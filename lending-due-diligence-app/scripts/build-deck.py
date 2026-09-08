@@ -293,7 +293,8 @@ para(_tf(tb), "Code App Migration Approach", size=44, bold=True, color=RED,
 rect(s, 1.02, 4.52, 2.6, 0.045, TEAL)
 tb = textbox(s, 1.0, 4.78, 11.3, 0.9)
 para(_tf(tb),
-     "Lending Due Diligence  ·  5 case types  ·  39 stages  ·  80 steps",
+     "A repeatable method for reverse-engineering Pega applications "
+     "without business workshops",
      size=16, color=BODY, first=True, space_after=4)
 para(_tf(tb),
      "Evidence-based findings from a working, deployed implementation",
@@ -335,34 +336,79 @@ num(s)
 num(divider(1, "Executive Summary", "Objective, challenges and outcomes"))
 
 s = base("A working migration, not a feasibility study", eyebrow="Executive Summary")
-kpis(s, [("100%", "Case lifecycle structure\nmigrated automatically"),
+kpis(s, [("0", "Business workshops\nrequired"),
+         ("100%", "Case lifecycle structure\nmigrated automatically"),
          ("49/49", "Automated verification\nchecks passing"),
          ("5 of 5", "Case types running\nend to end"),
-         ("27", "Dataverse tables\nprovisioned"),
-         ("~51%", "Step bodies needing\nmanual implementation")])
+         ("~51%", "Step bodies needing\nconfirmation")])
 bullets(s, [
     ("Objective", 0, True),
-    "Prove that a production Pega application can be migrated to the Power Platform "
-    "with its process fidelity intact - and quantify precisely what does not come across.",
+    "Prove that a production Pega application can be migrated to the Power "
+    "Platform without asking the business to re-specify it - and quantify "
+    "precisely what still needs their input.",
     ("Outcome", 0, True),
     "The Lending Due Diligence application is deployed and operating in the "
-    "Patrick Clarke environment. All five case types create, advance through their "
-    "stages, evaluate decisions and reach resolution.",
+    "Patrick Clarke environment. All five case types create, advance through "
+    "their stages, evaluate decisions and reach resolution. Zero business "
+    "workshops were held to get there.",
     ("The headline finding", 0, True),
-    "Process structure migrates almost entirely through automation. Process behaviour - "
-    "notifications, data transforms, document generation - does not, because Pega does "
-    "not expose it in any exportable form.",
+    "Process structure migrates almost entirely through automation. Process "
+    "behaviour - notifications, data transforms, document generation - does "
+    "not, because Pega does not expose it. But every one of those steps is "
+    "recovered by name and position, so the residual business conversation is "
+    "confirmation rather than discovery.",
 ], y=3.20, gap=7, size=13.5)
 notes(s, "Lead with the fact that this is a completed implementation. The five "
          "KPIs are all measured, not estimated. The 51% figure is the honest "
-         "counterweight to the 100% - be upfront about it; it is the single most "
-         "useful number in the deck for planning purposes.")
+         "counterweight to the 100% - be upfront about it, then immediately "
+         "qualify it: those 41 steps are named and located, so they are a "
+         "confirmation exercise, not a discovery exercise.")
+num(s)
+
+s = base("The real bottleneck is requirements elicitation", eyebrow="Executive Summary")
+bullets(s, [
+    ("The client's constraint", 0, True),
+    "Traditional migration starts with weeks of workshops to rediscover what an "
+    "application already does. For this client that is the binding constraint - "
+    "the business does not have the time, and understandably has little appetite "
+    "for re-specifying a system that is already running in production.",
+    ("Why that constraint drove the method", 0, True),
+    "So we inverted the approach. Rather than asking the business to describe "
+    "the application, we reverse-engineer it from artefacts the Pega platform "
+    "already holds, and use the business only to confirm the residue.",
+], y=1.55, size=13.5, gap=7)
+table(s,
+      ["Traditional discovery", "This methodology"],
+      [["Workshops to map the process model",
+        "*Extracted: 5 case types, 39 stages, 80 steps"],
+       ["Workshops to document business rules",
+        "*Extracted: 10 decision tables with 28 rules of logic"],
+       ["Workshops and mock-ups to specify screens",
+        "*Extracted: 24 screens with 59 fields, plus screenshots"],
+       ["Workshops to define the data model",
+        "*Extracted: 10 data objects, 334 properties"],
+       ["Workshops to agree the security model",
+        "*Extracted: 19 roles, 18 workbaskets"],
+       ["Elapsed before a line of code is written",
+        "*Days, and the output is a running application"]],
+      y=3.85, widths=[5.6, 6.5], size=12)
+callout(s, "None of the extracted material required a business workshop. The "
+           "artefacts are the specification.")
+notes(s, "This is the slide that matters most to this client. Their stated "
+         "problem is not migration cost - it is that requirements elicitation "
+         "consumes business time they will not give. Lead with it and the rest "
+         "of the deck reads as supporting evidence.")
 num(s)
 
 s = base("Business challenges being addressed", eyebrow="Executive Summary")
 table(s,
       ["Challenge", "Impact today", "How the target state responds"],
-      [["*Specialist skill dependency",
+      [["*Requirements elicitation load",
+        "Migration normally demands weeks of business workshops to re-specify a "
+        "system that already exists",
+        "Artefact-driven reverse engineering recovers the specification without "
+        "them"],
+       ["*Specialist skill dependency",
         "Pega development requires scarce, costly certified specialists",
         "React + TypeScript + Dataverse draws on a far larger talent pool"],
        ["*Licence cost concentration",
@@ -377,9 +423,9 @@ table(s,
        ["*Opaque logic",
         "Business rules are locked inside a proprietary rule engine",
         "Decision tables become inspectable, queryable Dataverse rows"]],
-      y=1.72, widths=[2.6, 4.5, 5.0], size=12)
-callout(s, "Change latency is the one the PoC demonstrably solves: adding a "
-           "stage or reordering steps is a data edit, with no redeploy.")
+      y=1.72, widths=[2.6, 4.5, 5.0], size=11.5)
+callout(s, "The first row is the client's stated priority. The rest follow from "
+           "the target platform; that one follows from the method.")
 num(s)
 
 s = base("Expected outcomes and benefits", eyebrow="Executive Summary")
@@ -556,6 +602,37 @@ num(s)
 
 # ===================================================== 4. MIGRATION APPROACH
 num(divider(4, "Migration Approach", "Assessment, analysis and mapping strategy"))
+
+s = base("A repeatable reverse-engineering methodology", eyebrow="Migration Approach")
+bullets(s, [
+    ("Principle: the running system is the specification", 0, True),
+    "Four artefact sources, each independently obtainable from the Pega estate, "
+    "combine into a single normalised model. No business workshop is required to "
+    "produce any of them.",
+], y=1.52, size=13.5)
+table(s,
+      ["#", "Artefact source", "How it is obtained", "What it contributes"],
+      [["*1", "Application export (.zip)",
+        "Dev Studio product export",
+        "SQL schema, full rule inventory, and - decoded as UTF-16BE - the flow "
+        "rule bodies"],
+       ["*2", "Application documentation (.docx)",
+        "Generated from the platform",
+        "Stages, flows, decision table logic, security model"],
+       ["*3", "pegakit + Pega DX API",
+        "Client-credentials OAuth against a sandbox",
+        "Screens, fields, choice values, theme - the largest single uplift"],
+       ["*4", "Screenshots of the running app",
+        "Captured from the live system",
+        "Visual fidelity, layout and branding for like-for-like rebuild"]],
+      y=2.62, widths=[0.5, 3.0, 3.5, 5.1], size=11.5)
+callout(s, "All four are artefacts the client already owns or can generate "
+           "unattended. The business is not in the critical path.")
+notes(s, "Emphasise repeatability. This is not a bespoke effort for one "
+         "application - the extract and seed pipeline discovers class prefixes, "
+         "case types and choice sets rather than hardcoding them, so it runs "
+         "against the next application unchanged.")
+num(s)
 
 s = base("Assessment methodology", eyebrow="Migration Approach")
 bullets(s, [
@@ -812,6 +889,59 @@ notes(s, "Challenge 1 is worth dwelling on. It is the clearest evidence that a "
          "would not be safe.")
 num(s)
 
+s = base("Requirements recovered without a workshop", eyebrow="Migration Findings")
+kpis(s, [("0", "Business workshops held\nduring the PoC"),
+         ("100%", "Process model recovered\nfrom artefacts"),
+         ("41", "Steps needing business\ninput - all pre-located"),
+         ("39", "Steps needing no\nbusiness input at all")],
+     y=1.58, h=1.20)
+table(s,
+      ["Requirement domain", "Recovered from artefacts", "Workshops needed"],
+      [["*Process model", "5 case types, 39 stages, 80 steps", "*None"],
+       ["*Business rules", "10 decision tables, 28 rules of logic", "*None"],
+       ["*User interface", "24 screens, 59 fields, plus screenshots", "*None"],
+       ["*Data model", "10 data objects, 334 properties", "*None"],
+       ["*Reference data", "26 choice sets, 107 values", "*None"],
+       ["*Security model", "19 roles, 30 grants, 18 workbaskets", "*None"],
+       ["*Routing logic", "264 connector transitions", "*None"],
+       ["*Step behaviour", "41 steps named and located, bodies not exported",
+        "Confirmation only"]],
+      y=3.10, widths=[2.7, 5.5, 3.9], size=11.5)
+callout(s, "The residue is confirmation, not discovery - see the next slide.")
+num(s)
+
+s = base("How the residual elicitation changes shape", eyebrow="Migration Findings")
+bullets(s, [
+    ("The 41 steps are not unknowns", 0, True),
+    "For every one of them the artefacts already give the case type, the stage, "
+    "the position in the sequence, the step name and the step type. What is "
+    "missing is only the body - the wording of a notification, the field "
+    "derivation inside a transform.",
+], y=1.55, size=13.5)
+table(s,
+      ["Instead of asking", "The question becomes"],
+      [["What notifications does this process send, to whom, and when?",
+        "*Compliance Monitoring / Remediation / 'Notify Stakeholders' - "
+        "confirm the wording"],
+       ["What calculations happen between these two steps?",
+        "*Escalation Management / Case Routing / 'Assign Case Owner' - "
+        "confirm the derivation"],
+       ["What documents does this process produce?",
+        "*Risk Assessment / Resolution Tracking / 'Generate Final Report' - "
+        "confirm the template"],
+       ["When should a case go back for rework?",
+        "*Four specific transitions, each with a proposed condition - "
+        "confirm or correct"]],
+      y=3.05, widths=[5.0, 7.1], size=11.5)
+callout(s, "Open-ended discovery becomes closed confirmation against a working "
+           "system the business can see running. That is a materially shorter "
+           "and easier conversation.", tone=GREEN)
+notes(s, "This is the practical answer to 'we have no time for requirements'. "
+         "You are not asking them to specify an application. You are showing "
+         "them one that already runs and asking them to confirm 41 specific "
+         "points, each anchored to a named step they recognise.")
+num(s)
+
 s = base("Automation opportunities", eyebrow="Migration Findings")
 table(s,
       ["Opportunity", "Current state", "Potential"],
@@ -982,8 +1112,7 @@ table(s,
       [["*Business SME workshops", "Agreeing the rework conditions", "*Phase 1 weeks 1 to 2", "Business"],
        ["*Pega sandbox with DX API", "High-fidelity extraction of each app",
         "*Before assessment", "Pega platform team"],
-       ["*Business SMEs", "Restating 20 transforms and 27 notifications",
-        "Phase 1 weeks 1 to 4", "Business"],
+       ["*Business SMEs (time-boxed)", "Confirming 41 pre-located step bodies - confirmation, not discovery", "*Short sessions, Phase 1 weeks 1 to 4", "Business"],
        ["*Power Platform environments", "Dev, test and production with ALM",
         "Phase 1 start", "Platform team"],
        ["*Dataverse capacity", "Row and storage volumes", "Phase 1 planning",
@@ -1014,7 +1143,7 @@ bullets(s, [
     "The migration assets - extract pipeline, engine, dynamic forms, "
     "verification harness - are application-agnostic and reusable.",
     ("Condition", 0, True),
-    "Secure business SME time before Phase 1 starts. Flow-rule extraction is solved; what remains needs business input, not platform access.",
+    "Book time-boxed SME confirmation sessions. The artefacts carry the specification; the business is asked only to confirm 41 named, located step bodies against a system they can watch running.",
 ], y=1.60, size=14, gap=8)
 callout(s, "Recommended next action: a two-week inception to recover the 35 "
            "flow rule bodies and confirm the security model. That retires the "
@@ -1025,8 +1154,8 @@ s = base("Phase 1 roadmap", eyebrow="Recommendations")
 table(s,
       ["Stage", "Weeks", "Activities", "Exit criteria"],
       [["*Inception", "1 - 2",
-        "Recover flow rule bodies; confirm security model; provision environments",
-        "Real guards documented; roles designed"],
+        "Run artefact extraction; time-boxed SME confirmation; provision environments",
+        "41 step bodies confirmed; roles designed"],
        ["*Build - logic", "3 - 6",
         "Implement 20 data transforms and 4 document generators; replace "
         "inferred guards",
@@ -1059,8 +1188,7 @@ table(s,
         "Few external system dependencies"],
        ["*Security complexity", "Pega and Dataverse models differ structurally",
         "Small number of access groups"],
-       ["*Business criticality", "De-risk before touching tier 1",
-        "Start with tier 2 or 3"],
+       ["*Artefact availability", "Determines how little business time is needed", "*Export, docs and DX API sandbox all obtainable"],
        ["*In-flight case volume", "Cutover complexity scales with it",
         "Short-lived cases that can be drained"]],
       y=1.70, widths=[3.3, 4.5, 4.3], size=11.5)
@@ -1223,8 +1351,8 @@ para(_tf(tb),
      "Pega to Power Platform  ·  Lending Due Diligence PoC",
      size=15, color=RGBColor(0xD6, 0xEC, 0xEE), first=True, space_after=6)
 para(_tf(tb),
-     "5 case types  ·  39 stages  ·  80 steps  ·  27 Dataverse tables  ·  "
-     "49/49 verification checks passing",
+     "5 case types  ·  39 stages  ·  80 steps  ·  49/49 verification checks  ·  "
+     "0 business workshops",
      size=13, color=RGBColor(0xBF, 0xDF, 0xE3), space_after=0)
 num(s)
 

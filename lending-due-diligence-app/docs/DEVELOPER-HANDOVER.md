@@ -16,6 +16,31 @@ replace the Pega application in production.
 
 ## 1. Architecture
 
+### Why the app is built this way
+
+The client's binding constraint is **requirements elicitation**, not migration
+cost. A conventional migration opens with weeks of business workshops to
+rediscover what an application already does; this business does not have the
+time for that. The whole approach is therefore built to treat **the running
+system as the specification** and to reverse-engineer it from artefacts the
+Pega estate already holds.
+
+Four artefact sources, none needing a workshop to produce:
+
+| # | Source | How it is obtained | Contributes |
+|---|---|---|---|
+| 1 | Application export (`.zip`) | Dev Studio product export | SQL schema, rule inventory, and (decoded as UTF-16BE) the flow rule bodies - see section 3b |
+| 2 | Application documentation (`.docx`) | Generated from the platform | Stages, flows, decision table logic, security model |
+| 3 | pegakit + Pega DX API | Client-credentials OAuth against a sandbox | Screens, fields, choice values, theme - the largest single uplift |
+| 4 | Screenshots of the running app | Captured from the live system | Visual fidelity for a like-for-like rebuild |
+
+Everything in the configuration tables below came from those four sources with
+**zero business workshops**. The residual 41 step bodies (section 4.3) still
+need business input, but each is recovered by name and position, so that
+conversation is confirmation rather than discovery.
+
+### Solution architecture
+
 The app is a **metadata-driven case engine**. Nothing about the process is
 hard-coded in React: case types, stages, steps, view layouts, choice sets and
 decision tables all live as rows in Dataverse, imported from the Pega export.
