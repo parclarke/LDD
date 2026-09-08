@@ -115,7 +115,10 @@ export async function advanceCase(
     if (code) stageVisits[code] = (stageVisits[code] ?? 0) + 1;
   }
 
-  const actions = planNextActions(record, stages, steps, { stageVisits });
+  const actions = planNextActions(record, stages, steps, {
+    stageVisits,
+    flowBranches: config.flowBranches ?? [],
+  });
   const taken: string[] = [];
   let current = record;
   let paused: AdvanceResult['pausedOn'] = 'none';

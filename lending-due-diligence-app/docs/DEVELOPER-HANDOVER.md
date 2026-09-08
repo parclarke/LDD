@@ -73,7 +73,7 @@ src/screens + components React UI
 |---|---|---|
 | Config extraction | `scripts/extract-prototype.mjs` | Pega JSON -> normalised config JSON |
 | Config load | `scripts/seed-prototype.mjs` | Config JSON -> Dataverse (idempotent upserts) |
-| Schema | `scripts/schema-v2.mjs` | The 27 Dataverse tables |
+| Schema | `scripts/schema-v2.mjs` | The 28 Dataverse tables |
 | Data access | `src/lib/data.ts` | Thin wrappers over the generated Dataverse services |
 | Engine | `src/lib/engine.ts` | `planNextActions`, `evaluateDecision`, `utilityEffect`. Pure functions. |
 | Orchestration | `src/lib/orchestrator.ts` | `createCase`, `advanceCase`, `submitAssignment`, `submitApproval` |
@@ -81,7 +81,7 @@ src/screens + components React UI
 
 ### Data model groups
 
-- **Configuration (10 tables)** - `ava_lddcasetype`, `ava_lddstage`,
+- **Configuration (11 tables)** - `ava_lddcasetype`, `ava_lddstage`,
   `ava_lddstep`, `ava_lddview`, `ava_lddviewfield`, `ava_lddchoiceset`,
   `ava_lddchoicevalue`, `ava_ldddecision`, `ava_ldddecisionrow`, `ava_lddrole`
 - **Data objects (9 tables)** - customers, lending transactions, etc.
@@ -159,7 +159,7 @@ unconditionally and the case ping-pongs forever. Two mitigations are in place:
 
 **Verification:** `node scripts/verify-engine.mjs` imports the *real* shipped
 `src/lib/engine.ts` and drives full lifecycles against live Dataverse.
-Current result: **49 passed, 0 failed**, covering config integrity, decision
+Current result: **57 passed, 0 failed**, covering config integrity, decision
 evaluation, utility classification, dry-run planning, and a live end-to-end
 lifecycle for each of the 5 case types.
 
@@ -285,23 +285,88 @@ assuming the same holds.
 
 ---
 
+## 3c. Decision routing extracted from the flow rules
+
+Every Decision shape in a Pega flow has one outgoing connector per decision-table
+result, and the connector records which result selects it. Those connectors are
+in the flow bodies, so the app no longer has to guess what a decision result
+does next.
+
+`scripts/extract-decision-routing.py` recovers them:
+
+```bash
+python scripts/extract-decision-routing.py <export.zip> --json prototype/flow-routing.json
+node scripts/seed-flow-routing.mjs
+```
+
+The parser is positional, so its output is **validated against the decision
+table that each flow's stage actually uses** - a branch is kept only if its
+result is a real result of its own decision. Candidates that fail are discarded
+rather than trusted, and the kept-versus-candidate counts are printed so a weak
+extraction is obvious.
+
+| Measure | Result |
+|---|---|
+| Flows with a transition graph | 35 (all of them) |
+| Flows containing a Decision | 7 |
+| Branches kept | 26 of 87 candidates |
+| Validation | 100% - every kept result is a real result of its own decision |
+| Branches that terminate the stage | 2 |
+
+Seeded into `ava_lddflowbranch` and surfaced in the app's **Process model ->
+Flow routing** tab.
+
+### What this changed in the engine
+
+Two decision results route to an END shape, which in Pega completes the stage's
+flow:
+
+| Case type | Stage | Decision | Result | Effect |
+|---|---|---|---|---|
+| ComplianceMonitoring | Issue Assessment | DecisionOutcomes | `No Action` | ends the stage |
+| LendingReview | Review Assessment | EscalateComplexIssues | `No Escalation` | ends the stage |
+
+Both are the decision's `otherwise` default: when nothing matched, there is
+nothing to do, so the process ends. The engine previously ran the remaining
+steps of the stage regardless. `isTerminalResult()` in `src/lib/engine.ts` now
+skips them, and `verify-engine.mjs` asserts both the positive and the negative
+case - a non-terminal result of the same decision must *not* end the stage.
+
+### What is deliberately not wired in
+
+The other 24 branches name a target shape (`Utility3`, `Assignment1_2`). Those
+shape IDs cannot be mapped to config steps safely: the flows contain more shapes
+than the extracted step list, so an ordinal mapping would be a guess. Wiring
+routing on a guess would be worse than the current honest sequential execution.
+They are stored and displayed so a developer can use them, but the engine does
+not act on them.
+
+To go further, resolve shape ID to step name from the `pyShapes` region of the
+flow body and extend the engine to jump to a named step.
+
+---
+
 ## 4. What a developer must do for production
 
 Ordered by priority. Items 4.1 to 4.4 are required; 4.5 onwards are hardening.
 
 ### 4.1 Validate the stage-change guards with the business (required)
 
-**This item changed materially - see section 3b.** The original plan was to
+**This item changed twice - see sections 3b and 3c.** The original plan was to
 recover the real `when` conditions from Dev Studio. Extraction of the flow rule
-bodies shows there is nothing to recover: **all 264 connector transitions in the
-exported application are unconditional** (225 `Always`, 32 `Action`, 7 `Else`).
-Zero are `when`-guarded.
+bodies shows there is nothing of that kind to recover: **all 264 connector
+transitions are unconditional** (225 `Always`, 32 `Action`, 7 `Else`).
 
-So the four inferred guards are not placeholders for a rule that exists
-somewhere. They are a design decision, and the work is a **business
-conversation** rather than a technical extraction: confirm with SMEs when a case
-*should* return to a previous stage for rework, then encode that in the
-`ava_guarddecision` / `ava_guardresults` columns.
+What the flow bodies *do* contain is the **decision branch routing** - which
+decision result routes to which shape. That is now extracted, validated and
+seeded (section 3c), and it corroborates the four inferred guards: in both
+guarded stages every decision result routes to a distinct target, and the
+result the guard treats as "done" (`Valid`, `Resolved`) has its own target
+separate from the rework ones.
+
+So the guards are a design decision, and the remaining work is a **business
+conversation**: confirm with SMEs when a case *should* return to a previous
+stage for rework, then encode that in `ava_guarddecision` / `ava_guardresults`.
 
 Keep `maxStageRevisits` permanently. Since the source application's transitions
 are unconditional, the cap is the only structural guarantee that a case

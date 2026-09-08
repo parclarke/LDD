@@ -16,6 +16,7 @@ import { Ava_lddchoicevaluesService } from '../generated/services/Ava_lddchoicev
 import { Ava_ldddecisionsService } from '../generated/services/Ava_ldddecisionsService';
 import { Ava_ldddecisionrowsService } from '../generated/services/Ava_ldddecisionrowsService';
 import { Ava_lddrolesService } from '../generated/services/Ava_lddrolesService';
+import { Ava_lddflowbranchsService } from '../generated/services/Ava_lddflowbranchsService';
 import { Ava_lddworkcasesService } from '../generated/services/Ava_lddworkcasesService';
 import { Ava_lddassignmentsService } from '../generated/services/Ava_lddassignmentsService';
 import { Ava_lddapprovalsService } from '../generated/services/Ava_lddapprovalsService';
@@ -125,6 +126,7 @@ export async function loadProcessConfig(): Promise<ProcessConfig> {
     decisions,
     decisionRows,
     roles,
+    flowBranches,
   ] = await Promise.all([
     Ava_lddcasetypesService.getAll({ orderBy: ['ava_sortorder asc'], ...PAGE }),
     Ava_lddstagesService.getAll({ orderBy: ['ava_sortorder asc'], ...PAGE }),
@@ -136,6 +138,7 @@ export async function loadProcessConfig(): Promise<ProcessConfig> {
     Ava_ldddecisionsService.getAll({ orderBy: ['ava_name asc'], ...PAGE }),
     Ava_ldddecisionrowsService.getAll({ orderBy: ['ava_sortorder asc'], ...PAGE }),
     Ava_lddrolesService.getAll({ orderBy: ['ava_name asc'], ...PAGE }),
+    Ava_lddflowbranchsService.getAll({ orderBy: ['ava_sortorder asc'], ...PAGE }),
   ]);
 
   return {
@@ -149,6 +152,7 @@ export async function loadProcessConfig(): Promise<ProcessConfig> {
     decisions: unwrap(decisions, 'Load decisions') ?? [],
     decisionRows: unwrap(decisionRows, 'Load decision rows') ?? [],
     roles: unwrap(roles, 'Load roles') ?? [],
+    flowBranches: unwrap(flowBranches, 'Load flow branches') ?? [],
   };
 }
 

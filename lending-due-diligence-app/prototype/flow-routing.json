@@ -1,0 +1,957 @@
+{
+  "flows": [
+    {
+      "caseTypeUpper": "COMPLIANCEMONITORING",
+      "flow": "COMPLIANCEAUDIT_FLOW",
+      "edges": [
+        {
+          "from": "GenerativeAI1",
+          "to": "END52",
+          "id": "Transition4",
+          "when": "ALWAYS",
+          "result": null
+        },
+        {
+          "from": "GenerativeAI1",
+          "to": "Decision1",
+          "id": "Transition2",
+          "when": "ELSE",
+          "result": null
+        }
+      ],
+      "decision": null,
+      "stage": [
+        "ComplianceMonitoring",
+        "PRIM1",
+        "Compliance Audit"
+      ]
+    },
+    {
+      "caseTypeUpper": "COMPLIANCEMONITORING",
+      "flow": "ESCALATIONPATH_FLOW",
+      "edges": [
+        {
+          "from": "Utility1",
+          "to": "END52",
+          "id": "Transition4",
+          "when": "ALWAYS",
+          "result": null
+        },
+        {
+          "from": "Utility1",
+          "to": "Decision1",
+          "id": "Transition7",
+          "when": "STATUS",
+          "result": "Standard Escalation"
+        },
+        {
+          "from": "Utility1",
+          "to": "Assignment1_3",
+          "id": "Transition5",
+          "when": "STATUS",
+          "result": "Immediate Escalation"
+        },
+        {
+          "from": "Utility1",
+          "to": null,
+          "id": "Transition2",
+          "when": "ELSE",
+          "result": null
+        },
+        {
+          "from": "Utility1",
+          "to": "Assignment1_2",
+          "id": "Transition6",
+          "when": "STATUS",
+          "result": "Senior Review"
+        },
+        {
+          "from": "Utility1",
+          "to": "Assignment1_1",
+          "id": "Transition8",
+          "when": "STATUS",
+          "result": "No Escalation"
+        }
+      ],
+      "decision": "TriggerEscalation",
+      "stage": [
+        "ComplianceMonitoring",
+        "ALT1",
+        "Escalation Path"
+      ]
+    },
+    {
+      "caseTypeUpper": "COMPLIANCEMONITORING",
+      "flow": "INTAKEREVIEW_FLOW",
+      "edges": [
+        {
+          "from": "Utility2",
+          "to": "END66",
+          "id": "Transition4",
+          "when": "ALWAYS",
+          "result": null
+        }
+      ],
+      "decision": null,
+      "stage": [
+        "ComplianceMonitoring",
+        "PRIM0",
+        "Intake Review"
+      ]
+    },
+    {
+      "caseTypeUpper": "COMPLIANCEMONITORING",
+      "flow": "ISSUEASSESSMENT_FLOW",
+      "edges": [
+        {
+          "from": "Decision1",
+          "to": "Utility3",
+          "id": "Transition5",
+          "when": "STATUS",
+          "result": "Escalate Immediately"
+        },
+        {
+          "from": "Decision1",
+          "to": "Utility2",
+          "id": "Transition6",
+          "when": "STATUS",
+          "result": "Corrective Action"
+        },
+        {
+          "from": "Decision1",
+          "to": "Utility1",
+          "id": "Transition7",
+          "when": "STATUS",
+          "result": "Close Case"
+        },
+        {
+          "from": "Decision1",
+          "to": "END52_1",
+          "id": "Transition8",
+          "when": "STATUS",
+          "result": "No Action"
+        },
+        {
+          "from": "Decision1",
+          "to": "END52",
+          "id": "Transition4",
+          "when": "ELSE",
+          "result": null
+        },
+        {
+          "from": "Decision1",
+          "to": "GenerativeAI1",
+          "id": "Transition3",
+          "when": "ALWAYS",
+          "result": null
+        }
+      ],
+      "decision": "DecisionOutcomes",
+      "stage": [
+        "ComplianceMonitoring",
+        "PRIM2",
+        "Issue Assessment"
+      ]
+    },
+    {
+      "caseTypeUpper": "COMPLIANCEMONITORING",
+      "flow": "REMEDIATION_FLOW",
+      "edges": [
+        {
+          "from": "Utility2",
+          "to": "END52",
+          "id": "Transition4",
+          "when": "ALWAYS",
+          "result": null
+        }
+      ],
+      "decision": null,
+      "stage": [
+        "ComplianceMonitoring",
+        "PRIM3",
+        "Remediation"
+      ]
+    },
+    {
+      "caseTypeUpper": "COMPLIANCEMONITORING",
+      "flow": "RESOLUTIONCLOSURE_FLOW",
+      "edges": [
+        {
+          "from": "Utility2",
+          "to": "END52",
+          "id": "Transition4",
+          "when": "ALWAYS",
+          "result": null
+        },
+        {
+          "from": "Utility2",
+          "to": "Utility3",
+          "id": "Transition7",
+          "when": "STATUS",
+          "result": "Action Required"
+        },
+        {
+          "from": "Utility2",
+          "to": "Utility1_2",
+          "id": "Transition5",
+          "when": "STATUS",
+          "result": "Valid"
+        },
+        {
+          "from": "Utility2",
+          "to": "Utility1_1",
+          "id": "Transition6",
+          "when": "STATUS",
+          "result": "Pending Closure"
+        },
+        {
+          "from": "Utility2",
+          "to": "Utility4",
+          "id": "Transition2",
+          "when": "ELSE",
+          "result": null
+        }
+      ],
+      "decision": "ValidateResolution",
+      "stage": [
+        "ComplianceMonitoring",
+        "PRIM4",
+        "Resolution Closure"
+      ]
+    },
+    {
+      "caseTypeUpper": "COMPLIANCEMONITORING",
+      "flow": "REWORKPATH_FLOW",
+      "edges": [
+        {
+          "from": "Assignment1",
+          "to": "Utility2",
+          "id": "Transition3",
+          "when": "ALWAYS",
+          "result": null
+        }
+      ],
+      "decision": null,
+      "stage": [
+        "ComplianceMonitoring",
+        "ALT2",
+        "Rework Path"
+      ]
+    },
+    {
+      "caseTypeUpper": "ESCALATIONMANAGEMENT",
+      "flow": "CASECLOSURE_FLOW",
+      "edges": [
+        {
+          "from": "Utility3",
+          "to": "END52",
+          "id": "Transition4",
+          "when": "ALWAYS",
+          "result": null
+        }
+      ],
+      "decision": null,
+      "stage": [
+        "EscalationManagement",
+        "PRIM4",
+        "Case Closure"
+      ]
+    },
+    {
+      "caseTypeUpper": "ESCALATIONMANAGEMENT",
+      "flow": "CASEROUTING_FLOW",
+      "edges": [
+        {
+          "from": "Utility2",
+          "to": "END52",
+          "id": "Transition4",
+          "when": "ALWAYS",
+          "result": null
+        },
+        {
+          "from": "Utility2",
+          "to": "Utility1_2",
+          "id": "Transition6",
+          "when": "STATUS",
+          "result": "Compliance"
+        },
+        {
+          "from": "Utility2",
+          "to": "Utility1_3",
+          "id": "Transition5",
+          "when": "STATUS",
+          "result": "Risk management"
+        },
+        {
+          "from": "Utility2",
+          "to": null,
+          "id": "Transition2",
+          "when": "ELSE",
+          "result": null
+        },
+        {
+          "from": "Utility2",
+          "to": "Utility1_1",
+          "id": "Transition7",
+          "when": "STATUS",
+          "result": "Business controls"
+        }
+      ],
+      "decision": "AssessRoutingCriteria",
+      "stage": [
+        "EscalationManagement",
+        "PRIM1",
+        "Case Routing"
+      ]
+    },
+    {
+      "caseTypeUpper": "ESCALATIONMANAGEMENT",
+      "flow": "ESCALATIONDECISION_FLOW",
+      "edges": [
+        {
+          "from": "Utility1",
+          "to": "END52",
+          "id": "Transition4",
+          "when": "ALWAYS",
+          "result": null
+        }
+      ],
+      "decision": null,
+      "stage": [
+        "EscalationManagement",
+        "PRIM3",
+        "Escalation Decision"
+      ]
+    },
+    {
+      "caseTypeUpper": "ESCALATIONMANAGEMENT",
+      "flow": "EXCEPTIONCLOSURE_FLOW",
+      "edges": [
+        {
+          "from": "Utility1",
+          "to": "Utility2",
+          "id": "Transition4",
+          "when": "ALWAYS",
+          "result": null
+        }
+      ],
+      "decision": null,
+      "stage": [
+        "EscalationManagement",
+        "ALT2",
+        "Exception Closure"
+      ]
+    },
+    {
+      "caseTypeUpper": "ESCALATIONMANAGEMENT",
+      "flow": "INTAKEREVIEW_FLOW",
+      "edges": [
+        {
+          "from": "Utility1",
+          "to": "Utility2",
+          "id": "Transition4",
+          "when": "ALWAYS",
+          "result": null
+        }
+      ],
+      "decision": null,
+      "stage": [
+        "EscalationManagement",
+        "PRIM0",
+        "Intake Review"
+      ]
+    },
+    {
+      "caseTypeUpper": "ESCALATIONMANAGEMENT",
+      "flow": "REWORKINTAKE_FLOW",
+      "edges": [
+        {
+          "from": "Assignment1",
+          "to": "Utility1",
+          "id": "Transition3",
+          "when": "ALWAYS",
+          "result": null
+        },
+        {
+          "from": "Decision1",
+          "to": null,
+          "id": "Transition2",
+          "when": "ELSE",
+          "result": null
+        }
+      ],
+      "decision": null,
+      "stage": [
+        "EscalationManagement",
+        "ALT1",
+        "Rework Intake"
+      ]
+    },
+    {
+      "caseTypeUpper": "ESCALATIONMANAGEMENT",
+      "flow": "SPECIALISTASSESSMENT_FLOW",
+      "edges": [
+        {
+          "from": "GenerativeAI1",
+          "to": "Assignment2",
+          "id": "Transition4",
+          "when": "ALWAYS",
+          "result": null
+        }
+      ],
+      "decision": null,
+      "stage": [
+        "EscalationManagement",
+        "PRIM2",
+        "Specialist Assessment"
+      ]
+    },
+    {
+      "caseTypeUpper": "LENDINGREVIEW",
+      "flow": "CASECLOSURE_FLOW",
+      "edges": [
+        {
+          "from": "Utility3",
+          "to": "END52",
+          "id": "Transition4",
+          "when": "ALWAYS",
+          "result": null
+        }
+      ],
+      "decision": null,
+      "stage": [
+        "LendingReview",
+        "PRIM4",
+        "Case Closure"
+      ]
+    },
+    {
+      "caseTypeUpper": "LENDINGREVIEW",
+      "flow": "DOCUMENTCOMPILATION_FLOW",
+      "edges": [
+        {
+          "from": "Utility1",
+          "to": "Utility2",
+          "id": "Transition4",
+          "when": "ALWAYS",
+          "result": null
+        }
+      ],
+      "decision": null,
+      "stage": [
+        "LendingReview",
+        "PRIM1",
+        "Document Compilation"
+      ]
+    },
+    {
+      "caseTypeUpper": "LENDINGREVIEW",
+      "flow": "ESCALATIONPATH_FLOW",
+      "edges": [
+        {
+          "from": "Utility1",
+          "to": "END52",
+          "id": "Transition4",
+          "when": "ALWAYS",
+          "result": null
+        }
+      ],
+      "decision": null,
+      "stage": [
+        "LendingReview",
+        "ALT2",
+        "Escalation Path"
+      ]
+    },
+    {
+      "caseTypeUpper": "LENDINGREVIEW",
+      "flow": "FINALDECISION_FLOW",
+      "edges": [
+        {
+          "from": "Utility1",
+          "to": "Utility2",
+          "id": "Transition4",
+          "when": "ALWAYS",
+          "result": null
+        },
+        {
+          "from": "Utility1",
+          "to": "Decision1",
+          "id": "Transition3",
+          "when": "ELSE",
+          "result": null
+        }
+      ],
+      "decision": null,
+      "stage": [
+        "LendingReview",
+        "PRIM3",
+        "Final Decision"
+      ]
+    },
+    {
+      "caseTypeUpper": "LENDINGREVIEW",
+      "flow": "INTAKECAPTURE_FLOW",
+      "edges": [
+        {
+          "from": "Utility2",
+          "to": "END66",
+          "id": "Transition4",
+          "when": "ALWAYS",
+          "result": null
+        }
+      ],
+      "decision": null,
+      "stage": [
+        "LendingReview",
+        "PRIM0",
+        "Intake Capture"
+      ]
+    },
+    {
+      "caseTypeUpper": "LENDINGREVIEW",
+      "flow": "REVIEWASSESSMENT_FLOW",
+      "edges": [
+        {
+          "from": "GenerativeAI1",
+          "to": "Decision1",
+          "id": "Transition4",
+          "when": "ALWAYS",
+          "result": null
+        },
+        {
+          "from": "GenerativeAI1",
+          "to": "Utility2_1",
+          "id": "Transition7",
+          "when": "STATUS",
+          "result": "Management Review"
+        },
+        {
+          "from": "GenerativeAI1",
+          "to": "Utility2",
+          "id": "Transition8",
+          "when": "STATUS",
+          "result": "Specialist Review"
+        },
+        {
+          "from": "GenerativeAI1",
+          "to": "Utility2_2",
+          "id": "Transition6",
+          "when": "STATUS",
+          "result": "Escalate Immediately"
+        },
+        {
+          "from": "GenerativeAI1",
+          "to": "END52_1",
+          "id": "Transition9",
+          "when": "STATUS",
+          "result": "No Escalation"
+        },
+        {
+          "from": "GenerativeAI1",
+          "to": "END52",
+          "id": "Transition5",
+          "when": "ELSE",
+          "result": null
+        }
+      ],
+      "decision": "EscalateComplexIssues",
+      "stage": [
+        "LendingReview",
+        "PRIM2",
+        "Review Assessment"
+      ]
+    },
+    {
+      "caseTypeUpper": "LENDINGREVIEW",
+      "flow": "REWORKREQUESTED_FLOW",
+      "edges": [
+        {
+          "from": "Utility2",
+          "to": "END52",
+          "id": "Transition4",
+          "when": "ALWAYS",
+          "result": null
+        }
+      ],
+      "decision": null,
+      "stage": [
+        "LendingReview",
+        "ALT1",
+        "Rework Requested"
+      ]
+    },
+    {
+      "caseTypeUpper": "QUALITYRECOMMENDATION",
+      "flow": "ASSESSMENTANALYSIS_FLOW",
+      "edges": [
+        {
+          "from": "Utility1",
+          "to": "END52",
+          "id": "Transition4",
+          "when": "ALWAYS",
+          "result": null
+        }
+      ],
+      "decision": null,
+      "stage": [
+        "QualityRecommendation",
+        "PRIM1",
+        "Assessment Analysis"
+      ]
+    },
+    {
+      "caseTypeUpper": "QUALITYRECOMMENDATION",
+      "flow": "CLOSUREVALIDATION_FLOW",
+      "edges": [
+        {
+          "from": "Utility2",
+          "to": "END52",
+          "id": "Transition4",
+          "when": "ALWAYS",
+          "result": null
+        }
+      ],
+      "decision": null,
+      "stage": [
+        "QualityRecommendation",
+        "PRIM4",
+        "Closure Validation"
+      ]
+    },
+    {
+      "caseTypeUpper": "QUALITYRECOMMENDATION",
+      "flow": "EXCEPTIONHANDLING_FLOW",
+      "edges": [
+        {
+          "from": "Utility2",
+          "to": "END52",
+          "id": "Transition4",
+          "when": "ALWAYS",
+          "result": null
+        }
+      ],
+      "decision": null,
+      "stage": [
+        "QualityRecommendation",
+        "ALT1",
+        "Exception Handling"
+      ]
+    },
+    {
+      "caseTypeUpper": "QUALITYRECOMMENDATION",
+      "flow": "INTAKEREVIEW_FLOW",
+      "edges": [
+        {
+          "from": "Utility2",
+          "to": "END66",
+          "id": "Transition4",
+          "when": "ALWAYS",
+          "result": null
+        }
+      ],
+      "decision": null,
+      "stage": [
+        "QualityRecommendation",
+        "PRIM0",
+        "Intake Review"
+      ]
+    },
+    {
+      "caseTypeUpper": "QUALITYRECOMMENDATION",
+      "flow": "RECOMMENDATIONFORMULATION_FLOW",
+      "edges": [
+        {
+          "from": "Utility1",
+          "to": "Utility2",
+          "id": "Transition4",
+          "when": "ALWAYS",
+          "result": null
+        }
+      ],
+      "decision": null,
+      "stage": [
+        "QualityRecommendation",
+        "PRIM2",
+        "Recommendation Formulation"
+      ]
+    },
+    {
+      "caseTypeUpper": "QUALITYRECOMMENDATION",
+      "flow": "RESOLUTIONTRACKING_FLOW",
+      "edges": [
+        {
+          "from": "Assignment2",
+          "to": "Decision1",
+          "id": "Transition2",
+          "when": "ELSE",
+          "result": null
+        },
+        {
+          "from": "Assignment2",
+          "to": null,
+          "id": "Transition1",
+          "when": "ALWAYS",
+          "result": null
+        }
+      ],
+      "decision": null,
+      "stage": [
+        "QualityRecommendation",
+        "PRIM3",
+        "Resolution Tracking"
+      ]
+    },
+    {
+      "caseTypeUpper": "QUALITYRECOMMENDATION",
+      "flow": "REWORK_FLOW",
+      "edges": [
+        {
+          "from": "Assignment2",
+          "to": "Decision1",
+          "id": "Transition2",
+          "when": "ELSE",
+          "result": null
+        },
+        {
+          "from": "Assignment2",
+          "to": null,
+          "id": "Transition1",
+          "when": "ALWAYS",
+          "result": null
+        }
+      ],
+      "decision": null,
+      "stage": [
+        "QualityRecommendation",
+        "ALT2",
+        "Rework"
+      ]
+    },
+    {
+      "caseTypeUpper": "RISKASSESSMENT",
+      "flow": "DETAILEDASSESSMENT_FLOW",
+      "edges": [
+        {
+          "from": "Utility2",
+          "to": "END52",
+          "id": "Transition4",
+          "when": "ALWAYS",
+          "result": null
+        }
+      ],
+      "decision": null,
+      "stage": [
+        "RiskAssessment",
+        "PRIM2",
+        "Detailed Assessment"
+      ]
+    },
+    {
+      "caseTypeUpper": "RISKASSESSMENT",
+      "flow": "ESCALATION_FLOW",
+      "edges": [
+        {
+          "from": "Utility1",
+          "to": "END52",
+          "id": "Transition4",
+          "when": "ALWAYS",
+          "result": null
+        },
+        {
+          "from": "Decision1",
+          "to": null,
+          "id": "Transition2",
+          "when": "ELSE",
+          "result": null
+        }
+      ],
+      "decision": null,
+      "stage": [
+        "RiskAssessment",
+        "ALT1",
+        "Escalation"
+      ]
+    },
+    {
+      "caseTypeUpper": "RISKASSESSMENT",
+      "flow": "INTAKEREVIEW_FLOW",
+      "edges": [
+        {
+          "from": "Utility2",
+          "to": "END66",
+          "id": "Transition4",
+          "when": "ALWAYS",
+          "result": null
+        }
+      ],
+      "decision": null,
+      "stage": [
+        "RiskAssessment",
+        "PRIM0",
+        "Intake Review"
+      ]
+    },
+    {
+      "caseTypeUpper": "RISKASSESSMENT",
+      "flow": "PRELIMINARYSCREENING_FLOW",
+      "edges": [
+        {
+          "from": "GenerativeAI1",
+          "to": "END52",
+          "id": "Transition4",
+          "when": "ALWAYS",
+          "result": null
+        },
+        {
+          "from": "Decision1",
+          "to": "Utility2_1",
+          "id": "Transition5",
+          "when": "STATUS",
+          "result": "Critical Alert"
+        },
+        {
+          "from": "Decision1",
+          "to": "Utility2",
+          "id": "Transition6",
+          "when": "STATUS",
+          "result": "Immediate Escalation"
+        },
+        {
+          "from": "Decision1",
+          "to": "GenerativeAI1_2",
+          "id": "Transition7",
+          "when": "STATUS",
+          "result": "Monitor"
+        },
+        {
+          "from": "Decision1",
+          "to": null,
+          "id": "Transition3",
+          "when": "ELSE",
+          "result": null
+        },
+        {
+          "from": "Decision1",
+          "to": "GenerativeAI1_1",
+          "id": "Transition8",
+          "when": "STATUS",
+          "result": "No Alert"
+        }
+      ],
+      "decision": "IdentifyRiskSignals",
+      "stage": [
+        "RiskAssessment",
+        "PRIM1",
+        "Preliminary Screening"
+      ]
+    },
+    {
+      "caseTypeUpper": "RISKASSESSMENT",
+      "flow": "RECOMMENDATION_FLOW",
+      "edges": [
+        {
+          "from": "Utility2",
+          "to": "END52",
+          "id": "Transition4",
+          "when": "ALWAYS",
+          "result": null
+        },
+        {
+          "from": "Utility2",
+          "to": "Decision1",
+          "id": "Transition3",
+          "when": "ELSE",
+          "result": null
+        }
+      ],
+      "decision": null,
+      "stage": [
+        "RiskAssessment",
+        "PRIM3",
+        "Recommendation"
+      ]
+    },
+    {
+      "caseTypeUpper": "RISKASSESSMENT",
+      "flow": "RESOLUTIONTRACKING_FLOW",
+      "edges": [
+        {
+          "from": "Utility2",
+          "to": "END52",
+          "id": "Transition4",
+          "when": "ALWAYS",
+          "result": null
+        },
+        {
+          "from": "Decision1",
+          "to": "Utility2_1",
+          "id": "Transition8",
+          "when": "STATUS",
+          "result": "Pending Review"
+        },
+        {
+          "from": "Decision1",
+          "to": "Utility3",
+          "id": "Transition6",
+          "when": "STATUS",
+          "result": "Escalated"
+        },
+        {
+          "from": "Decision1",
+          "to": "Utility2_2",
+          "id": "Transition5",
+          "when": "STATUS",
+          "result": "Resolved"
+        },
+        {
+          "from": "Decision1",
+          "to": null,
+          "id": "Transition3",
+          "when": "ELSE",
+          "result": null
+        },
+        {
+          "from": "Decision1",
+          "to": "Utility1",
+          "id": "Transition7",
+          "when": "STATUS",
+          "result": "Under Review"
+        }
+      ],
+      "decision": "OutcomeDecision",
+      "stage": [
+        "RiskAssessment",
+        "PRIM4",
+        "Resolution Tracking"
+      ]
+    },
+    {
+      "caseTypeUpper": "RISKASSESSMENT",
+      "flow": "REWORK_FLOW",
+      "edges": [
+        {
+          "from": "Assignment1",
+          "to": "Utility2",
+          "id": "Transition3",
+          "when": "ALWAYS",
+          "result": null
+        }
+      ],
+      "decision": null,
+      "stage": [
+        "RiskAssessment",
+        "ALT2",
+        "Rework"
+      ]
+    }
+  ],
+  "terminalResults": {
+    "COMPLIANCEMONITORING/ISSUEASSESSMENT_FLOW": [
+      "No Action"
+    ],
+    "LENDINGREVIEW/REVIEWASSESSMENT_FLOW": [
+      "No Escalation"
+    ]
+  }
+}

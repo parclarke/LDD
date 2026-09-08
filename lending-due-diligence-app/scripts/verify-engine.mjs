@@ -76,7 +76,7 @@ const created = [];
 
 async function main() {
   console.log('Loading process configuration from Dataverse...');
-  const [caseTypes, stages, steps, views, viewFields, decisions, decisionRows, choiceSets, choiceValues] =
+  const [caseTypes, stages, steps, views, viewFields, decisions, decisionRows, choiceSets, choiceValues, flowBranches] =
     await Promise.all([
       get('ava_lddcasetypes', '?$orderby=ava_sortorder'),
       get('ava_lddstages', '?$orderby=ava_sortorder&$top=200'),
@@ -87,11 +87,13 @@ async function main() {
       get('ava_ldddecisionrows', '?$orderby=ava_sortorder&$top=300'),
       get('ava_lddchoicesets', '?$top=100'),
       get('ava_lddchoicevalues', '?$orderby=ava_sortorder&$top=300'),
+      get('ava_lddflowbranchs', '?$orderby=ava_sortorder&$top=200'),
     ]);
 
   console.log(
     `  caseTypes=${caseTypes.length} stages=${stages.length} steps=${steps.length} ` +
-      `views=${views.length} fields=${viewFields.length} decisions=${decisions.length}`
+      `views=${views.length} fields=${viewFields.length} decisions=${decisions.length} ` +
+      `flowBranches=${flowBranches.length}`
   );
 
   console.log('\n=== 1. Configuration integrity ===');
@@ -100,6 +102,34 @@ async function main() {
   check('80 steps imported', steps.length === 80, `got ${steps.length}`);
   check('24 views imported', views.length === 24, `got ${views.length}`);
   check('10 decision tables imported', decisions.length === 10, `got ${decisions.length}`);
+  check('26 flow branches imported', flowBranches.length === 26, `got ${flowBranches.length}`);
+  check(
+    'every flow branch result is a real result of its own decision table',
+    flowBranches.every((b) => {
+      const dec = decisions.find((d) => d.ava_name === b.ava_decisionname);
+      if (!dec) return false;
+      const rows = decisionRows.filter((r) => r._ava_decisionid_value === dec.ava_ldddecisionid);
+      const legal = new Set(rows.map((r) => (r.ava_result ?? '').trim().toLowerCase()));
+      if (dec.ava_otherwise) legal.add(dec.ava_otherwise.trim().toLowerCase());
+      return legal.has((b.ava_resultvalue ?? '').trim().toLowerCase());
+    }),
+    flowBranches
+      .filter((b) => !decisions.some((d) => d.ava_name === b.ava_decisionname))
+      .map((b) => b.ava_name)
+      .join(', ')
+  );
+  check(
+    'every flow branch points at a stage that exists',
+    flowBranches.every((b) => stages.some((s) => s.ava_stagecode === b.ava_stagecode))
+  );
+  check(
+    'exactly 2 terminal branches were extracted',
+    flowBranches.filter((b) => b.ava_isterminal === true).length === 2,
+    flowBranches
+      .filter((b) => b.ava_isterminal === true)
+      .map((b) => `${b.ava_casetypecode}/${b.ava_resultvalue}`)
+      .join(', ')
+  );
   check(
     'every case type has at least one primary stage',
     caseTypes.every(
@@ -219,6 +249,51 @@ async function main() {
       `${plan.length} actions, kinds=${[...new Set(plan.map((a) => a.type))].join('/')}`);
   }
 
+  console.log('\n=== 4b. Terminal decision results end the stage ===');
+  for (const b of flowBranches.filter((x) => x.ava_isterminal === true)) {
+    const ct = caseTypes.find((c) => c.ava_code === b.ava_casetypecode);
+    const ctStages = stages.filter((s) => s._ava_casetypeid_value === ct.ava_lddcasetypeid);
+    const stageIds = new Set(ctStages.map((s) => s.ava_lddstageid));
+    const ctSteps = steps.filter((s) => stageIds.has(s._ava_stageid_value));
+    const stage = ctStages.find((s) => s.ava_stagecode === b.ava_stagecode);
+    const inStage = stepsForStage(ctSteps, stage.ava_lddstageid);
+    // Position the case just after the decision step in that stage.
+    const decIdx = inStage.findIndex((s) => s.ava_kind === 'Decision');
+    const base = {
+      ava_lddworkcaseid: '00000000-0000-0000-0000-000000000000',
+      ava_stagecode: stage.ava_stagecode,
+      ava_currentstepindex: decIdx + 1,
+      ava_casetypecode: ct.ava_code,
+    };
+
+    const terminalPlan = planNextActions(
+      { ...base, ava_lastdecisionresult: `${b.ava_decisionname}: ${b.ava_resultvalue}` },
+      ctStages, ctSteps, { flowBranches }
+    );
+    const skipped = terminalPlan.find((a) => a.type === 'skipStep' && /END shape/.test(a.reason ?? ''));
+    check(
+      `${b.ava_casetypecode}: "${b.ava_resultvalue}" ends ${stage.ava_name} early`,
+      Boolean(skipped),
+      terminalPlan.map((a) => a.type).join(' -> ')
+    );
+
+    // A non-terminal result of the same decision must NOT skip the stage.
+    const other = flowBranches.find(
+      (x) => x.ava_decisionname === b.ava_decisionname && x.ava_isterminal !== true
+    );
+    if (other) {
+      const normalPlan = planNextActions(
+        { ...base, ava_lastdecisionresult: `${b.ava_decisionname}: ${other.ava_resultvalue}` },
+        ctStages, ctSteps, { flowBranches }
+      );
+      check(
+        `${b.ava_casetypecode}: "${other.ava_resultvalue}" does not end the stage early`,
+        !normalPlan.some((a) => a.type === 'skipStep' && /END shape/.test(a.reason ?? '')),
+        normalPlan.map((a) => a.type).join(' -> ')
+      );
+    }
+  }
+
   console.log('\n=== 5. Live lifecycle per case type ===');
   const stamp = Date.now().toString().slice(-6);
 
@@ -263,7 +338,7 @@ async function main() {
     const stageVisits = { [first.ava_stagecode]: 1 };
 
     while (iterations++ < 40) {
-      const plan = planNextActions(record, ctStages, ctSteps, { stageVisits });
+      const plan = planNextActions(record, ctStages, ctSteps, { stageVisits, flowBranches });
       if (!plan.length) break;
 
       let paused = false;

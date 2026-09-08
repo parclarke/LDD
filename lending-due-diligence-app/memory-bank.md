@@ -38,11 +38,11 @@ myapp.zip -> scripts/extract-prototype.mjs -> prototype/ldd-prototype-config.jso
 See `docs/DEVELOPER-HANDOVER.md` for the full architecture, verification results, and the
 production readiness backlog.
 
-## Dataverse tables — 27, all `ava_` prefixed, all in the solution
+## Dataverse tables — 28, all `ava_` prefixed, all in the solution
 
-- **Configuration (10)** — `ava_lddcasetype`, `ava_lddstage`, `ava_lddstep`, `ava_lddview`,
+- **Configuration (11)** — `ava_lddcasetype`, `ava_lddstage`, `ava_lddstep`, `ava_lddview`,
   `ava_lddviewfield`, `ava_lddchoiceset`, `ava_lddchoicevalue`, `ava_ldddecision`,
-  `ava_ldddecisionrow`, `ava_lddrole`
+  `ava_ldddecisionrow`, `ava_lddrole`, `ava_lddflowbranch`
 - **Data objects (9)** — `ava_lddcustomer` and the other prototype data objects
 - **Work / runtime (4)** — `ava_lddworkcase` (shared case envelope), `ava_lddassignment`,
   `ava_lddapproval`, `ava_lddcasehistory` (audit trail)
@@ -56,13 +56,13 @@ Case types: `LendingReview`, `RiskAssessment`, `ComplianceMonitoring`, `Escalati
 - [x] Prerequisites validated (Node 24, git, `pa` CLI)
 - [x] Scaffold + `pa app init`
 - [x] v1: 9 tables, demo data, UI, deployed and verified end to end
-- [x] v2: prototype analysed; 27-table schema designed and provisioned into the solution
+- [x] v2: prototype analysed; 28-table schema designed and provisioned into the solution
 - [x] v2: config seeded — 26 choice sets/107 values, 19 roles, 24 views/59 fields,
       10 decisions/28 rows, 5 case types/39 stages/80 steps, plus 5 demo cases
 - [x] v2: 28 Dataverse data sources added to the code app
 - [x] v2: engine, orchestrator, dynamic form renderer, 5 screens, 4 components
 - [x] v2: rework-loop bug fixed (inferred guards + hard stage re-visit cap)
-- [x] v2: `scripts/verify-engine.mjs` — **49 passed / 0 failed** against live Dataverse
+- [x] v2: `scripts/verify-engine.mjs` — **57 passed / 0 failed** against live Dataverse
 - [x] v2: built, linted clean, deployed
 - [x] v2: `docs/DEVELOPER-HANDOVER.md` written
 

@@ -14,6 +14,7 @@
  */
 import type {
   LddCaseType,
+  LddFlowBranch,
   LddStage,
   LddStep,
   LddWorkCase,
@@ -98,6 +99,11 @@ export function stepsForStage(steps: LddStep[], stageId: string): LddStep[] {
  *      fires when the case's last decision result is one of the listed results.
  *   2. A stage may be re-entered at most `maxStageRevisits` times regardless, so a
  *      mis-configured guard can never loop forever.
+ *
+ * Decision routing comes from the Pega flow rule bodies (`ava_lddflowbranch`).
+ * A branch whose connector lands on an END shape completes the stage, so when a
+ * decision returns such a result the remaining steps in that stage are skipped
+ * rather than executed.
  */
 export interface PlanOptions {
   /** How many times each stage has already been entered, keyed by stage code. */
@@ -106,6 +112,8 @@ export interface PlanOptions {
   maxSteps?: number;
   /** The case's most recent decision result, used to evaluate step guards. */
   lastDecisionResult?: string | null;
+  /** Decision branch routing extracted from the Pega flow rules. */
+  flowBranches?: LddFlowBranch[];
 }
 
 export function planNextActions(
@@ -119,6 +127,7 @@ export function planNextActions(
     maxStageRevisits = 2,
     maxSteps = 25,
     lastDecisionResult = record.ava_lastdecisionresult ?? null,
+    flowBranches = [],
   } = options;
 
   const actions: EngineAction[] = [];
@@ -153,6 +162,19 @@ export function planNextActions(
       }
       stage = next;
       index = 0;
+      continue;
+    }
+
+    // In Pega, a decision result whose connector lands on an END shape completes
+    // the flow. The remaining steps of the stage must therefore not run.
+    if (index > 0 && decisionResult && isTerminalResult(flowBranches, stage, decisionResult)) {
+      actions.push({
+        type: 'skipStep',
+        step: steps[index],
+        stage,
+        reason: `flow ends here: "${decisionResult}" routes to an END shape`,
+      });
+      index = steps.length;
       continue;
     }
 
@@ -221,6 +243,24 @@ export function planNextActions(
   }
 
   return actions;
+}
+
+/**
+ * True when the Pega flow routes this decision result straight to an END shape,
+ * meaning the stage's process is finished and later steps must not run.
+ */
+export function isTerminalResult(
+  branches: LddFlowBranch[],
+  stage: LddStage,
+  decisionResult: string
+): boolean {
+  const want = decisionResult.trim().toLowerCase();
+  return branches.some(
+    (b) =>
+      b.ava_isterminal === true &&
+      b.ava_stagecode === stage.ava_stagecode &&
+      (b.ava_resultvalue ?? '').trim().toLowerCase() === want
+  );
 }
 
 /** A guarded step fires only when the last decision result is in its allow-list. */

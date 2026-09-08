@@ -14,6 +14,7 @@ import type { Ava_lddchoicevalues } from '../generated/models/Ava_lddchoicevalue
 import type { Ava_ldddecisions } from '../generated/models/Ava_ldddecisionsModel';
 import type { Ava_ldddecisionrows } from '../generated/models/Ava_ldddecisionrowsModel';
 import type { Ava_lddroles } from '../generated/models/Ava_lddrolesModel';
+import type { Ava_lddflowbranchs } from '../generated/models/Ava_lddflowbranchsModel';
 import type { Ava_lddworkcases } from '../generated/models/Ava_lddworkcasesModel';
 import type { Ava_lddassignments } from '../generated/models/Ava_lddassignmentsModel';
 import type { Ava_lddapprovals } from '../generated/models/Ava_lddapprovalsModel';
@@ -36,6 +37,7 @@ export type LddChoiceValue = Ava_lddchoicevalues;
 export type LddDecision = Ava_ldddecisions;
 export type LddDecisionRow = Ava_ldddecisionrows;
 export type LddRole = Ava_lddroles;
+export type LddFlowBranch = Ava_lddflowbranchs;
 export type LddWorkCase = Ava_lddworkcases;
 export type LddAssignment = Ava_lddassignments;
 export type LddApproval = Ava_lddapprovals;
@@ -114,6 +116,8 @@ export interface ProcessConfig {
   decisions: LddDecision[];
   decisionRows: LddDecisionRow[];
   roles: LddRole[];
+  /** Decision branch routing extracted from the Pega flow rule bodies. */
+  flowBranches: LddFlowBranch[];
 }
 
 export type Route =

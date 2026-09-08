@@ -131,6 +131,13 @@ export const dataSourcesInfo = {
     "dataSourceType": "Dataverse",
     "apis": {}
   },
+  "ava_lddflowbranchs": {
+    "tableId": "",
+    "version": "",
+    "primaryKey": "ava_lddflowbranchid",
+    "dataSourceType": "Dataverse",
+    "apis": {}
+  },
   "ava_lddlendingreviews": {
     "tableId": "",
     "version": "",
