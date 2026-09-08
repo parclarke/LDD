@@ -58,6 +58,146 @@
           "entitySetName": "ava_lddcasetasks",
           "logicalName": "ava_lddcasetask",
           "isHidden": false
+        },
+        "lddcasetypes": {
+          "entitySetName": "ava_lddcasetypes",
+          "logicalName": "ava_lddcasetype",
+          "isHidden": false
+        },
+        "lddstages": {
+          "entitySetName": "ava_lddstages",
+          "logicalName": "ava_lddstage",
+          "isHidden": false
+        },
+        "lddsteps": {
+          "entitySetName": "ava_lddsteps",
+          "logicalName": "ava_lddstep",
+          "isHidden": false
+        },
+        "lddviews": {
+          "entitySetName": "ava_lddviews",
+          "logicalName": "ava_lddview",
+          "isHidden": false
+        },
+        "lddviewfields": {
+          "entitySetName": "ava_lddviewfields",
+          "logicalName": "ava_lddviewfield",
+          "isHidden": false
+        },
+        "lddchoicesets": {
+          "entitySetName": "ava_lddchoicesets",
+          "logicalName": "ava_lddchoiceset",
+          "isHidden": false
+        },
+        "lddchoicevalues": {
+          "entitySetName": "ava_lddchoicevalues",
+          "logicalName": "ava_lddchoicevalue",
+          "isHidden": false
+        },
+        "ldddecisiontables": {
+          "entitySetName": "ava_ldddecisions",
+          "logicalName": "ava_ldddecision",
+          "isHidden": false
+        },
+        "ldddecisionrows": {
+          "entitySetName": "ava_ldddecisionrows",
+          "logicalName": "ava_ldddecisionrow",
+          "isHidden": false
+        },
+        "lddroles": {
+          "entitySetName": "ava_lddroles",
+          "logicalName": "ava_lddrole",
+          "isHidden": false
+        },
+        "lddworkcases": {
+          "entitySetName": "ava_lddworkcases",
+          "logicalName": "ava_lddworkcase",
+          "isHidden": false
+        },
+        "lddassignments": {
+          "entitySetName": "ava_lddassignments",
+          "logicalName": "ava_lddassignment",
+          "isHidden": false
+        },
+        "lddapprovals": {
+          "entitySetName": "ava_lddapprovals",
+          "logicalName": "ava_lddapproval",
+          "isHidden": false
+        },
+        "lddcasehistory": {
+          "entitySetName": "ava_lddcasehistories",
+          "logicalName": "ava_lddcasehistory",
+          "isHidden": false
+        },
+        "lddcustomers": {
+          "entitySetName": "ava_lddcustomers",
+          "logicalName": "ava_lddcustomer",
+          "isHidden": false
+        },
+        "lddcompliancefindings": {
+          "entitySetName": "ava_lddcompliancefindings",
+          "logicalName": "ava_lddcompliancefinding",
+          "isHidden": false
+        },
+        "lddqualityreviews": {
+          "entitySetName": "ava_lddqualityreviews",
+          "logicalName": "ava_lddqualityreview",
+          "isHidden": false
+        },
+        "lddriskprofiles": {
+          "entitySetName": "ava_lddriskprofiles",
+          "logicalName": "ava_lddriskprofile",
+          "isHidden": false
+        },
+        "lddoversightcases": {
+          "entitySetName": "ava_lddoversightcases",
+          "logicalName": "ava_lddoversightcase",
+          "isHidden": false
+        },
+        "lddresolutionsummaries": {
+          "entitySetName": "ava_lddresolutionsummaries",
+          "logicalName": "ava_lddresolutionsummary",
+          "isHidden": false
+        },
+        "lddescalationlogs": {
+          "entitySetName": "ava_lddescalationlogs",
+          "logicalName": "ava_lddescalationlog",
+          "isHidden": false
+        },
+        "lddrecommendationitems": {
+          "entitySetName": "ava_lddrecommendationitems",
+          "logicalName": "ava_lddrecommendationitem",
+          "isHidden": false
+        },
+        "lddroleassignments": {
+          "entitySetName": "ava_lddroleassignments",
+          "logicalName": "ava_lddroleassignment",
+          "isHidden": false
+        },
+        "lddlendingreviewdetails": {
+          "entitySetName": "ava_lddlendingreviews",
+          "logicalName": "ava_lddlendingreview",
+          "isHidden": false
+        },
+        "lddriskassessmentdetails": {
+          "entitySetName": "ava_lddriskassessmentcases",
+          "logicalName": "ava_lddriskassessmentcase",
+          "isHidden": false
+        },
+        "lddcompliancemonitoringdetails": {
+          "entitySetName": "ava_lddcompliancecases",
+          "logicalName": "ava_lddcompliancecase",
+          "isHidden": false
+        },
+        "lddescalationmanagementdetails": {
+          "entitySetName": "ava_lddescalationcases",
+          "logicalName": "ava_lddescalationcase",
+          "isHidden": false
+        },
+        "lddqualityrecommendationdetails": {
+          "entitySetName": "ava_lddqualityreccases",
+          "logicalName": "ava_lddqualityreccase",
+          "isHidden": false
         }
       },
       "environmentVariableName": ""

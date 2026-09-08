@@ -1,7 +1,8 @@
 // Provisions the LDD Dataverse tables into the Lending Due Diligence solution.
 // Usage: node scripts/provision-dataverse.mjs
 import { execFileSync } from 'node:child_process';
-import { tables, SOLUTION } from './schema.mjs';
+const schemaModule = process.env.LDD_SCHEMA ?? './schema.mjs';
+const { tables, SOLUTION } = await import(schemaModule);
 
 const ORG = process.env.LDD_ORG_URL || 'https://org07a06763.crm.dynamics.com';
 const API = `${ORG}/api/data/v9.2`;
@@ -245,3 +246,4 @@ main().catch((e) => {
   console.error(e.message);
   process.exit(1);
 });
+

@@ -1,22 +1,26 @@
-import { useEffect, useState } from 'react';
-import { listCases } from '../lib/data';
+import { useEffect, useMemo, useState } from 'react';
+import { listWorkCases } from '../lib/data';
 import { dash, relativeTime } from '../lib/format';
-import type { LddCase } from '../lib/types';
+import type { LddWorkCase, ProcessConfig } from '../lib/types';
 
 interface Props {
+  config: ProcessConfig;
   onOpenCase: (caseId: string) => void;
   onNewCase: () => void;
 }
 
-/** All Business Control cases, used as the landing list for Business Control analysts. */
-export function CaseListScreen({ onOpenCase, onNewCase }: Props) {
-  const [cases, setCases] = useState<LddCase[]>([]);
+/** All cases across every case type, with type and status filters. */
+export function CaseListScreen({ config, onOpenCase, onNewCase }: Props) {
+  const [cases, setCases] = useState<LddWorkCase[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [typeFilter, setTypeFilter] = useState('');
+  const [openOnly, setOpenOnly] = useState(true);
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
     let cancelled = false;
-    listCases()
+    listWorkCases()
       .then((c) => !cancelled && setCases(c))
       .catch((e: Error) => !cancelled && setError(e.message))
       .finally(() => !cancelled && setLoading(false));
@@ -25,17 +29,56 @@ export function CaseListScreen({ onOpenCase, onNewCase }: Props) {
     };
   }, []);
 
+  const rows = useMemo(() => {
+    const term = search.trim().toLowerCase();
+    return cases.filter((c) => {
+      if (typeFilter && c.ava_casetypecode !== typeFilter) return false;
+      if (openOnly && (c.ava_status ?? '').startsWith('Resolved')) return false;
+      if (term && !`${c.ava_name} ${c.ava_stagename} ${c.ava_assignedto}`.toLowerCase().includes(term))
+        return false;
+      return true;
+    });
+  }, [cases, typeFilter, openOnly, search]);
+
   return (
     <>
       <div className="page-title-bar">
-        Business Control Cases
+        Cases
         <div style={{ flex: 1 }} />
         <button className="btn btn-primary" type="button" onClick={onNewCase}>
-          + Create Business Control case
+          + Create case
         </button>
       </div>
       <div className="work-area">
         <div className="panel">
+          <div className="toolbar">
+            <select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)}>
+              <option value="">All case types</option>
+              {config.caseTypes.map((ct) => (
+                <option key={ct.ava_lddcasetypeid} value={ct.ava_code ?? ''}>
+                  {ct.ava_name}
+                </option>
+              ))}
+            </select>
+            <input
+              type="text"
+              placeholder="Search case ID, stage or assignee"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              style={{ minWidth: 280 }}
+            />
+            <label className="checkbox-row">
+              <input
+                type="checkbox"
+                checked={openOnly}
+                onChange={(e) => setOpenOnly(e.target.checked)}
+              />
+              Open cases only
+            </label>
+            <div style={{ flex: 1 }} />
+            <span className="muted">{rows.length} shown</span>
+          </div>
+
           {error && <div className="banner-msg error">{error}</div>}
           {loading ? (
             <div className="loading">Loading cases…</div>
@@ -45,61 +88,57 @@ export function CaseListScreen({ onOpenCase, onNewCase }: Props) {
                 <thead>
                   <tr>
                     <th>Case ID</th>
+                    <th>Case type</th>
                     <th>Status</th>
                     <th>Stage</th>
-                    <th>Queue Type</th>
-                    <th>Review name</th>
-                    <th>Product Type</th>
-                    <th>Purpose</th>
-                    <th>BC due diligence</th>
-                    <th>Case Owner</th>
+                    <th>Assigned to</th>
+                    <th>Workbasket</th>
+                    <th>Last decision</th>
                     <th>Updated</th>
                     <th />
                   </tr>
                 </thead>
                 <tbody>
-                  {cases.length === 0 && (
+                  {rows.length === 0 && (
                     <tr>
-                      <td colSpan={11} className="empty-row">
-                        ✧ No results.
+                      <td colSpan={9} className="empty-row">
+                        ✧ No cases match the current filters.
                       </td>
                     </tr>
                   )}
-                  {cases.map((c) => (
-                    <tr key={c.ava_lddcaseid}>
-                      <td>
-                        <span className="case-link" onClick={() => onOpenCase(c.ava_lddcaseid)}>
-                          {c.ava_name}
-                        </span>
-                      </td>
-                      <td>
-                        <span
-                          className={
-                            c.ava_status === 'New' ? 'status-chip new' : 'status-chip'
-                          }
-                        >
-                          {dash(c.ava_status)}
-                        </span>
-                      </td>
-                      <td>{dash(c.ava_stage)}</td>
-                      <td>{dash(c.ava_queuetype)}</td>
-                      <td>{dash(c.ava_reviewname)}</td>
-                      <td>{dash(c.ava_producttype)}</td>
-                      <td>{dash(c.ava_purpose)}</td>
-                      <td>{dash(c.ava_bcduediligence)}</td>
-                      <td>{dash(c.ava_caseowner)}</td>
-                      <td>{relativeTime(c.modifiedon)}</td>
-                      <td>
-                        <button
-                          className="btn btn-primary btn-sm"
-                          type="button"
-                          onClick={() => onOpenCase(c.ava_lddcaseid)}
-                        >
-                          Open
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
+                  {rows.map((c) => {
+                    const ct = config.caseTypes.find((t) => t.ava_code === c.ava_casetypecode);
+                    const resolved = (c.ava_status ?? '').startsWith('Resolved');
+                    return (
+                      <tr key={c.ava_lddworkcaseid}>
+                        <td>
+                          <span className="case-link" onClick={() => onOpenCase(c.ava_lddworkcaseid)}>
+                            {c.ava_name}
+                          </span>
+                        </td>
+                        <td>{dash(ct?.ava_name ?? c.ava_casetypecode)}</td>
+                        <td>
+                          <span className={`status-chip${resolved ? '' : ' new'}`}>
+                            {dash(c.ava_status)}
+                          </span>
+                        </td>
+                        <td>{dash(c.ava_stagename)}</td>
+                        <td>{dash(c.ava_assignedto)}</td>
+                        <td>{dash(c.ava_workbasket)}</td>
+                        <td>{dash(c.ava_lastdecisionresult)}</td>
+                        <td>{relativeTime(c.modifiedon)}</td>
+                        <td>
+                          <button
+                            className="btn btn-primary btn-sm"
+                            type="button"
+                            onClick={() => onOpenCase(c.ava_lddworkcaseid)}
+                          >
+                            Open
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>

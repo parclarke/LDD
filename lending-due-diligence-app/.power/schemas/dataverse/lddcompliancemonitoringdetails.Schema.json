@@ -1,0 +1,516 @@
+{
+  "name": "ava_lddcompliancecase",
+  "title": "LDD Compliance Monitoring Details",
+  "schema": {
+    "type": "array",
+    "items": {
+      "type": "object",
+      "x-ms-dataverse-entity": true,
+      "x-ms-dataverse-entityset": "ava_lddcompliancecases",
+      "x-ms-dataverse-primary-id": "ava_lddcompliancecaseid",
+      "x-ms-dataverse-primary-name": "ava_name",
+      "properties": {
+        "ava_assessmentoutcome": {
+          "type": "string",
+          "title": "Assessment Outcome",
+          "x-ms-dataverse-attribute": "ava_assessmentoutcome",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "ava_AssessmentOutcome",
+          "maxLength": 60
+        },
+        "ava_businesscontrolsteam": {
+          "type": "string",
+          "title": "Business Controls Team",
+          "x-ms-dataverse-attribute": "ava_businesscontrolsteam",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "ava_BusinessControlsTeam",
+          "maxLength": 200
+        },
+        "ava_businessunit": {
+          "type": "string",
+          "title": "Business Unit",
+          "x-ms-dataverse-attribute": "ava_businessunit",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "ava_BusinessUnit",
+          "maxLength": 200
+        },
+        "ava_closuredate": {
+          "type": "string",
+          "title": "Closure Date",
+          "x-ms-dataverse-attribute": "ava_closuredate",
+          "x-ms-dataverse-type": "DateTimeType",
+          "x-ms-schema-name": "ava_ClosureDate"
+        },
+        "ava_comments": {
+          "type": "string",
+          "title": "Comments",
+          "x-ms-dataverse-attribute": "ava_comments",
+          "x-ms-dataverse-type": "MemoType",
+          "x-ms-schema-name": "ava_Comments",
+          "maxLength": 4000
+        },
+        "ava_compliancemonitoringname": {
+          "type": "string",
+          "title": "Compliance Monitoring Name",
+          "x-ms-dataverse-attribute": "ava_compliancemonitoringname",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "ava_ComplianceMonitoringName",
+          "maxLength": 256
+        },
+        "ava_compliancereviewtype": {
+          "type": "string",
+          "title": "Compliance Review Type",
+          "x-ms-dataverse-attribute": "ava_compliancereviewtype",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "ava_ComplianceReviewType",
+          "maxLength": 60
+        },
+        "ava_correctiveactionplan": {
+          "type": "string",
+          "title": "Corrective Action Plan",
+          "x-ms-dataverse-attribute": "ava_correctiveactionplan",
+          "x-ms-dataverse-type": "MemoType",
+          "x-ms-schema-name": "ava_CorrectiveActionPlan",
+          "maxLength": 4000
+        },
+        "ava_escalationrequired": {
+          "type": "string",
+          "title": "Escalation Required",
+          "x-ms-dataverse-attribute": "ava_escalationrequired",
+          "x-ms-dataverse-type": "BooleanType",
+          "x-ms-schema-name": "ava_EscalationRequired",
+          "enum": [
+            "No",
+            "Yes"
+          ],
+          "x-ms-enum-values": [
+            0,
+            1
+          ],
+          "Color": [
+            null,
+            null
+          ],
+          "x-ms-optionsetmetadataid": "7cff08d0-adab-f111-aaab-70a8a5b112f9",
+          "x-ms-isGlobal": false,
+          "x-ms-optionsetdisplayname": "Escalation Required",
+          "x-ms-optionSetType": "Boolean"
+        },
+        "ava_escalationrequiredname": {
+          "type": "string",
+          "title": "ava_escalationrequiredname",
+          "x-ms-dataverse-attribute": "ava_escalationrequiredname",
+          "x-ms-dataverse-type": "VirtualType",
+          "x-ms-schema-name": "ava_escalationrequiredName",
+          "x-ms-read-only": true
+        },
+        "ava_issueseverity": {
+          "type": "string",
+          "title": "Issue Severity",
+          "x-ms-dataverse-attribute": "ava_issueseverity",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "ava_IssueSeverity",
+          "maxLength": 20
+        },
+        "ava_lddcompliancecaseid": {
+          "type": "string",
+          "title": "LDD Compliance Monitoring Detail",
+          "x-ms-dataverse-attribute": "ava_lddcompliancecaseid",
+          "x-ms-dataverse-type": "UniqueidentifierType",
+          "x-ms-schema-name": "ava_LddComplianceCaseId",
+          "x-ms-dataverse-primary-id": true,
+          "required": true,
+          "x-ms-keyType": "primary"
+        },
+        "ava_name": {
+          "type": "string",
+          "title": "Case ID",
+          "x-ms-dataverse-attribute": "ava_name",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "ava_Name",
+          "x-ms-dataverse-primary-name": true,
+          "required": true,
+          "maxLength": 50
+        },
+        "ava_qualityassurancereviewer": {
+          "type": "string",
+          "title": "Quality Assurance Reviewer",
+          "x-ms-dataverse-attribute": "ava_qualityassurancereviewer",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "ava_QualityAssuranceReviewer",
+          "maxLength": 200
+        },
+        "ava_regulatoryrequirement": {
+          "type": "string",
+          "title": "Regulatory Requirement",
+          "x-ms-dataverse-attribute": "ava_regulatoryrequirement",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "ava_RegulatoryRequirement",
+          "maxLength": 60
+        },
+        "ava_resolutionstatus": {
+          "type": "string",
+          "title": "Resolution Status",
+          "x-ms-dataverse-attribute": "ava_resolutionstatus",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "ava_ResolutionStatus",
+          "maxLength": 60
+        },
+        "ava_reviewdate": {
+          "type": "string",
+          "title": "Review Date",
+          "x-ms-dataverse-attribute": "ava_reviewdate",
+          "x-ms-dataverse-type": "DateTimeType",
+          "x-ms-schema-name": "ava_ReviewDate"
+        },
+        "ava_reviewmethodology": {
+          "type": "string",
+          "title": "Review Methodology",
+          "x-ms-dataverse-attribute": "ava_reviewmethodology",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "ava_ReviewMethodology",
+          "maxLength": 60
+        },
+        "ava_rootcauseanalysis": {
+          "type": "string",
+          "title": "Root Cause Analysis",
+          "x-ms-dataverse-attribute": "ava_rootcauseanalysis",
+          "x-ms-dataverse-type": "MemoType",
+          "x-ms-schema-name": "ava_RootCauseAnalysis",
+          "maxLength": 4000
+        },
+        "ava_supportingevidence": {
+          "type": "string",
+          "title": "Supporting Evidence",
+          "x-ms-dataverse-attribute": "ava_supportingevidence",
+          "x-ms-dataverse-type": "MemoType",
+          "x-ms-schema-name": "ava_SupportingEvidence",
+          "maxLength": 4000
+        },
+        "ava_workcaseid": {
+          "type": "string",
+          "title": "Work Case",
+          "x-ms-dataverse-attribute": "ava_workcaseid",
+          "x-ms-dataverse-type": "LookupType",
+          "x-ms-schema-name": "ava_WorkCaseId"
+        },
+        "ava_workcaseidname": {
+          "type": "string",
+          "title": "ava_workcaseidname",
+          "x-ms-dataverse-attribute": "ava_workcaseidname",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "ava_WorkCaseIdName",
+          "x-ms-read-only": true,
+          "maxLength": 50
+        },
+        "createdby": {
+          "type": "string",
+          "title": "Created By",
+          "x-ms-dataverse-attribute": "createdby",
+          "x-ms-dataverse-type": "LookupType",
+          "x-ms-schema-name": "CreatedBy",
+          "x-ms-read-only": true
+        },
+        "createdbyname": {
+          "type": "string",
+          "title": "createdbyname",
+          "x-ms-dataverse-attribute": "createdbyname",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "CreatedByName",
+          "x-ms-read-only": true,
+          "maxLength": 100
+        },
+        "createdbyyominame": {
+          "type": "string",
+          "title": "createdbyyominame",
+          "x-ms-dataverse-attribute": "createdbyyominame",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "CreatedByYomiName",
+          "x-ms-read-only": true,
+          "required": true,
+          "maxLength": 100
+        },
+        "createdon": {
+          "type": "string",
+          "title": "Created On",
+          "x-ms-dataverse-attribute": "createdon",
+          "x-ms-dataverse-type": "DateTimeType",
+          "x-ms-schema-name": "CreatedOn",
+          "x-ms-read-only": true
+        },
+        "createdonbehalfby": {
+          "type": "string",
+          "title": "Created By (Delegate)",
+          "x-ms-dataverse-attribute": "createdonbehalfby",
+          "x-ms-dataverse-type": "LookupType",
+          "x-ms-schema-name": "CreatedOnBehalfBy",
+          "x-ms-read-only": true
+        },
+        "createdonbehalfbyname": {
+          "type": "string",
+          "title": "createdonbehalfbyname",
+          "x-ms-dataverse-attribute": "createdonbehalfbyname",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "CreatedOnBehalfByName",
+          "x-ms-read-only": true,
+          "maxLength": 100
+        },
+        "createdonbehalfbyyominame": {
+          "type": "string",
+          "title": "createdonbehalfbyyominame",
+          "x-ms-dataverse-attribute": "createdonbehalfbyyominame",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "CreatedOnBehalfByYomiName",
+          "x-ms-read-only": true,
+          "required": true,
+          "maxLength": 100
+        },
+        "importsequencenumber": {
+          "type": "string",
+          "title": "Import Sequence Number",
+          "x-ms-dataverse-attribute": "importsequencenumber",
+          "x-ms-dataverse-type": "IntegerType",
+          "x-ms-schema-name": "ImportSequenceNumber"
+        },
+        "modifiedby": {
+          "type": "string",
+          "title": "Modified By",
+          "x-ms-dataverse-attribute": "modifiedby",
+          "x-ms-dataverse-type": "LookupType",
+          "x-ms-schema-name": "ModifiedBy",
+          "x-ms-read-only": true
+        },
+        "modifiedbyname": {
+          "type": "string",
+          "title": "modifiedbyname",
+          "x-ms-dataverse-attribute": "modifiedbyname",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "ModifiedByName",
+          "x-ms-read-only": true,
+          "maxLength": 100
+        },
+        "modifiedbyyominame": {
+          "type": "string",
+          "title": "modifiedbyyominame",
+          "x-ms-dataverse-attribute": "modifiedbyyominame",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "ModifiedByYomiName",
+          "x-ms-read-only": true,
+          "required": true,
+          "maxLength": 100
+        },
+        "modifiedon": {
+          "type": "string",
+          "title": "Modified On",
+          "x-ms-dataverse-attribute": "modifiedon",
+          "x-ms-dataverse-type": "DateTimeType",
+          "x-ms-schema-name": "ModifiedOn",
+          "x-ms-read-only": true
+        },
+        "modifiedonbehalfby": {
+          "type": "string",
+          "title": "Modified By (Delegate)",
+          "x-ms-dataverse-attribute": "modifiedonbehalfby",
+          "x-ms-dataverse-type": "LookupType",
+          "x-ms-schema-name": "ModifiedOnBehalfBy",
+          "x-ms-read-only": true
+        },
+        "modifiedonbehalfbyname": {
+          "type": "string",
+          "title": "modifiedonbehalfbyname",
+          "x-ms-dataverse-attribute": "modifiedonbehalfbyname",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "ModifiedOnBehalfByName",
+          "x-ms-read-only": true,
+          "maxLength": 100
+        },
+        "modifiedonbehalfbyyominame": {
+          "type": "string",
+          "title": "modifiedonbehalfbyyominame",
+          "x-ms-dataverse-attribute": "modifiedonbehalfbyyominame",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "ModifiedOnBehalfByYomiName",
+          "x-ms-read-only": true,
+          "required": true,
+          "maxLength": 100
+        },
+        "overriddencreatedon": {
+          "type": "string",
+          "title": "Record Created On",
+          "x-ms-dataverse-attribute": "overriddencreatedon",
+          "x-ms-dataverse-type": "DateTimeType",
+          "x-ms-schema-name": "OverriddenCreatedOn"
+        },
+        "ownerid": {
+          "type": "string",
+          "title": "Owner",
+          "x-ms-dataverse-attribute": "ownerid",
+          "x-ms-dataverse-type": "OwnerType",
+          "x-ms-schema-name": "OwnerId",
+          "required": true
+        },
+        "owneridname": {
+          "type": "string",
+          "title": "owneridname",
+          "x-ms-dataverse-attribute": "owneridname",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "OwnerIdName",
+          "x-ms-read-only": true,
+          "required": true,
+          "maxLength": 100
+        },
+        "owneridtype": {
+          "type": "string",
+          "title": "owneridtype",
+          "x-ms-dataverse-attribute": "owneridtype",
+          "x-ms-dataverse-type": "EntityNameType",
+          "x-ms-schema-name": "OwnerIdType",
+          "required": true
+        },
+        "owneridyominame": {
+          "type": "string",
+          "title": "owneridyominame",
+          "x-ms-dataverse-attribute": "owneridyominame",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "OwnerIdYomiName",
+          "x-ms-read-only": true,
+          "required": true,
+          "maxLength": 100
+        },
+        "owningbusinessunit": {
+          "type": "string",
+          "title": "Owning Business Unit",
+          "x-ms-dataverse-attribute": "owningbusinessunit",
+          "x-ms-dataverse-type": "LookupType",
+          "x-ms-schema-name": "OwningBusinessUnit",
+          "x-ms-read-only": true
+        },
+        "owningbusinessunitname": {
+          "type": "string",
+          "title": "owningbusinessunitname",
+          "x-ms-dataverse-attribute": "owningbusinessunitname",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "OwningBusinessUnitName",
+          "x-ms-read-only": true,
+          "required": true,
+          "maxLength": 100
+        },
+        "owningteam": {
+          "type": "string",
+          "title": "Owning Team",
+          "x-ms-dataverse-attribute": "owningteam",
+          "x-ms-dataverse-type": "LookupType",
+          "x-ms-schema-name": "OwningTeam",
+          "x-ms-read-only": true
+        },
+        "owninguser": {
+          "type": "string",
+          "title": "Owning User",
+          "x-ms-dataverse-attribute": "owninguser",
+          "x-ms-dataverse-type": "LookupType",
+          "x-ms-schema-name": "OwningUser",
+          "x-ms-read-only": true
+        },
+        "statecode": {
+          "type": "string",
+          "title": "Status",
+          "x-ms-dataverse-attribute": "statecode",
+          "x-ms-dataverse-type": "StateType",
+          "x-ms-schema-name": "statecode",
+          "required": true,
+          "enum": [
+            "Active",
+            "Inactive"
+          ],
+          "x-ms-enum-values": [
+            0,
+            1
+          ],
+          "Color": [
+            null,
+            null
+          ],
+          "x-ms-optionsetmetadataid": "ccb0d9c3-adab-f111-aaab-70a8a5b112f9",
+          "x-ms-isGlobal": false,
+          "x-ms-optionsetdisplayname": "Status",
+          "x-ms-optionSetType": "State"
+        },
+        "statecodename": {
+          "type": "string",
+          "title": "statecodename",
+          "x-ms-dataverse-attribute": "statecodename",
+          "x-ms-dataverse-type": "VirtualType",
+          "x-ms-schema-name": "statecodeName",
+          "x-ms-read-only": true
+        },
+        "statuscode": {
+          "type": "string",
+          "title": "Status Reason",
+          "x-ms-dataverse-attribute": "statuscode",
+          "x-ms-dataverse-type": "StatusType",
+          "x-ms-schema-name": "statuscode",
+          "enum": [
+            "Active",
+            "Inactive"
+          ],
+          "x-ms-enum-values": [
+            1,
+            2
+          ],
+          "Color": [
+            null,
+            null
+          ],
+          "x-ms-optionsetmetadataid": "d6b0d9c3-adab-f111-aaab-70a8a5b112f9",
+          "x-ms-isGlobal": false,
+          "x-ms-optionsetdisplayname": "Status Reason",
+          "x-ms-optionSetType": "Status"
+        },
+        "statuscodename": {
+          "type": "string",
+          "title": "statuscodename",
+          "x-ms-dataverse-attribute": "statuscodename",
+          "x-ms-dataverse-type": "VirtualType",
+          "x-ms-schema-name": "statuscodeName",
+          "x-ms-read-only": true
+        },
+        "timezoneruleversionnumber": {
+          "type": "string",
+          "title": "Time Zone Rule Version Number",
+          "x-ms-dataverse-attribute": "timezoneruleversionnumber",
+          "x-ms-dataverse-type": "IntegerType",
+          "x-ms-schema-name": "TimeZoneRuleVersionNumber"
+        },
+        "utcconversiontimezonecode": {
+          "type": "string",
+          "title": "UTC Conversion Time Zone Code",
+          "x-ms-dataverse-attribute": "utcconversiontimezonecode",
+          "x-ms-dataverse-type": "IntegerType",
+          "x-ms-schema-name": "UTCConversionTimeZoneCode"
+        },
+        "versionnumber": {
+          "type": "string",
+          "title": "Version Number",
+          "x-ms-dataverse-attribute": "versionnumber",
+          "x-ms-dataverse-type": "BigIntType",
+          "x-ms-schema-name": "VersionNumber",
+          "x-ms-read-only": true
+        }
+      },
+      "required": [
+        "ava_lddcompliancecaseid",
+        "ava_name",
+        "createdbyyominame",
+        "createdonbehalfbyyominame",
+        "modifiedbyyominame",
+        "modifiedonbehalfbyyominame",
+        "ownerid",
+        "owneridname",
+        "owneridtype",
+        "owneridyominame",
+        "owningbusinessunitname",
+        "statecode"
+      ]
+    }
+  }
+}

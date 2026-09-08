@@ -1,33 +1,22 @@
 import { dash, relativeTime } from '../lib/format';
-import type { LddCase } from '../lib/types';
+import type { CaseBundle, LddStage } from '../lib/types';
 
 interface Props {
-  record: LddCase;
+  bundle: CaseBundle;
   activeSection: string;
   onSection: (section: string) => void;
-  onReopen?: () => void;
-  showEdit: boolean;
+  onChangeStage: (stageCode: string) => void;
 }
 
-const SECTIONS = [
-  'Overview',
-  'Transaction Information',
-  'Additional Metrics',
-  'Employee Information',
-  'Rating and Recommendation',
-  'Attachment List',
-];
+const SECTIONS = ['Overview', 'Case Details', 'Process', 'History'];
 
-/** Teal case banner + summary rail shown to the left of every case screen. */
-export function CaseSummaryPanel({
-  record,
-  activeSection,
-  onSection,
-  onReopen,
-  showEdit,
-}: Props) {
+/** Teal case banner plus the summary rail shown to the left of a case. */
+export function CaseSummaryPanel({ bundle, activeSection, onSection, onChangeStage }: Props) {
+  const { record, caseType, stages } = bundle;
   const resolved = (record.ava_status ?? '').startsWith('Resolved');
-  const statusClass = record.ava_status === 'New' ? 'status-chip new' : 'status-chip';
+  const alternates = stages
+    .filter((s) => s.ava_stagetype === 'Alternate')
+    .sort((a, b) => (a.ava_sortorder ?? 0) - (b.ava_sortorder ?? 0));
 
   return (
     <aside className="case-rail">
@@ -35,43 +24,31 @@ export function CaseSummaryPanel({
         <div className="case-icon">🗂</div>
         <div>
           <div className="case-id">{record.ava_name}</div>
-          <div className="case-type">Business Control</div>
+          <div className="case-type">{caseType?.ava_name ?? record.ava_casetypecode}</div>
         </div>
         <div className="star">☆</div>
       </div>
 
       <div className="case-actions">
-        {resolved && onReopen ? (
-          <button className="link-btn" type="button" onClick={onReopen}>
-            Reopen Case
-          </button>
-        ) : (
-          showEdit && (
-            <button className="link-btn" type="button">
-              Edit ▾
-            </button>
-          )
-        )}
-        <button className="link-btn" type="button">
-          Actions ▾
-        </button>
+        <StageMenu alternates={alternates} disabled={resolved} onChangeStage={onChangeStage} />
       </div>
 
       <div className="case-summary">
         <div className="summary-row">
           <div className="k">Status</div>
           <div className="v">
-            <span className={statusClass}>{dash(record.ava_status)}</span>
+            <span className={`status-chip${resolved ? '' : ' new'}`}>{dash(record.ava_status)}</span>
           </div>
         </div>
-        <Row k="Case Owner" v={dash(record.ava_caseowner)} />
-        <Row k="Review Template ID or Name" v={dash(record.ava_reviewtemplatename)} />
-        <Row k="Queue Type" v={dash(record.ava_queuetype)} />
-        <Row k="Review name" v={dash(record.ava_reviewname)} />
-        <Row k="Channel" v={dash(record.ava_channel)} />
-        <Row k="Product Type" v={dash(record.ava_producttype)} />
-        <Row k="Purpose" v={dash(record.ava_purpose)} />
-        <Row k="PID Description" v={dash(record.ava_piddescription)} />
+        <Row k="Stage" v={dash(record.ava_stagename)} />
+        <Row k="Assigned to" v={dash(record.ava_assignedto)} />
+        <Row k="Routing" v={dash(record.ava_assignmenttype)} />
+        <Row k="Workbasket" v={dash(record.ava_workbasket)} />
+        <Row k="Urgency" v={dash(record.ava_urgency)} />
+        <Row k="SLA deadline" v={record.ava_sladeadline ? relativeTime(record.ava_sladeadline) : '—'} />
+        {record.ava_lastdecisionresult && (
+          <Row k="Last decision" v={record.ava_lastdecisionresult} />
+        )}
 
         <div className="summary-row">
           <div className="k">Created</div>
@@ -83,11 +60,7 @@ export function CaseSummaryPanel({
         </div>
         <div className="summary-row">
           <div className="k">Updated</div>
-          <div className="v person">
-            {dash(record.modifiedbyname ?? record.ava_createdbyuser)}
-            <br />
-            {relativeTime(record.modifiedon)}
-          </div>
+          <div className="v person">{relativeTime(record.modifiedon)}</div>
         </div>
         {resolved && (
           <div className="summary-row">
@@ -114,6 +87,35 @@ export function CaseSummaryPanel({
         ))}
       </div>
     </aside>
+  );
+}
+
+function StageMenu({
+  alternates,
+  disabled,
+  onChangeStage,
+}: {
+  alternates: LddStage[];
+  disabled: boolean;
+  onChangeStage: (code: string) => void;
+}) {
+  if (disabled || !alternates.length) {
+    return <span className="muted" style={{ fontSize: 13 }}>No actions available</span>;
+  }
+  return (
+    <select
+      aria-label="Change stage"
+      value=""
+      onChange={(e) => e.target.value && onChangeStage(e.target.value)}
+      style={{ border: 'none', color: 'var(--action-red)', fontWeight: 600, background: 'none' }}
+    >
+      <option value="">Actions ▾</option>
+      {alternates.map((s) => (
+        <option key={s.ava_lddstageid} value={s.ava_stagecode ?? ''}>
+          Move to {s.ava_name}
+        </option>
+      ))}
+    </select>
   );
 }
 
