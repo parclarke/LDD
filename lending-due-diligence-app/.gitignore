@@ -28,3 +28,6 @@ dist-ssr
 
 # Office lock files
 ~$*
+
+# pa app push build artifact
+src.zip
