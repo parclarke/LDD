@@ -13,6 +13,7 @@ export function CaseSections({ section, bundle, config }: Props) {
   if (section === 'Case Details') return <DetailSection bundle={bundle} config={config} />;
   if (section === 'Process') return <ProcessSection bundle={bundle} config={config} />;
   if (section === 'History') return <HistorySection bundle={bundle} />;
+  if (section === 'Notifications') return <NotificationSection bundle={bundle} />;
   return null;
 }
 
@@ -192,6 +193,88 @@ function ProcessSection({ bundle, config }: { bundle: CaseBundle; config: Proces
             </div>
           );
         })}
+    </div>
+  );
+}
+
+/**
+ * The notification outbox for this case.
+ *
+ * The app queues rows here; a Power Automate flow triggers on create, sends the
+ * mail and stamps the outcome back. Showing it on the case makes both halves
+ * visible - what the case raised, and whether delivery actually succeeded.
+ */
+function NotificationSection({ bundle }: { bundle: CaseBundle }) {
+  const { notifications } = bundle;
+  return (
+    <div className="panel">
+      <div className="section-title">Notifications</div>
+      <hr className="rule" />
+      <p className="muted" style={{ fontSize: 12, marginTop: 0 }}>
+        Queued by the case. Delivery is owned by a Power Automate flow that triggers on
+        these rows and writes the status back.
+      </p>
+      {notifications.length === 0 ? (
+        <div className="empty-row">No notifications raised by this case yet.</div>
+      ) : (
+        <div className="grid-wrap">
+          <table className="grid">
+            <thead>
+              <tr>
+                <th style={{ width: 90 }}>Status</th>
+                <th>Subject</th>
+                <th>Step</th>
+                <th>Recipient</th>
+                <th style={{ width: 150 }}>Queued</th>
+              </tr>
+            </thead>
+            <tbody>
+              {notifications.map((n) => (
+                <tr key={n.ava_lddnotificationid}>
+                  <td>
+                    <span className={`pill${n.ava_status === 'Failed' ? '' : ' primary'}`}>
+                      {dash(n.ava_status)}
+                    </span>
+                  </td>
+                  <td>
+                    <strong>{dash(n.ava_subject)}</strong>
+                    {n.ava_body && (
+                      <>
+                        <br />
+                        <span className="muted" style={{ fontSize: 12 }}>
+                          {n.ava_body.slice(0, 160)}
+                          {n.ava_body.length > 160 ? '…' : ''}
+                        </span>
+                      </>
+                    )}
+                    {n.ava_errormessage && (
+                      <>
+                        <br />
+                        <span className="muted" style={{ fontSize: 12 }}>
+                          Error: {n.ava_errormessage}
+                        </span>
+                      </>
+                    )}
+                  </td>
+                  <td>{dash(n.ava_stepname)}</td>
+                  <td>{n.ava_recipient || dash(n.ava_recipientrole)}</td>
+                  <td>
+                    {formatDateTime(n.ava_queuedon)}
+                    {n.ava_senton && (
+                      <>
+                        <br />
+                        <span className="muted" style={{ fontSize: 12 }}>
+                          sent {relativeTime(n.ava_senton)}
+                        </span>
+                      </>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }

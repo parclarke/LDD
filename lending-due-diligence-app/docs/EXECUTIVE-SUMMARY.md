@@ -53,7 +53,7 @@ materially shorter and easier conversation, and it is the practical answer to a
 client who has no time for requirements workshops.
 
 That split also drives the commercial picture. The automated portion of a
-migration is days of work; our **79 to 123 day estimate for an application of
+migration is days of work; our **77 to 120 day estimate for an application of
 this complexity is almost entirely the manual 51%**. The value of the PoC is
 therefore less that it proved migration is possible, and more that it converted
 an unknown into a quantified, itemised and *pre-located* list.
@@ -107,7 +107,7 @@ switch - avoids the last one entirely.
 | Flow connector transitions extracted | 264 (0 conditional) |
 | Decision branches extracted and validated | 26 (100% validated) |
 | Notification subjects and bodies recovered | 27 of 27 |
-| Estimated Phase 1 effort | 79 - 123 days (~12 weeks, team of 3) |
+| Estimated Phase 1 effort | 77 - 120 days (~12 weeks, team of 3) |
 
 ## Related documents
 

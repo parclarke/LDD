@@ -104,6 +104,8 @@ export interface CaseBundle {
   assignments: LddAssignment[];
   approvals: LddApproval[];
   history: LddCaseHistory[];
+  /** Outbox rows raised by this case, newest first. */
+  notifications: LddNotification[];
 }
 
 /** Process configuration loaded once and shared across screens. */

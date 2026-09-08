@@ -10,6 +10,7 @@ import {
   listApprovalsForCase,
   listAssignmentsForCase,
   listHistoryForCase,
+  listNotificationsForCase,
 } from '../lib/data';
 import type { LookupSources } from '../lib/data';
 import { advanceCase, changeStage } from '../lib/orchestrator';
@@ -52,11 +53,12 @@ export function CaseScreen({ caseId, initialAssignmentId, config, lookups, user,
     const stageIds = new Set(stages.map((s) => s.ava_lddstageid));
     const steps = config.steps.filter((s) => stageIds.has(s._ava_stageid_value ?? ''));
 
-    const [detail, assignments, approvals, history] = await Promise.all([
+    const [detail, assignments, approvals, history, notifications] = await Promise.all([
       getCaseDetail(code, caseId),
       listAssignmentsForCase(caseId),
       listApprovalsForCase(caseId),
       listHistoryForCase(caseId),
+      listNotificationsForCase(caseId),
     ]);
 
     return {
@@ -69,6 +71,7 @@ export function CaseScreen({ caseId, initialAssignmentId, config, lookups, user,
       assignments,
       approvals,
       history,
+      notifications,
     } satisfies CaseBundle;
   }, [caseId, config]);
 
