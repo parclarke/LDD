@@ -502,15 +502,72 @@ async function main() {
 
   if (!KEEP) {
     console.log('\nCleaning up verification records...');
+    let removed = 0;
+    const stubborn = [];
     for (const [set, id] of created.reverse()) {
       if (!id) continue;
       try {
         await call('DELETE', `${set}(${id})`, null, null);
-      } catch {
-        /* child rows may already be gone via cascade */
+        removed += 1;
+      } catch (err) {
+        // A child row may already be gone via cascade, which is fine. Anything
+        // else is a real leak, so keep it for a second pass rather than
+        // silently swallowing it.
+        if (/404|Does Not Exist|not found/i.test(err.message)) continue;
+        stubborn.push([set, id, err.message]);
       }
     }
-    console.log(`  removed ${created.length} records`);
+
+    // Second pass: a parent can refuse to delete until its children are gone,
+    // and the first pass may have removed those children after we tried.
+    const stillThere = [];
+    for (const [set, id] of stubborn) {
+      try {
+        await call('DELETE', `${set}(${id})`, null, null);
+        removed += 1;
+      } catch (err) {
+        if (/404|Does Not Exist|not found/i.test(err.message)) continue;
+        stillThere.push(`${set}(${id}): ${err.message.slice(0, 120)}`);
+      }
+    }
+
+    console.log(`  removed ${removed} of ${created.length} records`);
+    if (stillThere.length) {
+      console.log(`  WARNING: ${stillThere.length} record(s) could not be removed:`);
+      for (const s of stillThere) console.log(`    ${s}`);
+    }
+
+    // Sweep any work cases left behind by earlier runs, so a leak does not
+    // accumulate and pollute the demo data.
+    const orphans = await get(
+      'ava_lddworkcases',
+      `?$filter=ava_createdbyuser eq 'verify-engine'&$select=ava_name`
+    );
+    if (orphans.length) {
+      console.log(`  sweeping ${orphans.length} leftover case(s) from earlier runs`);
+      for (const o of orphans) {
+        for (const child of ['ava_lddassignments', 'ava_lddapprovals', 'ava_lddcasehistories']) {
+          const rows = await get(
+            child,
+            `?$filter=_ava_workcaseid_value eq ${o.ava_lddworkcaseid}&$select=ava_name`
+          );
+          for (const r of rows) {
+            const key = `${child.slice(0, -1)}id`;
+            try {
+              await call('DELETE', `${child}(${r[key]})`, null, null);
+            } catch {
+              /* best effort */
+            }
+          }
+        }
+        try {
+          await call('DELETE', `ava_lddworkcases(${o.ava_lddworkcaseid})`, null, null);
+          console.log(`    removed ${o.ava_name}`);
+        } catch (err) {
+          console.log(`    could not remove ${o.ava_name}: ${err.message.slice(0, 100)}`);
+        }
+      }
+    }
   }
 
   console.log(`\n${'='.repeat(50)}`);
