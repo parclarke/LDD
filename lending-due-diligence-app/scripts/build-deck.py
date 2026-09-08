@@ -609,7 +609,7 @@ table(s,
         "Audited, not generated"],
        ["*Workbaskets (18)", "Dataverse teams + row-level security", "Not mapped"],
        ["*Access groups (19)", "Dataverse security roles", "Imported as data only"],
-       ["*Reporting (30)", "Power BI over Dataverse", "*All auto-generated - nothing to port"]],
+       ["*Reporting (30)", "Insights screen + Power BI", "*No logic to port; capability built"]],
       y=1.68, widths=[3.0, 5.4, 3.7], size=11.5)
 callout(s, "Azure services were not required for this PoC. Dataverse and the "
            "Power Platform connector set cover the full scope; Azure Functions "
@@ -922,7 +922,7 @@ table(s,
        ["*Reference data", "26 choice sets, 107 values", "*None"],
        ["*Security model", "19 roles, 30 grants, 18 workbaskets", "*None"],
        ["*Notification wording", "27 subjects and 27 email bodies", "*None"],
-       ["*Reporting", "30 definitions - all auto-generated scaffolding", "*None - nothing to port"],
+       ["*Reporting", "30 definitions - all auto-generated scaffolding", "*None - capability rebuilt natively"],
        ["*Step behaviour", "20 transforms and 4 documents, named and located",
         "Confirmation only"]],
       y=3.10, widths=[2.7, 5.5, 3.9], size=11.5)
@@ -951,7 +951,7 @@ table(s,
         "*Four specific transitions, each with a proposed condition - "
         "confirm or correct"],
        ["What reports does the business need?",
-        "*Nothing to ask - all 30 are platform scaffolding, not business reports"]],
+        "*Nothing to ask - all 30 are platform scaffolding; the equivalent views are built"]],
       y=3.05, widths=[5.0, 7.1], size=11.5)
 callout(s, "Open-ended discovery becomes closed confirmation against a working "
            "system the business can see running. That is a materially shorter "
@@ -1059,8 +1059,8 @@ table(s,
         "Define cutover: drain, dual-run or migrate mid-flight"],
        ["*Document generation", "Low",
         "Identify 4 templates and target generation mechanism"],
-       ["*Reporting", "*None",
-        "All 30 report definitions are auto-generated scaffolding - nothing to port"]],
+       ["*Reporting", "*Low",
+        "No report logic to port; the in-app summary and data browser are built"]],
       y=1.70, widths=[3.7, 1.5, 6.9], size=11.5)
 callout(s, "Three high-severity gaps all share a root cause: business logic "
            "that Pega executes but does not expose. Each needs business input, "

@@ -1,12 +1,15 @@
+type RailRoute = 'worklist' | 'cases' | 'newCase' | 'insights' | 'config';
+
 interface Props {
   active: string;
-  onNavigate: (route: 'worklist' | 'cases' | 'newCase' | 'config') => void;
+  onNavigate: (route: RailRoute) => void;
 }
 
-const ITEMS: Array<{ key: Props['active']; icon: string; title: string; route: 'worklist' | 'cases' | 'newCase' | 'config' }> = [
+const ITEMS: Array<{ key: Props['active']; icon: string; title: string; route: RailRoute }> = [
   { key: 'worklist', icon: '☺', title: 'My worklist', route: 'worklist' },
   { key: 'cases', icon: '☷', title: 'All cases', route: 'cases' },
   { key: 'newCase', icon: '⊕', title: 'Create case', route: 'newCase' },
+  { key: 'insights', icon: '◔', title: 'Insights', route: 'insights' },
   { key: 'config', icon: '⚙', title: 'Process model', route: 'config' },
 ];
 
