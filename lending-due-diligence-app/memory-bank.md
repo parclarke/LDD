@@ -62,7 +62,7 @@ Case types: `LendingReview`, `RiskAssessment`, `ComplianceMonitoring`, `Escalati
 - [x] v2: 28 Dataverse data sources added to the code app
 - [x] v2: engine, orchestrator, dynamic form renderer, 5 screens, 4 components
 - [x] v2: rework-loop bug fixed (inferred guards + hard stage re-visit cap)
-- [x] v2: `scripts/verify-engine.mjs` — **57 passed / 0 failed** against live Dataverse
+- [x] v2: `scripts/verify-engine.mjs` — **58 passed / 0 failed** against live Dataverse
 - [x] v2: built, linted clean, deployed
 - [x] v2: `docs/DEVELOPER-HANDOVER.md` written
 

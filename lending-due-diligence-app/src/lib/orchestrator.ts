@@ -167,14 +167,22 @@ export async function advanceCase(
       case 'runUtility': {
         const { step, effect } = action;
         const simulated = SIMULATED_EFFECTS.has(effect.kind);
+        // Notification wording was recovered from the Pega correspondence rules,
+        // so the audit trail records what the case would actually have sent.
+        const notify =
+          effect.kind === 'notify' && step.ava_notifysubject
+            ? { subject: step.ava_notifysubject, body: step.ava_notifybody ?? '' }
+            : null;
         await log(
           current.ava_lddworkcaseid,
           'Utility',
-          `${step.ava_name} (${effect.kind}${simulated ? ', simulated' : ''})`,
+          notify
+            ? `${step.ava_name}: "${notify.subject}"${simulated ? ' (not sent)' : ''}`
+            : `${step.ava_name} (${effect.kind}${simulated ? ', simulated' : ''})`,
           user,
           {
             ava_stepname: step.ava_name,
-            ava_details: JSON.stringify({ impl: step.ava_impl, effect, simulated }),
+            ava_details: JSON.stringify({ impl: step.ava_impl, effect, simulated, notify }),
           }
         );
         current = await updateWorkCase(current.ava_lddworkcaseid, {

@@ -23,6 +23,8 @@ export interface Ava_lddstepsBase {
   ava_lddstepid: string;
   ava_name: string;
   ava_notificationname?: string;
+  ava_notifybody?: string;
+  ava_notifysubject?: string;
   ava_params?: string;
   ava_routingtype?: string;
   ava_sladays?: number;

@@ -86,6 +86,22 @@
           "x-ms-schema-name": "ava_NotificationName",
           "maxLength": 100
         },
+        "ava_notifybody": {
+          "type": "string",
+          "title": "Notification Body",
+          "x-ms-dataverse-attribute": "ava_notifybody",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "ava_NotifyBody",
+          "maxLength": 4000
+        },
+        "ava_notifysubject": {
+          "type": "string",
+          "title": "Notification Subject",
+          "x-ms-dataverse-attribute": "ava_notifysubject",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "ava_NotifySubject",
+          "maxLength": 250
+        },
         "ava_params": {
           "type": "string",
           "title": "Params",

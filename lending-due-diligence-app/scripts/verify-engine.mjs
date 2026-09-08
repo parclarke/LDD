@@ -102,6 +102,17 @@ async function main() {
   check('80 steps imported', steps.length === 80, `got ${steps.length}`);
   check('24 views imported', views.length === 24, `got ${views.length}`);
   check('10 decision tables imported', decisions.length === 10, `got ${decisions.length}`);
+  check(
+    'all 17 notification steps carry recovered content',
+    steps.filter((s) => s.ava_impl === 'pzNotifyWrapper').length === 17 &&
+      steps
+        .filter((s) => s.ava_impl === 'pzNotifyWrapper')
+        .every((s) => Boolean(s.ava_notifysubject && s.ava_notifybody)),
+    steps
+      .filter((s) => s.ava_impl === 'pzNotifyWrapper' && !s.ava_notifysubject)
+      .map((s) => s.ava_name)
+      .join(', ')
+  );
   check('26 flow branches imported', flowBranches.length === 26, `got ${flowBranches.length}`);
   check(
     'every flow branch result is a real result of its own decision table',
@@ -465,7 +476,25 @@ async function main() {
   const demo = await get('ava_lddworkcases', "?$filter=ava_createdbyuser eq 'BEL, MM01025_RSA'");
   check('5 seeded demo cases present', demo.length >= 5, `${demo.length}`);
   const demoAssignments = await get('ava_lddassignments', "?$filter=ava_status eq 'Pending'");
-  check('seeded demo assignments are pending', demoAssignments.length >= 5, `${demoAssignments.length}`);
+  // Each demo case should be waiting on something or finished. Counting pending
+  // assignments globally was fragile: a demo case sitting at an approval has no
+  // pending assignment, so the count drifts as cases advance.
+  const demoApprovals = await get('ava_lddapprovals', "?$filter=ava_status eq 'Pending'");
+  const parked = demo.filter((c) => {
+    const status = c.ava_status ?? '';
+    if (status.startsWith('Resolved')) return true;
+    const id = c.ava_lddworkcaseid;
+    return (
+      demoAssignments.some((a) => a._ava_workcaseid_value === id) ||
+      demoApprovals.some((a) => a._ava_workcaseid_value === id)
+    );
+  });
+  check(
+    'every demo case is waiting on an assignment or approval, or resolved',
+    parked.length === demo.length,
+    `${parked.length}/${demo.length} parked; ${demoAssignments.length} assignments, ` +
+      `${demoApprovals.length} approvals`
+  );
 
   console.log('\n=== 7. Case ID generator ===');
   const gen = nextCaseId({ ava_caseprefix: 'L' }, ['L-26090001', 'L-26090002']);

@@ -112,6 +112,17 @@ export function ConfigScreen({ config, appName }: Props) {
                               {st.ava_impl ? ` / ${st.ava_impl}` : ''}
                               {st.ava_viewname ? ` / ${st.ava_viewname}` : ''}
                             </span>
+                            {st.ava_notifysubject && (
+                              <div
+                                className="muted"
+                                style={{ fontSize: 11.5, marginTop: 3, paddingLeft: 2 }}
+                              >
+                                <strong>{st.ava_notifysubject}</strong>
+                                {st.ava_notifybody ? ` — ${st.ava_notifybody.slice(0, 150)}${
+                                  st.ava_notifybody.length > 150 ? '…' : ''
+                                }` : ''}
+                              </div>
+                            )}
                           </li>
                         ))}
                       </ul>

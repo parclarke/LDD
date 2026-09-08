@@ -1,0 +1,164 @@
+[
+  {
+    "caseTypeUpper": "COMPLIANCEMONITORING",
+    "name": "ACKNOWLEDGESUBMISSION_0",
+    "subject": "Submission Confirmation",
+    "body": "Dear Business Controls Team, This message confirms that lending activity records have been successfully submitted for compliance monitoring and intake review. Your submission has been received and logged into our system for processing. Our team will conduct a thorough review of the submitted materials to ensure all compliance requirements are met. You will be notified of any findings or next steps as the review progresses. Thank you for your prompt submission and cooperation."
+  },
+  {
+    "caseTypeUpper": "COMPLIANCEMONITORING",
+    "name": "CLOSECASE_0",
+    "subject": "Case Closure Notice",
+    "body": "Dear Team, This message confirms that the compliance monitoring case has been officially resolved and closed. All identified issues have been addressed and verified to meet our compliance standards. The case file has been archived and is available for reference if needed in the future. Thank you for your diligent efforts in resolving the compliance matters. Should you have any questions regarding this closure, please contact the compliance team."
+  },
+  {
+    "caseTypeUpper": "COMPLIANCEMONITORING",
+    "name": "NOTIFYSTAKEHOLDERS_0",
+    "subject": "Remediation Action Alert",
+    "body": "Dear Stakeholders, This notice informs you that non-compliant findings have been identified and remediation actions are being initiated. Your business unit has been identified as impacted and requires follow-up actions to address the identified compliance gaps. Please review the remediation requirements and coordinate with your compliance team to implement the necessary corrections. Timely action is essential to ensure continued compliance with our monitoring standards. We appreciate your attention to this matter and your commitment to maintaining compliance."
+  },
+  {
+    "caseTypeUpper": "COMPLIANCEMONITORING",
+    "name": "REQUESTCORRECTION_0",
+    "subject": "Data Correction Request Notice",
+    "body": "Dear Lending Team, We are reaching out regarding a compliance case that requires additional information or correction of existing business data. Certain required information is either missing or inadequate in the current submission. Please review the identified items and provide the necessary corrections or supplementary documentation to ensure full compliance. We appreciate your cooperation in resolving this matter."
+  },
+  {
+    "caseTypeUpper": "COMPLIANCEMONITORING",
+    "name": "SENDESCALATION_0",
+    "subject": "Compliance Issue Escalation Alert",
+    "body": "Dear Regulatory Affairs and Management Team, We are writing to formally escalate an urgent compliance matter that requires immediate supervisory review and attention. This issue has been identified as unresolved and requires escalation beyond the standard review process. Please prioritize this matter and coordinate with relevant stakeholders to determine the appropriate course of action. Your prompt attention to this escalation is appreciated."
+  },
+  {
+    "caseTypeUpper": "ESCALATIONMANAGEMENT",
+    "name": "ACKNOWLEDGERECEIPT_0",
+    "subject": "Case Receipt Confirmation",
+    "body": "Dear Valued Partner, Thank you for submitting your escalated lending case for specialized review. We are pleased to confirm that we have received your documentation and case materials. Your submission has been logged into our system and assigned a unique case reference number for tracking purposes. Our intake team is now reviewing your case to ensure all required documentation is complete and properly organized. You will receive further updates regarding the status of your case as it progresses through our review process."
+  },
+  {
+    "caseTypeUpper": "ESCALATIONMANAGEMENT",
+    "name": "DECISIONNOTIFICATION_0",
+    "subject": "Escalation Decision Update",
+    "body": "Dear Stakeholders, The specialized review team has completed their analysis of the escalated lending case and reached a decision regarding the recommended resolution. The decision has been documented with supporting rationale and findings from the review process. All relevant parties have been considered in formulating this recommendation to ensure compliance with applicable policies and procedures. The next steps and any required actions will be communicated to you separately. Please contact the case management team if you have any questions regarding this decision."
+  },
+  {
+    "caseTypeUpper": "ESCALATIONMANAGEMENT",
+    "name": "NOTIFYCOMPLETION_0",
+    "subject": "Case Closure Notice",
+    "body": "Dear Stakeholders, We are pleased to inform you that the escalated lending case has been successfully resolved and is now being closed. All required documentation, findings, and resolution outcomes have been finalized and archived in accordance with our record retention policies. The case file will remain accessible for future reference and compliance purposes as needed. Thank you for your cooperation and participation throughout the review process. Should you require any additional information or clarification regarding the resolution, please do not hesitate to reach out to our case management team."
+  },
+  {
+    "caseTypeUpper": "ESCALATIONMANAGEMENT",
+    "name": "NOTIFYEXCEPTION_0",
+    "subject": "\ud3c7\u3562Escalation Status Update: Exception Hold",
+    "body": "Dear Stakeholder, We are writing to notify you that your escalation has been placed on hold due to compliance or risk considerations that must be resolved before proceeding. This action has been taken to ensure adherence to applicable policies and regulatory requirements. Our team is actively reviewing the identified concerns and will work toward a resolution. You will receive further updates as the situation develops. Should you require additional information regarding this hold, please reach out to our escalation management team."
+  },
+  {
+    "caseTypeUpper": "ESCALATIONMANAGEMENT",
+    "name": "NOTIFYTEAM_0",
+    "subject": "Case Assignment Alert",
+    "body": "Dear Team, A new escalated lending case has been assigned to your queue for specialized review. The case has been routed to your team based on identified risk factors and compliance considerations. Please review the case materials and documentation that have been made available in the system. Your team's expertise and analysis are critical to ensuring a thorough and appropriate resolution. Additional details and case-specific instructions are available in the case management portal."
+  },
+  {
+    "caseTypeUpper": "ESCALATIONMANAGEMENT",
+    "name": "REQUESTCORRECTION_0",
+    "subject": "\u56de\u72d6Action Required: Escalation Intake Correction",
+    "body": "Dear Colleague, We are writing to inform you that your escalation intake submission requires additional information or corrections before it can proceed. Our review has identified missing or incomplete details that must be addressed to ensure proper handling of your request. Please review the feedback provided and resubmit the corrected documentation at your earliest convenience. If you have any questions regarding the required corrections, please do not hesitate to contact our support team. We appreciate your prompt attention to this matter."
+  },
+  {
+    "caseTypeUpper": "LENDINGREVIEW",
+    "name": "CONFIRMCASECLOSURE_0",
+    "subject": "Case Closure Confirmation",
+    "body": "Dear Recipient, This is to confirm that the lending review case has been officially closed. All documentation has been finalized and archived according to our retention policies. The quality assurance reporting has been completed and filed in the appropriate records system. Should you need to reference any information from this case in the future, please contact our records management department. We appreciate your cooperation throughout this review process."
+  },
+  {
+    "caseTypeUpper": "LENDINGREVIEW",
+    "name": "ESCALATIONOUTCOME_0",
+    "subject": "Escalation Update: Case Review",
+    "body": "Dear Stakeholder, This is to notify you that your case has been escalated to our risk, compliance, or management team due to material findings identified during our review. The escalation has been completed and a determination has been made regarding the appropriate course of action. The outcome and any required next steps have been documented and will be communicated to you separately. We appreciate your patience throughout this process and remain available to address any questions or concerns you may have."
+  },
+  {
+    "caseTypeUpper": "LENDINGREVIEW",
+    "name": "NOTIFYASSIGNMENT_0",
+    "subject": "New Lending Review Case Assignment",
+    "body": "Dear Reviewer, A new lending review case has been assigned to you for evaluation. Please log into the system to access the case details and review the initial transaction information that has been captured. Your prompt attention to this matter is appreciated as we work to maintain our quality assurance standards. Should you have any questions or require clarification on the case details, please contact the case administrator. We look forward to your thorough review and assessment."
+  },
+  {
+    "caseTypeUpper": "LENDINGREVIEW",
+    "name": "NOTIFYOFGAPS_0",
+    "subject": "Documentation Gap Alert",
+    "body": "Dear Originator, During our document compilation process, we have identified that additional documentation is required to complete the lending review. Please review the attached list of missing items and submit the required materials through the designated submission portal. Providing complete and accurate documentation will help expedite the review process and ensure a thorough evaluation of the transaction. If you have questions about any of the requested documents, please reach out to our support team for assistance."
+  },
+  {
+    "caseTypeUpper": "LENDINGREVIEW",
+    "name": "NOTIFYSTAKEHOLDERS_0",
+    "subject": "Lending Review Decision Update",
+    "body": "Dear Stakeholder, The lending review has been completed and a final decision has been rendered on the submitted transaction. The outcome, along with any required remediation steps or escalation actions, has been documented in the case file. Please review the decision summary and any associated recommendations at your earliest convenience. Should you require additional details regarding the decision rationale or next steps, please contact the case management team. Thank you for your participation in this review process."
+  },
+  {
+    "caseTypeUpper": "LENDINGREVIEW",
+    "name": "REQUESTCORRECTIONS_0",
+    "subject": "Action Required: Corrections Needed",
+    "body": "Dear Originator, We are writing to inform you that your submission requires additional information or corrections before it can be processed further. Our review has identified gaps or discrepancies that need to be addressed to ensure accuracy and compliance. Please review the attached feedback carefully and provide the requested corrections or missing data. Your prompt attention to this matter will help us expedite the review process. Should you have any questions regarding the requested corrections, please do not hesitate to contact us."
+  },
+  {
+    "caseTypeUpper": "QUALITYRECOMMENDATION",
+    "name": "ACKNOWLEDGESUBMISSION_0",
+    "subject": "Intake Submission Confirmation",
+    "body": "Dear Oversight Team, This message confirms that the lending review intake has been successfully processed and received by our quality assessment team. Your submission has been logged into our system and assigned for detailed review. The key information and context from your lending review have been captured and will be evaluated according to our established quality standards. You will receive further updates as the review progresses through our assessment process."
+  },
+  {
+    "caseTypeUpper": "QUALITYRECOMMENDATION",
+    "name": "CLOSECASE_0",
+    "subject": "Case Closure Confirmation",
+    "body": "Dear Business and Risk Managers, This message confirms that the quality recommendation case has been officially closed following successful validation of final outcomes and confirmation of compliance requirements. All recommendations have been addressed, documented, and validated through our established closure procedures. The case file has been archived and is available for future reference if needed. Thank you for your collaboration and commitment to resolving the identified quality concerns. Should you require any documentation or have questions regarding this closure, please contact the quality assessment team."
+  },
+  {
+    "caseTypeUpper": "QUALITYRECOMMENDATION",
+    "name": "NOTIFYEXCEPTION_0",
+    "subject": "Exception Alert - Action Required",
+    "body": "Dear Business Team, This is to notify you that a case has been flagged for exception handling due to identified issues requiring immediate attention. The case has been escalated for review and rework to ensure compliance with established standards. Please review the exception details and take appropriate action as outlined in the case documentation. Your prompt attention to this matter is appreciated. Should you have any questions or require additional information, please contact the oversight team for assistance."
+  },
+  {
+    "caseTypeUpper": "QUALITYRECOMMENDATION",
+    "name": "NOTIFYRESUBMISSION_0",
+    "subject": "\u2cb9\u4827Resubmission Notice - Re-Review Required",
+    "body": "Dear Oversight Team, A case has been resubmitted following rework to address previously identified gaps or rejected recommendations. The updated submission is now ready for your re-review and evaluation. Please examine the revised information and documentation to ensure all requirements have been adequately addressed. Your thorough assessment will help ensure the case meets all necessary compliance and quality standards. Thank you for your continued diligence in this process."
+  },
+  {
+    "caseTypeUpper": "QUALITYRECOMMENDATION",
+    "name": "NOTIFYSTAKEHOLDERS_0",
+    "subject": "Quality Recommendations Alert",
+    "body": "Dear Stakeholders, Actionable quality recommendations have been formulated based on the lending review intake and are now available for your review. Comprehensive documentation supporting these recommendations has been prepared and is attached to this communication. These recommendations are intended to address identified quality concerns and improve operational outcomes. Please review the materials and coordinate with your teams regarding implementation of the recommended actions. Should you require clarification on any recommendations, please contact the quality assessment team."
+  },
+  {
+    "caseTypeUpper": "QUALITYRECOMMENDATION",
+    "name": "OUTCOMENOTIFICATION_0",
+    "subject": "Resolution Outcome Update",
+    "body": "Dear Stakeholders, This notice provides an update on the resolution status of the quality recommendations that were previously communicated to your teams. Our monitoring process has tracked the implementation progress across all responsible departments. The outcomes of these resolution efforts have been validated and documented in our system. Please review the attached outcome summary for details regarding the status of each recommendation. If you have questions about the resolution outcomes or require additional information, please reach out to the quality assessment team."
+  },
+  {
+    "caseTypeUpper": "RISKASSESSMENT",
+    "name": "NOTIFYESCALATION_0",
+    "subject": "\u0a60\u1df6Escalation Alert - Supervisory Review Required",
+    "body": "Dear Escalation Team, This case has been escalated due to high-risk transaction indicators requiring supervisory review and specialist intervention. Your immediate attention is requested to assess and determine the appropriate course of action. Please review all associated documentation and transaction details provided in the case file. All escalation actions and decisions should be documented in the system for audit and compliance purposes. Thank you for your prompt attention to this matter."
+  },
+  {
+    "caseTypeUpper": "RISKASSESSMENT",
+    "name": "NOTIFYRESOLUTION_0",
+    "subject": "Risk Assessment Resolution Update",
+    "body": "Dear Risk and Oversight Stakeholders, The risk assessment case has been finalized and the outcome determination is now complete. Please review the attached findings and final resolution status for your records and monitoring purposes. This communication serves as formal notification of the case closure and post-action status. Should you require any clarification on the findings or next steps, please reach out to the risk management team. Thank you for your continued oversight and attention to this matter."
+  },
+  {
+    "caseTypeUpper": "RISKASSESSMENT",
+    "name": "NOTIFYSTAKEHOLDERS_0",
+    "subject": "New Risk Assessment Case Alert",
+    "body": "Dear Stakeholder, A new risk assessment case has been created and requires your attention. Please review the transaction details and risk screening information that has been captured for lending oversight purposes. Your prompt review and assessment of this case will help ensure appropriate business controls are maintained. Should you have any questions or require additional information, please contact the risk management team. Thank you for your attention to this matter."
+  },
+  {
+    "caseTypeUpper": "RISKASSESSMENT",
+    "name": "REQUESTCORRECTIONS_0",
+    "subject": "\u951a\u53ceAction Required - Intake Data Correction Notice",
+    "body": "Dear Submitter, We have identified incomplete or inaccurate information in your submitted intake data that requires correction before we can proceed. Please review the detailed feedback provided and update the affected fields with accurate and complete information. Once you have made the necessary corrections, please resubmit your intake for processing. If you have any questions regarding the required corrections, please contact our support team for assistance. We appreciate your prompt attention to resolving these items."
+  }
+]
