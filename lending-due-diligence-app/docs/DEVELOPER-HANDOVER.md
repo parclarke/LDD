@@ -192,7 +192,7 @@ which *rules inside them* were imported. Counts below are from the export's own
 |---|---|---|
 | `RULE-OBJ-FLOW` / `RULE-OBJ-FLOWACTION` | 35 / 39 | Only present in the compiled `.jar` binaries. This is where the stage-change `when` guards live - worked around by the inferred guards and the re-visit cap (section 2). |
 | `RULE-NOTIFICATION` / `RULE-OBJ-CORR` | 27 / 27 | Simulated - see 4.3 |
-| `RULE-OBJ-MODEL` (data transforms) | 5 | Simulated - see 4.3 |
+| `RULE-OBJ-MODEL` (5) | 5 | Case-type field allow-lists, not data transforms - see 4.3a |
 | `RULE-ACCESS-ROLE-OBJ` (privilege grants) | 30 | Not enforced - see 4.4 |
 | `DATA-ADMIN-WORKBASKET` | 18 | Held as strings; not mapped to Dataverse teams - see 4.4 |
 | `RULE-OBJ-ATTACHMENTCATEGORY` | 12 | No document store wired - see 4.5 |
@@ -216,7 +216,8 @@ generated services replace them.
 
 pegakit's own documentation lists what no Pega artefact exposes:
 
-- Data transform logic (`pzRunDataTransform` steps)
+- Data transform logic (`pzRunDataTransform` steps) - **but see 4.3a: this
+  export has none authored, and in a real app they should be recoverable**
 - Email / correspondence bodies
 - Dashboard and insight definitions
 - AI agent prompts and tool bindings
@@ -395,17 +396,53 @@ before any pilot.
 
 ### 4.3 Execute the simulated utility steps (required)
 
-37 of the 80 steps are notification or data-transform utilities. They are
-currently logged to the audit trail but **not executed** - see
+41 of the 80 steps are notification, data-transform or document utilities. They
+are currently logged to the audit trail but **not executed** - see
 `SIMULATED_EFFECTS` in `src/lib/orchestrator.ts`.
 
 | Pega implementation | Count | What to build |
 |---|---|---|
 | `pzNotifyWrapper` | 17 | Email/Teams notification. Add the Office 365 Outlook connector (`/add-office365`) or call a Power Automate flow. Recipient comes from the step's workbasket or the assigned user. |
-| `pzRunDataTransform` | 20 | Field derivation between steps. Each named transform needs its own implementation. Recommended: a `dataTransforms` registry keyed by transform name in `src/lib/transforms.ts`, dispatched from the `runUtility` branch of `advanceCase`. |
+| `pzRunDataTransform` | 20 | Field derivation between steps. Recommended: a `dataTransforms` registry keyed by transform name in `src/lib/transforms.ts`, dispatched from the `runUtility` branch of `advanceCase`. **See 4.3a - in this prototype there is no logic to port.** |
 | `pxGenerateAndAttachDocument` | 4 | Document generation. Options: Power Automate + Word Online templates, or a Dataverse file column populated from a server-side template. |
 
 Remove each `kind` from `SIMULATED_EFFECTS` as it becomes real.
+
+### 4.3a Data transforms: what is actually in this export
+
+A Pega **data transform** (rule type `Rule-Obj-Model`) is a declarative
+list of assignments that maps or derives property values - set this field from
+that one, apply a default, convert a type, copy a page. In a flow it appears as
+a `pzRunDataTransform` utility step and runs unattended between human steps.
+It is Pega's equivalent of a mapping or calculation function.
+
+**This export contains no authored data transforms.** Verified against the rule
+inventory:
+
+| Check | Result |
+|---|---|
+| Steps calling `pzRunDataTransform` | 20 |
+| `RULE-OBJ-MODEL` instances in the export | 5 |
+| ... of which are data transforms | **0** - all 5 are `ALLOWEDSTARTINGFIELDS`, which are case-type field allow-lists, not process logic |
+| Transform rules matching a step name (e.g. `VERIFYINFORMATION`) | **0** |
+
+The shapes declare a `DataTransformName` parameter but it is never bound to a
+rule. The names visible in the flow bodies - *Verify Information*, *Analyze
+Records*, *Assign Case Owner* - are **shape display names**, not rule
+references.
+
+So the 20 transform steps in this application are **named placeholders with no
+behaviour**. There is nothing to port, and the app's current behaviour (log the
+step, carry on) is faithful to what the source application actually does. What
+each transform *should* do is a business question, not a recovery exercise.
+
+> **For a real client application, expect the opposite.** Authored data
+> transforms are `Rule-Obj-Model` rules and live in the same `rules.jar` as the
+> flow rules, so the UTF-16BE technique in section 3b should recover their
+> assignment lists too. That would move much of this workstream from workshops
+> to extraction. It could not be tested here because this application has none -
+> validate it against the first real candidate before relying on it in an
+> estimate.
 
 ### 4.4 Security: map roles to Dataverse (required)
 
@@ -545,7 +582,8 @@ pa app push
   and contain no conditional transitions, so these need business validation
   rather than technical recovery (sections 3b and 4.1).
 - Notification, data transform and document generation are logged, not executed
-  (section 4.3).
+  (section 4.3). Note the 20 data transform steps have no authored logic in this
+  export at all, so logging them is faithful behaviour (section 4.3a).
 - Current user is hard-coded (section 4.2).
 - No row-level security; all users see all cases (section 4.4).
 - Attachment fields are text references only (section 4.5).
