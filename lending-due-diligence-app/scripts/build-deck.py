@@ -839,27 +839,28 @@ callout(s, "The entire case lifecycle skeleton - every stage and every step, in 
 num(s)
 
 s = base("Manual conversion requirements", eyebrow="Migration Findings")
-kpis(s, [("41", "of 80 steps need\nmanual implementation"),
-         ("17", "Notification\nsteps"),
-         ("20", "Data transform\nsteps"),
-         ("4", "Document generation\nsteps"),
+kpis(s, [("41", "of 80 steps still\nneed implementation"),
+         ("27", "Notification messages\nfully recovered"),
+         ("20", "Transforms with no\nauthored logic"),
+         ("4", "Document templates\nnot exposed"),
          ("39", "Steps fully working\ntoday")],
      y=1.60, h=1.22)
 table(s,
-      ["Requirement", "Volume", "Why it cannot be automated"],
-      [["*Notification recipients", "17 steps",
-        "Subject and body recovered from the export; recipients are not in the rule"],
-       ["*Data transform logic", "20 steps",
-        "No transform rules authored in this export - nothing to port"],
+      ["Requirement", "Volume", "What the artefacts already give us"],
+      [["*Notification delivery", "17 steps",
+        "*Subject and body recovered 27/27 - only recipients need deciding"],
+       ["*Data transform behaviour", "20 steps",
+        "*No transform rules authored in the source - nothing to port"],
        ["*Document generation", "4 steps",
-        "Templates and merge logic are not exposed"],
-       ["*Stage transition guards", "4 inferred", "Extraction shows Pega has no conditional transitions at all"],
+        "Step name and position; templates are not exposed"],
+       ["*Stage transition guards", "4 inferred",
+        "Decision branch routing extracted; the rework condition is a business call"],
        ["*Security enforcement", "19 roles / 30 grants / 18 workbaskets",
-        "Pega and Dataverse security models differ structurally"]],
+        "Roles and workbaskets imported; the Dataverse mapping is design work"]],
       y=3.15, widths=[2.9, 2.3, 6.9], size=11.5)
-callout(s, "This 51% is the number to plan against. It is not a tooling "
-           "shortfall - no migration approach can extract what the platform "
-           "does not expose.", tone=AMBER)
+callout(s, "41 steps still need building - but none of them needs discovering. "
+           "Every one is named, located, and in the notification case fully "
+           "written.", tone=AMBER)
 num(s)
 
 s = base("Technical challenges encountered", eyebrow="Migration Findings")
@@ -899,12 +900,14 @@ table(s,
       ["Requirement domain", "Recovered from artefacts", "Workshops needed"],
       [["*Process model", "5 case types, 39 stages, 80 steps", "*None"],
        ["*Business rules", "10 decision tables, 28 rules of logic", "*None"],
+       ["*Routing logic", "264 transitions, 26 validated decision branches", "*None"],
        ["*User interface", "24 screens, 59 fields, plus screenshots", "*None"],
        ["*Data model", "10 data objects, 334 properties", "*None"],
        ["*Reference data", "26 choice sets, 107 values", "*None"],
        ["*Security model", "19 roles, 30 grants, 18 workbaskets", "*None"],
-       ["*Routing logic", "264 connector transitions", "*None"],
-       ["*Step behaviour", "41 steps named and located, bodies not exported",
+       ["*Notification wording", "27 subjects and 27 email bodies", "*None"],
+       ["*Reporting", "30 definitions - all auto-generated scaffolding", "*None - nothing to port"],
+       ["*Step behaviour", "20 transforms and 4 documents, named and located",
         "Confirmation only"]],
       y=3.10, widths=[2.7, 5.5, 3.9], size=11.5)
 callout(s, "The residue is confirmation, not discovery - see the next slide.")
@@ -912,34 +915,35 @@ num(s)
 
 s = base("How the residual elicitation changes shape", eyebrow="Migration Findings")
 bullets(s, [
-    ("The 41 steps are not unknowns", 0, True),
-    "For every one of them the artefacts already give the case type, the stage, "
-    "the position in the sequence, the step name and the step type. What is "
-    "missing is only the body - the wording of a notification, the field "
-    "derivation inside a transform.",
+    ("What is left is small, named and located", 0, True),
+    "Notification wording is fully recovered, reports need no migration and the "
+    "transform steps have no authored logic to reconstruct. What remains is a "
+    "short list of specific decisions, each anchored to a step the business "
+    "already recognises.",
 ], y=1.55, size=13.5)
 table(s,
       ["Instead of asking", "The question becomes"],
-      [["What notifications does this process send, to whom, and when?",
-        "*Compliance Monitoring / Remediation / 'Notify Stakeholders' - "
-        "confirm the wording"],
+      [["What notifications does this process send, and what do they say?",
+        "*Nothing to ask - 27 subjects and bodies recovered. Only: who receives them?"],
        ["What calculations happen between these two steps?",
         "*Escalation Management / Case Routing / 'Assign Case Owner' - "
-        "confirm the derivation"],
+        "no logic exists in Pega; what should it do?"],
        ["What documents does this process produce?",
         "*Risk Assessment / Resolution Tracking / 'Generate Final Report' - "
         "confirm the template"],
        ["When should a case go back for rework?",
         "*Four specific transitions, each with a proposed condition - "
-        "confirm or correct"]],
+        "confirm or correct"],
+       ["What reports does the business need?",
+        "*Nothing to ask - all 30 are platform scaffolding, not business reports"]],
       y=3.05, widths=[5.0, 7.1], size=11.5)
 callout(s, "Open-ended discovery becomes closed confirmation against a working "
            "system the business can see running. That is a materially shorter "
            "and easier conversation.", tone=GREEN)
 notes(s, "This is the practical answer to 'we have no time for requirements'. "
-         "You are not asking them to specify an application. You are showing "
-         "them one that already runs and asking them to confirm 41 specific "
-         "points, each anchored to a named step they recognise.")
+         "You are not asking them to specify an application. Two of the five "
+         "rows have collapsed to nothing since the artefacts were mined "
+         "properly, and the rest are specific questions against named steps.")
 num(s)
 
 s = base("Automation opportunities", eyebrow="Migration Findings")
@@ -1109,10 +1113,10 @@ num(s)
 s = base("Dependencies", eyebrow="Effort & Risk")
 table(s,
       ["Dependency", "Needed for", "Timing", "Owner"],
-      [["*Business SME workshops", "Agreeing the rework conditions", "*Phase 1 weeks 1 to 2", "Business"],
+      [["*Business SME sessions", "4 rework conditions, 20 transform behaviours, notification recipients", "*Phase 1 weeks 1 to 2", "Business"],
        ["*Pega sandbox with DX API", "High-fidelity extraction of each app",
         "*Before assessment", "Pega platform team"],
-       ["*Business SMEs (time-boxed)", "Confirming 41 pre-located step bodies - confirmation, not discovery", "*Short sessions, Phase 1 weeks 1 to 4", "Business"],
+       ["*Business SMEs (time-boxed)", "A short list of named decisions - notification wording and reports need no input at all", "*Short sessions, Phase 1 weeks 1 to 4", "Business"],
        ["*Power Platform environments", "Dev, test and production with ALM",
         "Phase 1 start", "Platform team"],
        ["*Dataverse capacity", "Row and storage volumes", "Phase 1 planning",
@@ -1145,17 +1149,15 @@ bullets(s, [
     ("Condition", 0, True),
     "Book time-boxed SME confirmation sessions. The artefacts carry the specification; the business is asked only to confirm 41 named, located step bodies against a system they can watch running.",
 ], y=1.60, size=14, gap=8)
-callout(s, "Recommended next action: a two-week inception to recover the 35 "
-           "flow rule bodies and confirm the security model. That retires the "
-           "highest risk before committing to the full build.")
+callout(s, "Recommended next action: a one-week inception to settle the security model and the short list of open business decisions. Flow rules, decision routing and notification wording are already recovered.")
 num(s)
 
 s = base("Phase 1 roadmap", eyebrow="Recommendations")
 table(s,
       ["Stage", "Weeks", "Activities", "Exit criteria"],
       [["*Inception", "1 - 2",
-        "Run artefact extraction; time-boxed SME confirmation; provision environments",
-        "41 step bodies confirmed; roles designed"],
+        "Artefact extraction (done); short SME confirmation; provision environments",
+        "Open decisions confirmed; roles designed"],
        ["*Build - logic", "3 - 6",
         "Implement 20 data transforms and 4 document generators; replace "
         "inferred guards",
