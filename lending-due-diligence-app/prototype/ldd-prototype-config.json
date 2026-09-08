@@ -1,0 +1,4166 @@
+{
+  "app": {
+    "name": "The Lending Due Diligence (LDD)",
+    "title": "The Lending Due Diligence (LDD)",
+    "description": "The application supports lending quality assurance and oversight activities across the Business Controls and Risk Management teams, enabling the intake, review, routing, assessment, recommendation, escalation, and resolution of lending transactions.",
+    "version": "01.01.01",
+    "engine": "26.1.0 PRPC-26.1.0-103357 ()",
+    "exported": "2026-Sep-01 14:34:56",
+    "workPrefix": "MyOrg-TheLending-Work-",
+    "dataPrefix": "MyOrg-TheLending-Data-"
+  },
+  "caseTypes": [
+    {
+      "code": "ComplianceMonitoring",
+      "name": "Compliance Monitoring",
+      "pegaClass": "MyOrg-TheLending-Work-ComplianceMonitoring",
+      "prefix": "C",
+      "icon": "analytics-good-solid",
+      "urgency": "10",
+      "sortOrder": 1,
+      "businessFields": [
+        {
+          "name": "BusinessUnit",
+          "type": "Text",
+          "label": "Business unit",
+          "pageClass": null
+        },
+        {
+          "name": "RoleAssignment",
+          "type": "Page List",
+          "label": "Role assignment",
+          "pageClass": "MyOrg-TheLending-Data-RoleAssignment"
+        },
+        {
+          "name": "ComplianceMonitoringName",
+          "type": "Text",
+          "label": "Compliance monitoring name",
+          "pageClass": null
+        },
+        {
+          "name": "ComplianceReviewType",
+          "type": "Text",
+          "label": "Compliance review type",
+          "pageClass": null
+        },
+        {
+          "name": "ReviewDate",
+          "type": "Date",
+          "label": "Review date",
+          "pageClass": null
+        },
+        {
+          "name": "BusinessControlsTeam",
+          "type": "Text",
+          "label": "Business controls team",
+          "pageClass": null
+        },
+        {
+          "name": "AssessmentOutcome",
+          "type": "Text",
+          "label": "Assessment outcome",
+          "pageClass": null
+        },
+        {
+          "name": "ReviewMethodology",
+          "type": "Text",
+          "label": "Review methodology",
+          "pageClass": null
+        },
+        {
+          "name": "ResolutionStatus",
+          "type": "Text",
+          "label": "Resolution status",
+          "pageClass": null
+        },
+        {
+          "name": "CorrectiveActionPlan",
+          "type": "Text",
+          "label": "Corrective action plan",
+          "pageClass": null
+        },
+        {
+          "name": "IssueSeverity",
+          "type": "Text",
+          "label": "Issue severity",
+          "pageClass": null
+        },
+        {
+          "name": "QualityAssuranceReviewer",
+          "type": "Text",
+          "label": "Quality assurance reviewer",
+          "pageClass": null
+        },
+        {
+          "name": "Comments",
+          "type": "Text",
+          "label": "Comments",
+          "pageClass": null
+        },
+        {
+          "name": "RegulatoryRequirement",
+          "type": "Text",
+          "label": "Regulatory requirement",
+          "pageClass": null
+        },
+        {
+          "name": "RootCauseAnalysis",
+          "type": "Text",
+          "label": "Root cause analysis",
+          "pageClass": null
+        },
+        {
+          "name": "ClosureDate",
+          "type": "Date",
+          "label": "Closure date",
+          "pageClass": null
+        },
+        {
+          "name": "SupportingEvidence",
+          "type": "Page",
+          "label": "Supporting evidence",
+          "pageClass": "Embed-Attach-File"
+        }
+      ],
+      "stages": [
+        {
+          "code": "PRIM0",
+          "name": "Intake Review",
+          "type": "Primary",
+          "transition": "create",
+          "processName": "Data Collection",
+          "sortOrder": 1,
+          "steps": [
+            {
+              "name": "Capture Activity",
+              "kind": "Assignment",
+              "impl": "WorkList",
+              "view": "CaptureActivity",
+              "sortOrder": 1,
+              "routingType": "WorkList",
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {
+                "ViewPolicy": "USE_CASE_POLICY",
+                "ConfirmationNote": "pyStepRoutedConfirmation"
+              }
+            },
+            {
+              "name": "Verify Information",
+              "kind": "Utility",
+              "impl": "pzRunDataTransform",
+              "view": null,
+              "sortOrder": 2,
+              "routingType": null,
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {}
+            },
+            {
+              "name": "Acknowledge Submission",
+              "kind": "Utility",
+              "impl": "pzNotifyWrapper",
+              "view": null,
+              "sortOrder": 3,
+              "routingType": null,
+              "notificationName": "AcknowledgeSubmission_0",
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {
+                "NotificationName": "AcknowledgeSubmission_0"
+              }
+            }
+          ]
+        },
+        {
+          "code": "PRIM1",
+          "name": "Compliance Audit",
+          "type": "Primary",
+          "transition": "automatic",
+          "processName": "Audit Execution",
+          "sortOrder": 2,
+          "steps": [
+            {
+              "name": "Analyze Records",
+              "kind": "Utility",
+              "impl": "pzRunDataTransform",
+              "view": null,
+              "sortOrder": 1,
+              "routingType": null,
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {}
+            }
+          ]
+        },
+        {
+          "code": "PRIM2",
+          "name": "Issue Assessment",
+          "type": "Primary",
+          "transition": "automatic",
+          "processName": "Issue Evaluation",
+          "sortOrder": 3,
+          "steps": [
+            {
+              "name": "Evaluate Issue",
+              "kind": "Assignment",
+              "impl": "WorkBasket",
+              "view": "EvaluateIssue",
+              "sortOrder": 1,
+              "routingType": "WorkBasket",
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {
+                "ConfirmationNote": "pyStepRoutedConfirmation",
+                "ViewPolicy": "USE_CASE_POLICY"
+              }
+            },
+            {
+              "name": "Decision Outcomes",
+              "kind": "Decision",
+              "impl": "DecisionOutcomes",
+              "view": null,
+              "sortOrder": 2,
+              "routingType": null,
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": "DecisionOutcomes",
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {}
+            },
+            {
+              "name": "Change to specific stage",
+              "kind": "Utility",
+              "impl": "pxChangeToSpecifiedStage",
+              "view": null,
+              "sortOrder": 3,
+              "routingType": null,
+              "notificationName": null,
+              "targetStageCode": "PRIM4",
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": "DecisionOutcomes",
+              "guardResults": "Escalate Immediately,Corrective Action",
+              "params": {
+                "Context": "@Utilities.pxGetStepPageReference()",
+                "TargetStage": "PRIM4"
+              }
+            },
+            {
+              "name": "Change to next stage",
+              "kind": "Utility",
+              "impl": "pxChangeToNextStage",
+              "view": null,
+              "sortOrder": 4,
+              "routingType": null,
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {}
+            }
+          ]
+        },
+        {
+          "code": "PRIM3",
+          "name": "Remediation",
+          "type": "Primary",
+          "transition": "automatic",
+          "processName": "Remediation Actions",
+          "sortOrder": 4,
+          "steps": [
+            {
+              "name": "Implement Solution",
+              "kind": "Assignment",
+              "impl": "WorkBasket",
+              "view": "ImplementSolution",
+              "sortOrder": 1,
+              "routingType": "WorkBasket",
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {
+                "ViewPolicy": "USE_CASE_POLICY",
+                "ConfirmationNote": "pyStepRoutedConfirmation"
+              }
+            },
+            {
+              "name": "Update Records",
+              "kind": "Utility",
+              "impl": "pzRunDataTransform",
+              "view": null,
+              "sortOrder": 2,
+              "routingType": null,
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {}
+            },
+            {
+              "name": "Notify Stakeholders",
+              "kind": "Utility",
+              "impl": "pzNotifyWrapper",
+              "view": null,
+              "sortOrder": 3,
+              "routingType": null,
+              "notificationName": "NotifyStakeholders_0",
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {
+                "NotificationName": "NotifyStakeholders_0"
+              }
+            }
+          ]
+        },
+        {
+          "code": "PRIM4",
+          "name": "Resolution Closure",
+          "type": "Primary",
+          "transition": "resolution",
+          "processName": "Closure Validation",
+          "sortOrder": 5,
+          "steps": [
+            {
+              "name": "Validate Resolution",
+              "kind": "Decision",
+              "impl": "ValidateResolution",
+              "view": null,
+              "sortOrder": 1,
+              "routingType": null,
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": "ValidateResolution",
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {}
+            },
+            {
+              "name": "Generate Report",
+              "kind": "Utility",
+              "impl": "pxGenerateAndAttachDocument",
+              "view": null,
+              "sortOrder": 2,
+              "routingType": null,
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {}
+            },
+            {
+              "name": "Close case",
+              "kind": "Utility",
+              "impl": "pzNotifyWrapper",
+              "view": null,
+              "sortOrder": 3,
+              "routingType": null,
+              "notificationName": "CloseCase_0",
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {
+                "NotificationName": "CloseCase_0"
+              }
+            },
+            {
+              "name": "Change to specific stage",
+              "kind": "Utility",
+              "impl": "pxChangeToSpecifiedStage",
+              "view": null,
+              "sortOrder": 4,
+              "routingType": null,
+              "notificationName": null,
+              "targetStageCode": "PRIM3",
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": "ValidateResolution",
+              "guardResults": "Pending Closure,Action Required,Incomplete",
+              "params": {
+                "Context": "@Utilities.pxGetStepPageReference()",
+                "TargetStage": "PRIM3"
+              }
+            },
+            {
+              "name": "Change to previous stage",
+              "kind": "Utility",
+              "impl": "pxChangeToPreviousStage",
+              "view": null,
+              "sortOrder": 5,
+              "routingType": null,
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": "ValidateResolution",
+              "guardResults": "Pending Closure,Action Required,Incomplete",
+              "params": {}
+            }
+          ]
+        },
+        {
+          "code": "ALT1",
+          "name": "Escalation Path",
+          "type": "Alternate",
+          "transition": "manual",
+          "processName": "Escalation Process",
+          "sortOrder": 6,
+          "steps": [
+            {
+              "name": "Trigger Escalation",
+              "kind": "Decision",
+              "impl": "TriggerEscalation",
+              "view": null,
+              "sortOrder": 1,
+              "routingType": null,
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": "TriggerEscalation",
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {}
+            },
+            {
+              "name": "Supervisor Review",
+              "kind": "Assignment",
+              "impl": "WorkList",
+              "view": null,
+              "sortOrder": 2,
+              "routingType": "WorkList",
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {
+                "ViewPolicy": "USE_CASE_POLICY",
+                "ConfirmationNote": "pyStepRoutedConfirmation"
+              }
+            },
+            {
+              "name": "Send Escalation",
+              "kind": "Utility",
+              "impl": "pzNotifyWrapper",
+              "view": null,
+              "sortOrder": 3,
+              "routingType": null,
+              "notificationName": "SendEscalation_0",
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {
+                "NotificationName": "SendEscalation_0"
+              }
+            }
+          ]
+        },
+        {
+          "code": "ALT2",
+          "name": "Rework Path",
+          "type": "Alternate",
+          "transition": "manual",
+          "processName": "Rework Process",
+          "sortOrder": 7,
+          "steps": [
+            {
+              "name": "Identify Gaps",
+              "kind": "Utility",
+              "impl": "pzRunDataTransform",
+              "view": null,
+              "sortOrder": 1,
+              "routingType": null,
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {}
+            },
+            {
+              "name": "Request Correction",
+              "kind": "Utility",
+              "impl": "pzNotifyWrapper",
+              "view": null,
+              "sortOrder": 2,
+              "routingType": null,
+              "notificationName": "RequestCorrection_0",
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {
+                "NotificationName": "RequestCorrection_0"
+              }
+            },
+            {
+              "name": "Resubmit Records",
+              "kind": "Assignment",
+              "impl": "WorkBasket",
+              "view": "ResubmitRecords",
+              "sortOrder": 3,
+              "routingType": "WorkBasket",
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {
+                "ConfirmationNote": "pyStepRoutedConfirmation",
+                "ViewPolicy": "USE_CASE_POLICY"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "EscalationManagement",
+      "name": "Escalation Management",
+      "pegaClass": "MyOrg-TheLending-Work-EscalationManagement",
+      "prefix": "E",
+      "icon": "flag-solid",
+      "urgency": "10",
+      "sortOrder": 2,
+      "businessFields": [
+        {
+          "name": "Customer",
+          "type": "Page",
+          "label": "Customer",
+          "pageClass": "MyOrg-TheLending-Data-Customer"
+        },
+        {
+          "name": "LendingTransaction",
+          "type": "Page",
+          "label": "Lending transaction",
+          "pageClass": "MyOrg-TheLending-Data-LendingTransaction"
+        },
+        {
+          "name": "RiskAssessment",
+          "type": "Page",
+          "label": "Risk assessment",
+          "pageClass": "MyOrg-TheLending-Data-RiskAssessment"
+        },
+        {
+          "name": "EscalationReason",
+          "type": "Text",
+          "label": "Escalation reason",
+          "pageClass": null
+        },
+        {
+          "name": "ComplianceFinding",
+          "type": "Page",
+          "label": "Compliance finding",
+          "pageClass": "MyOrg-TheLending-Data-ComplianceFinding"
+        },
+        {
+          "name": "AssessmentSummary",
+          "type": "Text",
+          "label": "Assessment summary",
+          "pageClass": null
+        },
+        {
+          "name": "EscalationInitiatedBy",
+          "type": "Text",
+          "label": "Escalation initiated by",
+          "pageClass": null
+        },
+        {
+          "name": "DecisionMaker",
+          "type": "Text",
+          "label": "Decision maker",
+          "pageClass": null
+        },
+        {
+          "name": "EscalationManagementName",
+          "type": "Text",
+          "label": "Escalation management name",
+          "pageClass": null
+        },
+        {
+          "name": "RecommendationOutcome",
+          "type": "Text",
+          "label": "Recommendation outcome",
+          "pageClass": null
+        },
+        {
+          "name": "DateEscalated",
+          "type": "Date",
+          "label": "Date escalated",
+          "pageClass": null
+        },
+        {
+          "name": "AssessmentDate",
+          "type": "Date",
+          "label": "Assessment date",
+          "pageClass": null
+        },
+        {
+          "name": "DateResolved",
+          "type": "Date",
+          "label": "Date resolved",
+          "pageClass": null
+        },
+        {
+          "name": "FollowupRequired",
+          "type": "True-False",
+          "label": "Follow-up required",
+          "pageClass": null
+        },
+        {
+          "name": "AssignedTeam",
+          "type": "Text",
+          "label": "Assigned team",
+          "pageClass": null
+        },
+        {
+          "name": "EscalationCategory",
+          "type": "Text",
+          "label": "Escalation category",
+          "pageClass": null
+        },
+        {
+          "name": "EscalationUrgencyLevel",
+          "type": "Text",
+          "label": "Escalation urgency level",
+          "pageClass": null
+        },
+        {
+          "name": "SupportingDocuments",
+          "type": "Page",
+          "label": "Supporting documents",
+          "pageClass": "Embed-Attach-File"
+        }
+      ],
+      "stages": [
+        {
+          "code": "PRIM0",
+          "name": "Intake Review",
+          "type": "Primary",
+          "transition": "create",
+          "processName": "Case Intake",
+          "sortOrder": 1,
+          "steps": [
+            {
+              "name": "Capture Escalation",
+              "kind": "Assignment",
+              "impl": "WorkList",
+              "view": "CaptureEscalation",
+              "sortOrder": 1,
+              "routingType": "WorkList",
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {
+                "ViewPolicy": "USE_CASE_POLICY",
+                "ConfirmationNote": "pyStepRoutedConfirmation"
+              }
+            },
+            {
+              "name": "Collect Documentation",
+              "kind": "Assignment",
+              "impl": "WorkList",
+              "view": null,
+              "sortOrder": 2,
+              "routingType": "WorkList",
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {
+                "ViewPolicy": "USE_CASE_POLICY",
+                "ConfirmationNote": "pyStepRoutedConfirmation"
+              }
+            },
+            {
+              "name": "Validate Submission",
+              "kind": "Utility",
+              "impl": "pzRunDataTransform",
+              "view": null,
+              "sortOrder": 3,
+              "routingType": null,
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {}
+            },
+            {
+              "name": "Acknowledge Receipt",
+              "kind": "Utility",
+              "impl": "pzNotifyWrapper",
+              "view": null,
+              "sortOrder": 4,
+              "routingType": null,
+              "notificationName": "AcknowledgeReceipt_0",
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {
+                "NotificationName": "AcknowledgeReceipt_0"
+              }
+            }
+          ]
+        },
+        {
+          "code": "PRIM1",
+          "name": "Case Routing",
+          "type": "Primary",
+          "transition": "automatic",
+          "processName": "Team Assignment",
+          "sortOrder": 2,
+          "steps": [
+            {
+              "name": "Assess Routing Criteria",
+              "kind": "Decision",
+              "impl": "AssessRoutingCriteria",
+              "view": null,
+              "sortOrder": 1,
+              "routingType": null,
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": "AssessRoutingCriteria",
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {}
+            },
+            {
+              "name": "Assign Case Owner",
+              "kind": "Utility",
+              "impl": "pzRunDataTransform",
+              "view": null,
+              "sortOrder": 2,
+              "routingType": null,
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {}
+            },
+            {
+              "name": "Notify Team",
+              "kind": "Utility",
+              "impl": "pzNotifyWrapper",
+              "view": null,
+              "sortOrder": 3,
+              "routingType": null,
+              "notificationName": "NotifyTeam_0",
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {
+                "NotificationName": "NotifyTeam_0"
+              }
+            }
+          ]
+        },
+        {
+          "code": "PRIM2",
+          "name": "Specialist Assessment",
+          "type": "Primary",
+          "transition": "automatic",
+          "processName": "Risk Assessment",
+          "sortOrder": 3,
+          "steps": [
+            {
+              "name": "Review Transaction",
+              "kind": "Assignment",
+              "impl": "WorkBasket",
+              "view": "ReviewTransaction",
+              "sortOrder": 1,
+              "routingType": "WorkBasket",
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {
+                "ViewPolicy": "USE_CASE_POLICY",
+                "ConfirmationNote": "pyStepRoutedConfirmation"
+              }
+            },
+            {
+              "name": "Perform Due Diligence",
+              "kind": "Utility",
+              "impl": "pzRunDataTransform",
+              "view": null,
+              "sortOrder": 2,
+              "routingType": null,
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {}
+            },
+            {
+              "name": "Document Questions",
+              "kind": "Assignment",
+              "impl": "WorkList",
+              "view": "DocumentQuestions",
+              "sortOrder": 3,
+              "routingType": "WorkList",
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {
+                "ViewPolicy": "USE_CASE_POLICY",
+                "ConfirmationNote": "pyStepRoutedConfirmation"
+              }
+            }
+          ]
+        },
+        {
+          "code": "PRIM3",
+          "name": "Escalation Decision",
+          "type": "Primary",
+          "transition": "automatic",
+          "processName": "Decision Making",
+          "sortOrder": 4,
+          "steps": [
+            {
+              "name": "Provide Recommendation",
+              "kind": "Assignment",
+              "impl": "WorkBasket",
+              "view": "ProvideRecommendation",
+              "sortOrder": 1,
+              "routingType": "WorkBasket",
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {
+                "ViewPolicy": "USE_CASE_POLICY",
+                "ConfirmationNote": "pyStepRoutedConfirmation"
+              }
+            },
+            {
+              "name": "Formal Approval",
+              "kind": "Sub-Process",
+              "impl": "pxApproval",
+              "view": null,
+              "sortOrder": 2,
+              "routingType": null,
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": "Manager",
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {
+                "OperatorID": "",
+                "RejectionStatus": "Approval Rejection",
+                "RejectionMetaData": "Resolved-Rejected",
+                "StepApprovalType": "Simple",
+                "pyApprovalSectionName": "FormalApproval",
+                "ApprovalAction": "Continue",
+                "RejectionAction": "UpdateStatus",
+                "ApproverType": "Manager"
+              }
+            }
+          ]
+        },
+        {
+          "code": "PRIM4",
+          "name": "Case Closure",
+          "type": "Primary",
+          "transition": "resolution",
+          "processName": "Closure Activities",
+          "sortOrder": 5,
+          "steps": []
+        },
+        {
+          "code": "ALT1",
+          "name": "Rework Intake",
+          "type": "Alternate",
+          "transition": "manual",
+          "processName": "Intake Correction",
+          "sortOrder": 6,
+          "steps": []
+        },
+        {
+          "code": "ALT2",
+          "name": "Exception Closure",
+          "type": "Alternate",
+          "transition": "manual",
+          "processName": "Exception Handling",
+          "sortOrder": 7,
+          "steps": []
+        },
+        {
+          "code": "ALT3",
+          "name": "Approval Rejection",
+          "type": "Alternate",
+          "transition": "resolution",
+          "processName": "",
+          "sortOrder": 8,
+          "steps": []
+        }
+      ]
+    },
+    {
+      "code": "LendingReview",
+      "name": "Lending Review",
+      "pegaClass": "MyOrg-TheLending-Work-LendingReview",
+      "prefix": "L",
+      "icon": "clipboard-solid",
+      "urgency": "10",
+      "sortOrder": 3,
+      "businessFields": [
+        {
+          "name": "LendingReviewName",
+          "type": "Text",
+          "label": "Lending review name",
+          "pageClass": null
+        },
+        {
+          "name": "LendingReviewReason",
+          "type": "Text",
+          "label": "Lending review reason",
+          "pageClass": null
+        },
+        {
+          "name": "ReviewAssignedManager",
+          "type": "Text",
+          "label": "Review assigned manager",
+          "pageClass": null
+        },
+        {
+          "name": "RequiredControls",
+          "type": "Text",
+          "label": "Required controls",
+          "pageClass": null
+        },
+        {
+          "name": "RegulatoryComplianceCheck",
+          "type": "True-False",
+          "label": "Regulatory compliance check",
+          "pageClass": null
+        },
+        {
+          "name": "RecommendedActions",
+          "type": "Text",
+          "label": "Recommended actions",
+          "pageClass": null
+        },
+        {
+          "name": "ReviewRequestedDate",
+          "type": "Date",
+          "label": "Review requested date",
+          "pageClass": null
+        },
+        {
+          "name": "EscalationStatus",
+          "type": "Text",
+          "label": "Escalation status",
+          "pageClass": null
+        },
+        {
+          "name": "QualityReviewOutcome",
+          "type": "Text",
+          "label": "Quality review outcome",
+          "pageClass": null
+        },
+        {
+          "name": "SupportingDocumentation",
+          "type": "Page",
+          "label": "Supporting documentation",
+          "pageClass": "Embed-Attach-File"
+        }
+      ],
+      "stages": [
+        {
+          "code": "PRIM0",
+          "name": "Intake Capture",
+          "type": "Primary",
+          "transition": "create",
+          "processName": "Transaction Entry",
+          "sortOrder": 1,
+          "steps": [
+            {
+              "name": "Enter Transaction Info",
+              "kind": "Assignment",
+              "impl": "WorkList",
+              "view": "EnterTransactionInfo",
+              "sortOrder": 1,
+              "routingType": "WorkList",
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {
+                "ViewPolicy": "USE_CASE_POLICY",
+                "ConfirmationNote": "pyStepRoutedConfirmation"
+              }
+            },
+            {
+              "name": "Assign Reviewer",
+              "kind": "Utility",
+              "impl": "pzRunDataTransform",
+              "view": null,
+              "sortOrder": 2,
+              "routingType": null,
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {}
+            },
+            {
+              "name": "Notify Assignment",
+              "kind": "Utility",
+              "impl": "pzNotifyWrapper",
+              "view": null,
+              "sortOrder": 3,
+              "routingType": null,
+              "notificationName": "NotifyAssignment_0",
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {
+                "NotificationName": "NotifyAssignment_0"
+              }
+            }
+          ]
+        },
+        {
+          "code": "PRIM1",
+          "name": "Document Compilation",
+          "type": "Primary",
+          "transition": "automatic",
+          "processName": "Gather Documentation",
+          "sortOrder": 2,
+          "steps": [
+            {
+              "name": "Request Documents",
+              "kind": "Assignment",
+              "impl": "WorkBasket",
+              "view": "RequestDocuments",
+              "sortOrder": 1,
+              "routingType": "WorkBasket",
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {
+                "ConfirmationNote": "pyStepRoutedConfirmation",
+                "ViewPolicy": "USE_CASE_POLICY"
+              }
+            },
+            {
+              "name": "Upload Documents",
+              "kind": "Assignment",
+              "impl": "WorkBasket",
+              "view": null,
+              "sortOrder": 2,
+              "routingType": "WorkBasket",
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {
+                "ConfirmationNote": "pyStepRoutedConfirmation",
+                "ViewPolicy": "USE_CASE_POLICY"
+              }
+            },
+            {
+              "name": "Document Completeness Check",
+              "kind": "Utility",
+              "impl": "pzRunDataTransform",
+              "view": null,
+              "sortOrder": 3,
+              "routingType": null,
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {}
+            },
+            {
+              "name": "Notify of Gaps",
+              "kind": "Utility",
+              "impl": "pzNotifyWrapper",
+              "view": null,
+              "sortOrder": 4,
+              "routingType": null,
+              "notificationName": "NotifyOfGaps_0",
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {
+                "NotificationName": "NotifyOfGaps_0"
+              }
+            }
+          ]
+        },
+        {
+          "code": "PRIM2",
+          "name": "Review Assessment",
+          "type": "Primary",
+          "transition": "automatic",
+          "processName": "Conduct Evaluation",
+          "sortOrder": 3,
+          "steps": [
+            {
+              "name": "Review Documentation",
+              "kind": "Assignment",
+              "impl": "WorkBasket",
+              "view": "ReviewDocumentation",
+              "sortOrder": 1,
+              "routingType": "WorkBasket",
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {
+                "ViewPolicy": "USE_CASE_POLICY",
+                "ConfirmationNote": "pyStepRoutedConfirmation"
+              }
+            },
+            {
+              "name": "Check Policy Compliance",
+              "kind": "Utility",
+              "impl": "pzRunDataTransform",
+              "view": null,
+              "sortOrder": 2,
+              "routingType": null,
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {}
+            },
+            {
+              "name": "Escalate Complex Issues",
+              "kind": "Decision",
+              "impl": "EscalateComplexIssues",
+              "view": null,
+              "sortOrder": 3,
+              "routingType": null,
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": "EscalateComplexIssues",
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {}
+            },
+            {
+              "name": "Change to next stage",
+              "kind": "Utility",
+              "impl": "pxChangeToNextStage",
+              "view": null,
+              "sortOrder": 4,
+              "routingType": null,
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {}
+            }
+          ]
+        },
+        {
+          "code": "PRIM3",
+          "name": "Final Decision",
+          "type": "Primary",
+          "transition": "automatic",
+          "processName": "Decision Making",
+          "sortOrder": 4,
+          "steps": [
+            {
+              "name": "Approve Transaction",
+              "kind": "Sub-Process",
+              "impl": "pxApproval",
+              "view": null,
+              "sortOrder": 1,
+              "routingType": null,
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": "Manager",
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {
+                "OperatorID": "",
+                "RejectionStatus": "Approval Rejection",
+                "RejectionMetaData": "Resolved-Rejected",
+                "StepApprovalType": "Simple",
+                "pyApprovalSectionName": "ApproveTransaction",
+                "ApprovalAction": "Continue",
+                "RejectionAction": "UpdateStatus",
+                "ApproverType": "Manager"
+              }
+            },
+            {
+              "name": "Document Outcome",
+              "kind": "Utility",
+              "impl": "pzRunDataTransform",
+              "view": null,
+              "sortOrder": 2,
+              "routingType": null,
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {}
+            },
+            {
+              "name": "Notify Stakeholders",
+              "kind": "Utility",
+              "impl": "pzNotifyWrapper",
+              "view": null,
+              "sortOrder": 3,
+              "routingType": null,
+              "notificationName": "NotifyStakeholders_0",
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {
+                "NotificationName": "NotifyStakeholders_0"
+              }
+            }
+          ]
+        },
+        {
+          "code": "PRIM4",
+          "name": "Case Closure",
+          "type": "Primary",
+          "transition": "resolution",
+          "processName": "Closure Reporting",
+          "sortOrder": 5,
+          "steps": [
+            {
+              "name": "Compile QA Report",
+              "kind": "Utility",
+              "impl": "pxGenerateAndAttachDocument",
+              "view": null,
+              "sortOrder": 1,
+              "routingType": null,
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {}
+            },
+            {
+              "name": "Archive Case Files",
+              "kind": "Utility",
+              "impl": "pzRunDataTransform",
+              "view": null,
+              "sortOrder": 2,
+              "routingType": null,
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {}
+            },
+            {
+              "name": "Confirm Case Closure",
+              "kind": "Utility",
+              "impl": "pzNotifyWrapper",
+              "view": null,
+              "sortOrder": 3,
+              "routingType": null,
+              "notificationName": "ConfirmCaseClosure_0",
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {
+                "NotificationName": "ConfirmCaseClosure_0"
+              }
+            }
+          ]
+        },
+        {
+          "code": "ALT1",
+          "name": "Rework Requested",
+          "type": "Alternate",
+          "transition": "manual",
+          "processName": "Info Update",
+          "sortOrder": 6,
+          "steps": [
+            {
+              "name": "Request Corrections",
+              "kind": "Utility",
+              "impl": "pzNotifyWrapper",
+              "view": null,
+              "sortOrder": 1,
+              "routingType": null,
+              "notificationName": "RequestCorrections_0",
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {
+                "NotificationName": "RequestCorrections_0"
+              }
+            },
+            {
+              "name": "Receive Updates",
+              "kind": "Assignment",
+              "impl": "WorkList",
+              "view": null,
+              "sortOrder": 2,
+              "routingType": "WorkList",
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {
+                "ViewPolicy": "USE_CASE_POLICY",
+                "ConfirmationNote": "pyStepRoutedConfirmation"
+              }
+            },
+            {
+              "name": "Re-validate Submission",
+              "kind": "Utility",
+              "impl": "pzRunDataTransform",
+              "view": null,
+              "sortOrder": 3,
+              "routingType": null,
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {}
+            }
+          ]
+        },
+        {
+          "code": "ALT2",
+          "name": "Escalation Path",
+          "type": "Alternate",
+          "transition": "manual",
+          "processName": "Risk Escalation",
+          "sortOrder": 7,
+          "steps": [
+            {
+              "name": "Escalate to Risk",
+              "kind": "Assignment",
+              "impl": "WorkBasket",
+              "view": "EscalateToRisk",
+              "sortOrder": 1,
+              "routingType": "WorkBasket",
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {
+                "ViewPolicy": "USE_CASE_POLICY",
+                "ConfirmationNote": "pyStepRoutedConfirmation"
+              }
+            },
+            {
+              "name": "Management Review",
+              "kind": "Sub-Process",
+              "impl": "pxApproval",
+              "view": null,
+              "sortOrder": 2,
+              "routingType": null,
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": "Manager",
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {
+                "OperatorID": "",
+                "RejectionStatus": "Approval Rejection",
+                "StepApprovalType": "Simple",
+                "RejectionMetaData": "Resolved-Rejected",
+                "pyApprovalSectionName": "ManagementReview",
+                "ApprovalAction": "Continue",
+                "RejectionAction": "UpdateStatus",
+                "ApproverType": "Manager"
+              }
+            },
+            {
+              "name": "Escalation Outcome",
+              "kind": "Utility",
+              "impl": "pzNotifyWrapper",
+              "view": null,
+              "sortOrder": 3,
+              "routingType": null,
+              "notificationName": "EscalationOutcome_0",
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {
+                "NotificationName": "EscalationOutcome_0"
+              }
+            }
+          ]
+        },
+        {
+          "code": "ALT3",
+          "name": "Approval Rejection",
+          "type": "Alternate",
+          "transition": "resolution",
+          "processName": "",
+          "sortOrder": 8,
+          "steps": []
+        }
+      ]
+    },
+    {
+      "code": "QualityRecommendation",
+      "name": "Quality Recommendation",
+      "pegaClass": "MyOrg-TheLending-Work-QualityRecommendation",
+      "prefix": "Q",
+      "icon": "bulb-solid",
+      "urgency": "10",
+      "sortOrder": 4,
+      "businessFields": [
+        {
+          "name": "ResolutionSummary",
+          "type": "Page",
+          "label": "Resolution summary",
+          "pageClass": "MyOrg-TheLending-Data-ResolutionSummary"
+        },
+        {
+          "name": "QualityReview",
+          "type": "Page",
+          "label": "Quality review",
+          "pageClass": "MyOrg-TheLending-Data-QualityReview"
+        },
+        {
+          "name": "OversightCase",
+          "type": "Page",
+          "label": "Oversight case",
+          "pageClass": "MyOrg-TheLending-Data-OversightCase"
+        },
+        {
+          "name": "RecommendationDescription",
+          "type": "Text",
+          "label": "Recommendation description",
+          "pageClass": null
+        },
+        {
+          "name": "RecommendationType",
+          "type": "Text",
+          "label": "Recommendation type",
+          "pageClass": null
+        },
+        {
+          "name": "EscalationRequired",
+          "type": "True-False",
+          "label": "Escalation required",
+          "pageClass": null
+        },
+        {
+          "name": "ResolutionDetails",
+          "type": "Text",
+          "label": "Resolution details",
+          "pageClass": null
+        },
+        {
+          "name": "AssociatedLendingTransaction",
+          "type": "Page",
+          "label": "Associated lending transaction",
+          "pageClass": "MyOrg-TheLending-Data-LendingTransaction"
+        },
+        {
+          "name": "LinkedRiskAssessment",
+          "type": "Page",
+          "label": "Linked risk assessment",
+          "pageClass": "MyOrg-TheLending-Data-RiskAssessment"
+        },
+        {
+          "name": "QualityRecommendationName",
+          "type": "Text",
+          "label": "Quality recommendation name",
+          "pageClass": null
+        },
+        {
+          "name": "RecommendationStatus",
+          "type": "Text",
+          "label": "Recommendation status",
+          "pageClass": null
+        },
+        {
+          "name": "RecommendationPriority",
+          "type": "Text",
+          "label": "Recommendation priority",
+          "pageClass": null
+        },
+        {
+          "name": "ValidationRequired",
+          "type": "True-False",
+          "label": "Validation required",
+          "pageClass": null
+        },
+        {
+          "name": "ResponsibleOversightTeam",
+          "type": "Text",
+          "label": "Responsible oversight team",
+          "pageClass": null
+        },
+        {
+          "name": "TargetResolutionDate",
+          "type": "Date",
+          "label": "Target resolution date",
+          "pageClass": null
+        },
+        {
+          "name": "ValidationOutcome",
+          "type": "Text",
+          "label": "Validation outcome",
+          "pageClass": null
+        },
+        {
+          "name": "DocumentedComplianceFinding",
+          "type": "Page",
+          "label": "Documented compliance finding",
+          "pageClass": "MyOrg-TheLending-Data-ComplianceFinding"
+        },
+        {
+          "name": "AuditTrail",
+          "type": "Text",
+          "label": "Audit trail",
+          "pageClass": null
+        },
+        {
+          "name": "StakeholderContactEmail",
+          "type": "Text",
+          "label": "Stakeholder contact email",
+          "pageClass": null
+        },
+        {
+          "name": "RecommendedAction",
+          "type": "Text",
+          "label": "Recommended action",
+          "pageClass": null
+        },
+        {
+          "name": "AssessmentRationale",
+          "type": "Text",
+          "label": "Assessment rationale",
+          "pageClass": null
+        },
+        {
+          "name": "AssignedOwner",
+          "type": "Text",
+          "label": "Assigned owner",
+          "pageClass": null
+        },
+        {
+          "name": "ActualResolutionDate",
+          "type": "Date",
+          "label": "Actual resolution date",
+          "pageClass": null
+        },
+        {
+          "name": "BusinessOutcomeTracked",
+          "type": "Text",
+          "label": "Business outcome tracked",
+          "pageClass": null
+        }
+      ],
+      "stages": [
+        {
+          "code": "PRIM0",
+          "name": "Intake Review",
+          "type": "Primary",
+          "transition": "create",
+          "processName": "Data Collection",
+          "sortOrder": 1,
+          "steps": [
+            {
+              "name": "Gather Review Details",
+              "kind": "Assignment",
+              "impl": "WorkList",
+              "view": "GatherReviewDetails",
+              "sortOrder": 1,
+              "routingType": "WorkList",
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {
+                "ViewPolicy": "USE_CASE_POLICY",
+                "ConfirmationNote": "pyStepRoutedConfirmation"
+              }
+            },
+            {
+              "name": "Identify Risk Points",
+              "kind": "Utility",
+              "impl": "pzRunDataTransform",
+              "view": null,
+              "sortOrder": 2,
+              "routingType": null,
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {}
+            },
+            {
+              "name": "Acknowledge Submission",
+              "kind": "Utility",
+              "impl": "pzNotifyWrapper",
+              "view": null,
+              "sortOrder": 3,
+              "routingType": null,
+              "notificationName": "AcknowledgeSubmission_0",
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {
+                "NotificationName": "AcknowledgeSubmission_0"
+              }
+            }
+          ]
+        },
+        {
+          "code": "PRIM1",
+          "name": "Assessment Analysis",
+          "type": "Primary",
+          "transition": "automatic",
+          "processName": "Risk Analysis",
+          "sortOrder": 2,
+          "steps": [
+            {
+              "name": "Evaluate Risk Factors",
+              "kind": "Assignment",
+              "impl": "WorkBasket",
+              "view": "EvaluateRiskFactors",
+              "sortOrder": 1,
+              "routingType": "WorkBasket",
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {
+                "ConfirmationNote": "pyStepRoutedConfirmation",
+                "ViewPolicy": "USE_CASE_POLICY"
+              }
+            },
+            {
+              "name": "Compliance Check",
+              "kind": "Utility",
+              "impl": "pzRunDataTransform",
+              "view": null,
+              "sortOrder": 2,
+              "routingType": null,
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {}
+            }
+          ]
+        },
+        {
+          "code": "PRIM2",
+          "name": "Recommendation Formulation",
+          "type": "Primary",
+          "transition": "automatic",
+          "processName": "",
+          "sortOrder": 3,
+          "steps": []
+        },
+        {
+          "code": "PRIM3",
+          "name": "Resolution Tracking",
+          "type": "Primary",
+          "transition": "automatic",
+          "processName": "",
+          "sortOrder": 4,
+          "steps": []
+        },
+        {
+          "code": "PRIM4",
+          "name": "Closure Validation",
+          "type": "Primary",
+          "transition": "resolution",
+          "processName": "",
+          "sortOrder": 5,
+          "steps": []
+        },
+        {
+          "code": "ALT1",
+          "name": "Exception Handling",
+          "type": "Alternate",
+          "transition": "manual",
+          "processName": "",
+          "sortOrder": 6,
+          "steps": []
+        },
+        {
+          "code": "ALT2",
+          "name": "Rework",
+          "type": "Alternate",
+          "transition": "manual",
+          "processName": "",
+          "sortOrder": 7,
+          "steps": []
+        },
+        {
+          "code": "ALT3",
+          "name": "Approval Rejection",
+          "type": "Alternate",
+          "transition": "resolution",
+          "processName": "",
+          "sortOrder": 8,
+          "steps": []
+        }
+      ]
+    },
+    {
+      "code": "RiskAssessment",
+      "name": "Risk Assessment",
+      "pegaClass": "MyOrg-TheLending-Work-RiskAssessment",
+      "prefix": "R",
+      "icon": "shield-solid",
+      "urgency": "10",
+      "sortOrder": 5,
+      "businessFields": [
+        {
+          "name": "RiskRating",
+          "type": "Text",
+          "label": "Risk rating",
+          "pageClass": null
+        },
+        {
+          "name": "EscalationLog",
+          "type": "Page List",
+          "label": "Escalation log",
+          "pageClass": "MyOrg-TheLending-Data-EscalationLog"
+        },
+        {
+          "name": "Recommendation",
+          "type": "Page List",
+          "label": "Recommendation",
+          "pageClass": "MyOrg-TheLending-Data-Recommendation"
+        },
+        {
+          "name": "RiskType",
+          "type": "Text",
+          "label": "Risk type",
+          "pageClass": null
+        },
+        {
+          "name": "Outcome",
+          "type": "Text",
+          "label": "Outcome",
+          "pageClass": null
+        },
+        {
+          "name": "AssessorName",
+          "type": "Text",
+          "label": "Assessor name",
+          "pageClass": null
+        },
+        {
+          "name": "AssessmentMethod",
+          "type": "Text",
+          "label": "Assessment method",
+          "pageClass": null
+        },
+        {
+          "name": "AssessmentDatetime",
+          "type": "Date Time",
+          "label": "Assessment date/time",
+          "pageClass": null
+        },
+        {
+          "name": "ControlsApplied",
+          "type": "Text",
+          "label": "Controls applied",
+          "pageClass": null
+        },
+        {
+          "name": "MitigationSteps",
+          "type": "Text",
+          "label": "Mitigation steps",
+          "pageClass": null
+        }
+      ],
+      "stages": [
+        {
+          "code": "PRIM0",
+          "name": "Intake Review",
+          "type": "Primary",
+          "transition": "create",
+          "processName": "Transaction Intake",
+          "sortOrder": 1,
+          "steps": [
+            {
+              "name": "Collect Transaction Data",
+              "kind": "Assignment",
+              "impl": "WorkList",
+              "view": "CollectTransactionData",
+              "sortOrder": 1,
+              "routingType": "WorkList",
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {
+                "ViewPolicy": "USE_CASE_POLICY",
+                "ConfirmationNote": "pyStepRoutedConfirmation"
+              }
+            },
+            {
+              "name": "Assign Analyst",
+              "kind": "Utility",
+              "impl": "pzRunDataTransform",
+              "view": null,
+              "sortOrder": 2,
+              "routingType": null,
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {}
+            },
+            {
+              "name": "Notify Stakeholders",
+              "kind": "Utility",
+              "impl": "pzNotifyWrapper",
+              "view": null,
+              "sortOrder": 3,
+              "routingType": null,
+              "notificationName": "NotifyStakeholders_0",
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {
+                "NotificationName": "NotifyStakeholders_0"
+              }
+            }
+          ]
+        },
+        {
+          "code": "PRIM1",
+          "name": "Preliminary Screening",
+          "type": "Primary",
+          "transition": "automatic",
+          "processName": "Risk Screening",
+          "sortOrder": 2,
+          "steps": [
+            {
+              "name": "Check Compliance Flags",
+              "kind": "Utility",
+              "impl": "pzRunDataTransform",
+              "view": null,
+              "sortOrder": 1,
+              "routingType": null,
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {}
+            },
+            {
+              "name": "Identify Risk Signals",
+              "kind": "Decision",
+              "impl": "IdentifyRiskSignals",
+              "view": null,
+              "sortOrder": 2,
+              "routingType": null,
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": "IdentifyRiskSignals",
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {}
+            },
+            {
+              "name": "Change to next stage",
+              "kind": "Utility",
+              "impl": "pxChangeToNextStage",
+              "view": null,
+              "sortOrder": 3,
+              "routingType": null,
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {}
+            }
+          ]
+        },
+        {
+          "code": "PRIM2",
+          "name": "Detailed Assessment",
+          "type": "Primary",
+          "transition": "automatic",
+          "processName": "Risk Evaluation",
+          "sortOrder": 3,
+          "steps": [
+            {
+              "name": "Gather External Data",
+              "kind": "Utility",
+              "impl": "pzRunDataTransform",
+              "view": null,
+              "sortOrder": 1,
+              "routingType": null,
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {}
+            },
+            {
+              "name": "Analyze Risk Profile",
+              "kind": "Assignment",
+              "impl": "WorkBasket",
+              "view": "AnalyzeRiskProfile",
+              "sortOrder": 2,
+              "routingType": "WorkBasket",
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {
+                "ViewPolicy": "USE_CASE_POLICY",
+                "ConfirmationNote": "pyStepRoutedConfirmation"
+              }
+            },
+            {
+              "name": "Document Analysis",
+              "kind": "Utility",
+              "impl": "pxGenerateAndAttachDocument",
+              "view": null,
+              "sortOrder": 3,
+              "routingType": null,
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {}
+            }
+          ]
+        },
+        {
+          "code": "PRIM3",
+          "name": "Recommendation",
+          "type": "Primary",
+          "transition": "automatic",
+          "processName": "Mitigation Proposal",
+          "sortOrder": 4,
+          "steps": [
+            {
+              "name": "Review Recommendations",
+              "kind": "Sub-Process",
+              "impl": "pxApproval",
+              "view": "ReviewRecommendations",
+              "sortOrder": 1,
+              "routingType": null,
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": "WorkBasket",
+              "workbasket": "TheLending:RiskManager",
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {
+                "OperatorID": "TheLending:RiskManager",
+                "RejectionStatus": "Approval Rejection",
+                "RejectionMetaData": "Resolved-Rejected",
+                "StepApprovalType": "Simple",
+                "pyApprovalSectionName": "ReviewRecommendations",
+                "ApprovalAction": "Continue",
+                "RejectionAction": "UpdateStatus",
+                "ApproverType": "WorkBasket"
+              }
+            },
+            {
+              "name": "Send Recommendation",
+              "kind": "Utility",
+              "impl": "pzRunDataTransform",
+              "view": null,
+              "sortOrder": 2,
+              "routingType": null,
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {}
+            }
+          ]
+        },
+        {
+          "code": "PRIM4",
+          "name": "Resolution Tracking",
+          "type": "Primary",
+          "transition": "resolution",
+          "processName": "Outcome Management",
+          "sortOrder": 5,
+          "steps": [
+            {
+              "name": "Generate Final Report",
+              "kind": "Utility",
+              "impl": "pxGenerateAndAttachDocument",
+              "view": null,
+              "sortOrder": 1,
+              "routingType": null,
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {}
+            },
+            {
+              "name": "Outcome Decision",
+              "kind": "Decision",
+              "impl": "OutcomeDecision",
+              "view": null,
+              "sortOrder": 2,
+              "routingType": null,
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": "OutcomeDecision",
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {}
+            },
+            {
+              "name": "Notify Resolution",
+              "kind": "Utility",
+              "impl": "pzNotifyWrapper",
+              "view": null,
+              "sortOrder": 3,
+              "routingType": null,
+              "notificationName": "NotifyResolution_0",
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {
+                "NotificationName": "NotifyResolution_0"
+              }
+            },
+            {
+              "name": "Change to previous stage",
+              "kind": "Utility",
+              "impl": "pxChangeToPreviousStage",
+              "view": null,
+              "sortOrder": 4,
+              "routingType": null,
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": "OutcomeDecision",
+              "guardResults": "Escalated,Under Review,Pending Review",
+              "params": {}
+            }
+          ]
+        },
+        {
+          "code": "ALT1",
+          "name": "Escalation",
+          "type": "Alternate",
+          "transition": "manual",
+          "processName": "Supervisory Escala...",
+          "sortOrder": 6,
+          "steps": []
+        },
+        {
+          "code": "ALT2",
+          "name": "Rework",
+          "type": "Alternate",
+          "transition": "manual",
+          "processName": "Intake Correction",
+          "sortOrder": 7,
+          "steps": [
+            {
+              "name": "Detect Intake Issues",
+              "kind": "Utility",
+              "impl": "pzRunDataTransform",
+              "view": null,
+              "sortOrder": 1,
+              "routingType": null,
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {}
+            },
+            {
+              "name": "Request Corrections",
+              "kind": "Utility",
+              "impl": "pzNotifyWrapper",
+              "view": null,
+              "sortOrder": 2,
+              "routingType": null,
+              "notificationName": "RequestCorrections_0",
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {
+                "NotificationName": "RequestCorrections_0"
+              }
+            },
+            {
+              "name": "Resubmit Data",
+              "kind": "Assignment",
+              "impl": "WorkBasket",
+              "view": "ResubmitData",
+              "sortOrder": 3,
+              "routingType": "WorkBasket",
+              "notificationName": null,
+              "targetStageCode": null,
+              "approverType": null,
+              "workbasket": null,
+              "decisionName": null,
+              "guardDecision": null,
+              "guardResults": null,
+              "params": {
+                "ViewPolicy": "USE_CASE_POLICY",
+                "ConfirmationNote": "pyStepRoutedConfirmation"
+              }
+            }
+          ]
+        },
+        {
+          "code": "ALT3",
+          "name": "Approval Rejection",
+          "type": "Alternate",
+          "transition": "resolution",
+          "processName": "",
+          "sortOrder": 8,
+          "steps": []
+        }
+      ]
+    }
+  ],
+  "choiceSets": [
+    {
+      "name": "ReviewType",
+      "label": "Review type",
+      "owningClass": "MyOrg-TheLending-Data-QualityReview",
+      "values": [
+        "Routine",
+        "Targeted",
+        "Escalation",
+        "Follow-up",
+        "Compliance"
+      ]
+    },
+    {
+      "name": "RiskRating",
+      "label": "Risk rating",
+      "owningClass": "MyOrg-TheLending-Work-RiskAssessment",
+      "values": [
+        "Low",
+        "Medium",
+        "High",
+        "Severe"
+      ]
+    },
+    {
+      "name": "EscalationStatus",
+      "label": "Escalation status",
+      "owningClass": "MyOrg-TheLending-Work-LendingReview",
+      "values": [
+        "None",
+        "Pending",
+        "Escalated",
+        "Resolved"
+      ]
+    },
+    {
+      "name": "QualityReviewOutcome",
+      "label": "Quality review outcome",
+      "owningClass": "MyOrg-TheLending-Work-LendingReview",
+      "values": [
+        "Pass",
+        "Fail",
+        "Recommendations",
+        "Escalated"
+      ]
+    },
+    {
+      "name": "FindingType",
+      "label": "Finding type",
+      "owningClass": "MyOrg-TheLending-Data-ComplianceFinding",
+      "values": [
+        "Regulatory violation",
+        "Policy breach",
+        "Process deficiency",
+        "Customer complaint",
+        "Documentation error"
+      ]
+    },
+    {
+      "name": "RiskLevel",
+      "label": "Risk level",
+      "owningClass": "MyOrg-TheLending-Data-ComplianceFinding",
+      "values": [
+        "High",
+        "Medium",
+        "Low"
+      ]
+    },
+    {
+      "name": "RecommendationType",
+      "label": "Recommendation type",
+      "owningClass": "MyOrg-TheLending-Work-QualityRecommendation",
+      "values": [
+        "Process improvement",
+        "Compliance correction",
+        "Risk mitigation",
+        "Remediation",
+        "Escalation",
+        "Prescriptive guidance"
+      ]
+    },
+    {
+      "name": "RiskType",
+      "label": "Risk type",
+      "owningClass": "MyOrg-TheLending-Work-RiskAssessment",
+      "values": [
+        "Credit",
+        "Operational",
+        "Compliance",
+        "Reputational"
+      ]
+    },
+    {
+      "name": "Outcome",
+      "label": "Outcome",
+      "owningClass": "MyOrg-TheLending-Work-RiskAssessment",
+      "values": [
+        "Approved",
+        "Declined",
+        "Further review",
+        "Escalated"
+      ]
+    },
+    {
+      "name": "AssessmentMethod",
+      "label": "Assessment method",
+      "owningClass": "MyOrg-TheLending-Work-RiskAssessment",
+      "values": [
+        "Manual review",
+        "Automated screening",
+        "Hybrid"
+      ]
+    },
+    {
+      "name": "ComplianceReviewType",
+      "label": "Compliance review type",
+      "owningClass": "MyOrg-TheLending-Work-ComplianceMonitoring",
+      "values": [
+        "Periodic review",
+        "Triggered audit",
+        "Random sampling"
+      ]
+    },
+    {
+      "name": "AssessmentOutcome",
+      "label": "Assessment outcome",
+      "owningClass": "MyOrg-TheLending-Work-ComplianceMonitoring",
+      "values": [
+        "Compliant",
+        "Non-compliant",
+        "Further review needed"
+      ]
+    },
+    {
+      "name": "ReviewMethodology",
+      "label": "Review methodology",
+      "owningClass": "MyOrg-TheLending-Work-ComplianceMonitoring",
+      "values": [
+        "Checklist",
+        "Sampling",
+        "Interview"
+      ]
+    },
+    {
+      "name": "ResolutionStatus",
+      "label": "Resolution status",
+      "owningClass": "MyOrg-TheLending-Work-ComplianceMonitoring",
+      "values": [
+        "Open",
+        "In progress",
+        "Resolved",
+        "Closed"
+      ]
+    },
+    {
+      "name": "IssueSeverity",
+      "label": "Issue severity",
+      "owningClass": "MyOrg-TheLending-Work-ComplianceMonitoring",
+      "values": [
+        "Low",
+        "Medium",
+        "High"
+      ]
+    },
+    {
+      "name": "RegulatoryRequirement",
+      "label": "Regulatory requirement",
+      "owningClass": "MyOrg-TheLending-Work-ComplianceMonitoring",
+      "values": [
+        "AML",
+        "KYC",
+        "OSFI",
+        "Privacy"
+      ]
+    },
+    {
+      "name": "ReviewStatus",
+      "label": "Review status",
+      "owningClass": "MyOrg-TheLending-Data-QualityReview",
+      "values": [
+        "Draft",
+        "In review",
+        "Completed",
+        "Escalated"
+      ]
+    },
+    {
+      "name": "RiskStatus",
+      "label": "Risk status",
+      "owningClass": "MyOrg-TheLending-Data-RiskAssessment",
+      "values": [
+        "Open",
+        "In review",
+        "Closed",
+        "Escalated"
+      ]
+    },
+    {
+      "name": "RecommendationOutcome",
+      "label": "Recommendation outcome",
+      "owningClass": "MyOrg-TheLending-Work-EscalationManagement",
+      "values": [
+        "Approve",
+        "Reject",
+        "Further review",
+        "Escalate to senior management",
+        "Close case"
+      ]
+    },
+    {
+      "name": "AssignedTeam",
+      "label": "Assigned team",
+      "owningClass": "MyOrg-TheLending-Work-EscalationManagement",
+      "values": [
+        "Risk management",
+        "Compliance",
+        "Business controls",
+        "Quality assurance"
+      ]
+    },
+    {
+      "name": "EscalationCategory",
+      "label": "Escalation category",
+      "owningClass": "MyOrg-TheLending-Work-EscalationManagement",
+      "values": [
+        "Regulatory",
+        "Operational",
+        "Compliance",
+        "Customer complaint",
+        "Fraud risk",
+        "Other"
+      ]
+    },
+    {
+      "name": "EscalationUrgencyLevel",
+      "label": "Escalation urgency level",
+      "owningClass": "MyOrg-TheLending-Work-EscalationManagement",
+      "values": [
+        "High",
+        "Medium",
+        "Low"
+      ]
+    },
+    {
+      "name": "RecommendationStatus",
+      "label": "Recommendation status",
+      "owningClass": "MyOrg-TheLending-Work-QualityRecommendation",
+      "values": [
+        "Draft",
+        "Under review",
+        "Approved",
+        "Implemented",
+        "Escalated",
+        "Resolved",
+        "Closed"
+      ]
+    },
+    {
+      "name": "RecommendationPriority",
+      "label": "Recommendation priority",
+      "owningClass": "MyOrg-TheLending-Work-QualityRecommendation",
+      "values": [
+        "Low",
+        "Medium",
+        "High",
+        "Critical"
+      ]
+    },
+    {
+      "name": "ResponsibleOversightTeam",
+      "label": "Responsible oversight team",
+      "owningClass": "MyOrg-TheLending-Work-QualityRecommendation",
+      "values": [
+        "Business Controls",
+        "Risk Management",
+        "Compliance",
+        "Operational Oversight"
+      ]
+    },
+    {
+      "name": "ValidationOutcome",
+      "label": "Validation outcome",
+      "owningClass": "MyOrg-TheLending-Work-QualityRecommendation",
+      "values": [
+        "Validated",
+        "Partially validated",
+        "Rejected",
+        "Not validated"
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "name": "DecisionOutcomes",
+      "caseTypeCode": "ComplianceMonitoring",
+      "description": "Decide on corrective actions or escalations.",
+      "conditions": [
+        "Assessment outcome",
+        "Issue severity",
+        "Resolution status"
+      ],
+      "otherwise": "No Action",
+      "rows": [
+        {
+          "operator": "if",
+          "when": [
+            "Non-compliant",
+            "High",
+            "Open"
+          ],
+          "result": "Escalate Immediately",
+          "sortOrder": 1
+        },
+        {
+          "operator": "else if",
+          "when": [
+            "Non-compliant",
+            "Medium",
+            "In progress"
+          ],
+          "result": "Corrective Action",
+          "sortOrder": 2
+        },
+        {
+          "operator": "else if",
+          "when": [
+            "Compliant",
+            "Low",
+            "Resolved"
+          ],
+          "result": "Close Case",
+          "sortOrder": 3
+        }
+      ]
+    },
+    {
+      "name": "TriggerEscalation",
+      "caseTypeCode": "ComplianceMonitoring",
+      "description": "Identify high-risk compliance issues requiring senior review.",
+      "conditions": [
+        "Issue severity",
+        "Assessment outcome",
+        "Regulatory requirement"
+      ],
+      "otherwise": "No Escalation",
+      "rows": [
+        {
+          "operator": "if",
+          "when": [
+            "High",
+            "Non-compliant",
+            "AML"
+          ],
+          "result": "Immediate Escalation",
+          "sortOrder": 1
+        },
+        {
+          "operator": "else if",
+          "when": [
+            "High",
+            "Further review needed",
+            "OSFI"
+          ],
+          "result": "Senior Review",
+          "sortOrder": 2
+        },
+        {
+          "operator": "else if",
+          "when": [
+            "Medium",
+            "Non-compliant",
+            "KYC"
+          ],
+          "result": "Standard Escalation",
+          "sortOrder": 3
+        }
+      ]
+    },
+    {
+      "name": "ValidateResolution",
+      "caseTypeCode": "ComplianceMonitoring",
+      "description": "Check completeness of remediation and closure steps.",
+      "conditions": [
+        "Resolution status",
+        "Corrective action plan",
+        "Closure date"
+      ],
+      "otherwise": "Incomplete",
+      "rows": [
+        {
+          "operator": "if",
+          "when": [
+            "Closed"
+          ],
+          "result": "Valid",
+          "sortOrder": 1
+        },
+        {
+          "operator": "else if",
+          "when": [
+            "Resolved"
+          ],
+          "result": "Pending Closure",
+          "sortOrder": 2
+        },
+        {
+          "operator": "else if",
+          "when": [
+            "Open"
+          ],
+          "result": "Action Required",
+          "sortOrder": 3
+        }
+      ]
+    },
+    {
+      "name": "AssessRoutingCriteria",
+      "caseTypeCode": "EscalationManagement",
+      "description": "Determine specialist team (risk or compliance) required for escalation review.",
+      "conditions": [
+        "Escalation category",
+        "Escalation urgency level"
+      ],
+      "otherwise": "Business controls",
+      "rows": [
+        {
+          "operator": "if",
+          "when": [
+            "Fraud risk",
+            "High"
+          ],
+          "result": "Risk management",
+          "sortOrder": 1
+        },
+        {
+          "operator": "else if",
+          "when": [
+            "Compliance",
+            "High"
+          ],
+          "result": "Compliance",
+          "sortOrder": 2
+        },
+        {
+          "operator": "else if",
+          "when": [
+            "Regulatory",
+            "Medium"
+          ],
+          "result": "Compliance",
+          "sortOrder": 3
+        }
+      ]
+    },
+    {
+      "name": "IdentifyGaps",
+      "caseTypeCode": "EscalationManagement",
+      "description": "Detect missing or inaccurate information in escalation submission.",
+      "conditions": [
+        "Escalation reason",
+        "Escalation category",
+        "Escalation initiated by"
+      ],
+      "otherwise": "Complete",
+      "rows": [
+        {
+          "operator": "if",
+          "when": [
+            "Risk assessment required",
+            "Regulatory"
+          ],
+          "result": "Missing Data",
+          "sortOrder": 1
+        }
+      ]
+    },
+    {
+      "name": "EscalateComplexIssues",
+      "caseTypeCode": "LendingReview",
+      "description": "Route complex or high-risk issues to designated specialists or management for deeper assessment.",
+      "conditions": [
+        "Risk rating",
+        "Quality review outcome",
+        "Review type"
+      ],
+      "otherwise": "No Escalation",
+      "rows": [
+        {
+          "operator": "if",
+          "when": [
+            "High",
+            "Fail",
+            "Risk assessment"
+          ],
+          "result": "Escalate Immediately",
+          "sortOrder": 1
+        },
+        {
+          "operator": "else if",
+          "when": [
+            "Critical",
+            "Escalated",
+            "Special oversight"
+          ],
+          "result": "Management Review",
+          "sortOrder": 2
+        },
+        {
+          "operator": "else if",
+          "when": [
+            "Medium",
+            "Recommendations",
+            "Policy compliance"
+          ],
+          "result": "Specialist Review",
+          "sortOrder": 3
+        }
+      ]
+    },
+    {
+      "name": "RemediationRequired",
+      "caseTypeCode": "LendingReview",
+      "description": "Recommend corrective actions for identified issues.",
+      "conditions": [
+        "Quality review outcome",
+        "Risk rating",
+        "Escalation status"
+      ],
+      "otherwise": "No Action",
+      "rows": [
+        {
+          "operator": "if",
+          "when": [
+            "Fail",
+            "High",
+            "Escalated"
+          ],
+          "result": "Immediate Remediation",
+          "sortOrder": 1
+        },
+        {
+          "operator": "else if",
+          "when": [
+            "Recommendations",
+            "Medium",
+            "Pending"
+          ],
+          "result": "Corrective Action",
+          "sortOrder": 2
+        },
+        {
+          "operator": "else if",
+          "when": [
+            "Pass",
+            "Low",
+            "None"
+          ],
+          "result": "Monitor Only",
+          "sortOrder": 3
+        }
+      ]
+    },
+    {
+      "name": "FlagForEscalation",
+      "caseTypeCode": "RiskAssessment",
+      "description": "Identify cases needing escalation to senior risk or compliance officers.",
+      "conditions": [
+        "Risk rating",
+        "Risk type",
+        "Outcome"
+      ],
+      "otherwise": "No Escalation",
+      "rows": [
+        {
+          "operator": "if",
+          "when": [
+            "Severe",
+            "Compliance",
+            "Escalated"
+          ],
+          "result": "Escalate Immediately",
+          "sortOrder": 1
+        },
+        {
+          "operator": "else if",
+          "when": [
+            "High",
+            "Reputational",
+            "Further review"
+          ],
+          "result": "Escalate",
+          "sortOrder": 2
+        },
+        {
+          "operator": "else if",
+          "when": [
+            "Severe",
+            "Credit",
+            "Declined"
+          ],
+          "result": "Escalate",
+          "sortOrder": 3
+        }
+      ]
+    },
+    {
+      "name": "IdentifyRiskSignals",
+      "caseTypeCode": "RiskAssessment",
+      "description": "Flag suspicious indicators such as high-risk criteria, unusual transaction patterns, or third-party alerts.",
+      "conditions": [
+        "Risk type",
+        "Risk rating",
+        "Assessment method"
+      ],
+      "otherwise": "No Alert",
+      "rows": [
+        {
+          "operator": "if",
+          "when": [
+            "Compliance",
+            "High",
+            "Automated screening"
+          ],
+          "result": "Critical Alert",
+          "sortOrder": 1
+        },
+        {
+          "operator": "else if",
+          "when": [
+            "Credit",
+            "Severe",
+            "Manual review"
+          ],
+          "result": "Immediate Escalation",
+          "sortOrder": 2
+        },
+        {
+          "operator": "else if",
+          "when": [
+            "Operational",
+            "Medium",
+            "Hybrid"
+          ],
+          "result": "Monitor",
+          "sortOrder": 3
+        }
+      ]
+    },
+    {
+      "name": "OutcomeDecision",
+      "caseTypeCode": "RiskAssessment",
+      "description": "Record resolution status and update transaction history in compliance system.",
+      "conditions": [
+        "Risk type",
+        "Risk rating",
+        "Outcome"
+      ],
+      "otherwise": "Pending Review",
+      "rows": [
+        {
+          "operator": "if",
+          "when": [
+            "Credit",
+            "Low",
+            "Approved"
+          ],
+          "result": "Resolved",
+          "sortOrder": 1
+        },
+        {
+          "operator": "else if",
+          "when": [
+            "Compliance",
+            "High",
+            "Escalated"
+          ],
+          "result": "Escalated",
+          "sortOrder": 2
+        },
+        {
+          "operator": "else if",
+          "when": [
+            "Operational",
+            "Medium",
+            "Further review"
+          ],
+          "result": "Under Review",
+          "sortOrder": 3
+        }
+      ]
+    }
+  ],
+  "roles": [
+    {
+      "name": "Authors",
+      "accessGroup": "TheLending:Authors",
+      "isManager": false
+    },
+    {
+      "name": "SecurityAdministrator",
+      "accessGroup": "TheLending:SecurityAdministrator",
+      "isManager": true
+    },
+    {
+      "name": "BranchOfficer",
+      "accessGroup": "TheLending:BranchOfficer",
+      "isManager": true
+    },
+    {
+      "name": "ComplianceOfficer",
+      "accessGroup": "TheLending:ComplianceOfficer",
+      "isManager": true
+    },
+    {
+      "name": "CreditRiskAnalyst",
+      "accessGroup": "TheLending:CreditRiskAnalyst",
+      "isManager": false
+    },
+    {
+      "name": "Customer",
+      "accessGroup": "TheLending:Customer",
+      "isManager": false
+    },
+    {
+      "name": "CustomerServiceAgent",
+      "accessGroup": "TheLending:CustomerServiceAgent",
+      "isManager": false
+    },
+    {
+      "name": "DigitalProductOwner",
+      "accessGroup": "TheLending:DigitalProductOwner",
+      "isManager": false
+    },
+    {
+      "name": "FraudFinancialCrimeOfficer",
+      "accessGroup": "TheLending:FraudFinancialCrimeOfficer",
+      "isManager": true
+    },
+    {
+      "name": "Guarantor",
+      "accessGroup": "TheLending:Guarantor",
+      "isManager": false
+    },
+    {
+      "name": "LoanOfficer",
+      "accessGroup": "TheLending:LoanOfficer",
+      "isManager": true
+    },
+    {
+      "name": "OperationsFulfilmentSpecialist",
+      "accessGroup": "TheLending:OperationsFulfilmentSpecialist",
+      "isManager": false
+    },
+    {
+      "name": "OperationsManager",
+      "accessGroup": "TheLending:OperationsManager",
+      "isManager": true
+    },
+    {
+      "name": "ProductManager",
+      "accessGroup": "TheLending:ProductManager",
+      "isManager": true
+    },
+    {
+      "name": "RiskManager",
+      "accessGroup": "TheLending:RiskManager",
+      "isManager": true
+    },
+    {
+      "name": "SeniorCreditOfficer",
+      "accessGroup": "TheLending:SeniorCreditOfficer",
+      "isManager": true
+    },
+    {
+      "name": "Underwriter",
+      "accessGroup": "TheLending:Underwriter",
+      "isManager": false
+    },
+    {
+      "name": "Users",
+      "accessGroup": "TheLending:Users",
+      "isManager": false
+    },
+    {
+      "name": "User4",
+      "accessGroup": "TheLending:User4",
+      "isManager": false
+    }
+  ],
+  "dataObjects": [
+    {
+      "class": "MyOrg-TheLending-Data-ComplianceFinding",
+      "short": "ComplianceFinding",
+      "label": "Compliance Finding",
+      "fields": [
+        {
+          "name": "ComplianceFindingName",
+          "type": "Text",
+          "options": null
+        },
+        {
+          "name": "FindingType",
+          "type": "Text",
+          "options": [
+            "Regulatory violation",
+            "Policy breach",
+            "Process deficiency",
+            "Customer complaint",
+            "Documentation error"
+          ]
+        },
+        {
+          "name": "RiskLevel",
+          "type": "Text",
+          "options": [
+            "High",
+            "Medium",
+            "Low"
+          ]
+        },
+        {
+          "name": "UniqueFindingID",
+          "type": "Text",
+          "options": null
+        }
+      ]
+    },
+    {
+      "class": "MyOrg-TheLending-Data-Customer",
+      "short": "Customer",
+      "label": "Customer",
+      "fields": [
+        {
+          "name": "CustomerName",
+          "type": "Text",
+          "options": null
+        }
+      ]
+    },
+    {
+      "class": "MyOrg-TheLending-Data-EscalationLog",
+      "short": "EscalationLog",
+      "label": "Escalation Log",
+      "fields": [
+        {
+          "name": "EscalationLog",
+          "type": "Page",
+          "options": null
+        },
+        {
+          "name": "EscalationEventDate",
+          "type": "Date Time",
+          "options": null
+        },
+        {
+          "name": "EscalationLogName",
+          "type": "Text",
+          "options": null
+        }
+      ]
+    },
+    {
+      "class": "MyOrg-TheLending-Data-LendingTransaction",
+      "short": "LendingTransaction",
+      "label": "Lending Transaction",
+      "fields": [
+        {
+          "name": "pyGUID",
+          "type": "Text",
+          "options": null
+        },
+        {
+          "name": "LendingTransactionName",
+          "type": "Text",
+          "options": null
+        }
+      ]
+    },
+    {
+      "class": "MyOrg-TheLending-Data-OversightCase",
+      "short": "OversightCase",
+      "label": "Oversight Case",
+      "fields": [
+        {
+          "name": "OversightCaseName",
+          "type": "Text",
+          "options": null
+        }
+      ]
+    },
+    {
+      "class": "MyOrg-TheLending-Data-QualityReview",
+      "short": "QualityReview",
+      "label": "Quality Review",
+      "fields": [
+        {
+          "name": "pyGUID",
+          "type": "Text",
+          "options": null
+        },
+        {
+          "name": "ReviewType",
+          "type": "Text",
+          "options": [
+            "Routine",
+            "Targeted",
+            "Escalation",
+            "Follow-up",
+            "Compliance"
+          ]
+        },
+        {
+          "name": "QualityReviewName",
+          "type": "Text",
+          "options": null
+        },
+        {
+          "name": "ReviewStatus",
+          "type": "Text",
+          "options": [
+            "Draft",
+            "In review",
+            "Completed",
+            "Escalated"
+          ]
+        }
+      ]
+    },
+    {
+      "class": "MyOrg-TheLending-Data-Recommendation",
+      "short": "Recommendation",
+      "label": "Recommendation",
+      "fields": [
+        {
+          "name": "RecommendationName",
+          "type": "Text",
+          "options": null
+        },
+        {
+          "name": "Recommendation",
+          "type": "Page",
+          "options": null
+        }
+      ]
+    },
+    {
+      "class": "MyOrg-TheLending-Data-ResolutionSummary",
+      "short": "ResolutionSummary",
+      "label": "Resolution Summary",
+      "fields": [
+        {
+          "name": "ResolutionSummaryName",
+          "type": "Text",
+          "options": null
+        }
+      ]
+    },
+    {
+      "class": "MyOrg-TheLending-Data-RiskAssessment",
+      "short": "RiskAssessment",
+      "label": "Risk Assessment",
+      "fields": [
+        {
+          "name": "pyGUID",
+          "type": "Text",
+          "options": null
+        },
+        {
+          "name": "RiskAssessmentName",
+          "type": "Text",
+          "options": null
+        },
+        {
+          "name": "InternalRiskGrade",
+          "type": "Text",
+          "options": null
+        },
+        {
+          "name": "RiskStatus",
+          "type": "Text",
+          "options": [
+            "Open",
+            "In review",
+            "Closed",
+            "Escalated"
+          ]
+        },
+        {
+          "name": "RiskScoreID",
+          "type": "Text",
+          "options": null
+        }
+      ]
+    },
+    {
+      "class": "MyOrg-TheLending-Data-RoleAssignment",
+      "short": "RoleAssignment",
+      "label": "Role Assignment",
+      "fields": [
+        {
+          "name": "RoleAssignment",
+          "type": "Page",
+          "options": null
+        },
+        {
+          "name": "TeamMemberName",
+          "type": "Text",
+          "options": null
+        },
+        {
+          "name": "RoleAssignmentName",
+          "type": "Text",
+          "options": null
+        },
+        {
+          "name": "Role",
+          "type": "Text",
+          "options": null
+        }
+      ]
+    }
+  ],
+  "views": [
+    {
+      "name": "EnterTransactionInfo",
+      "caseTypeCode": "LendingReview",
+      "fields": [
+        {
+          "region": "Fields",
+          "name": "LendingTransaction",
+          "label": "LendingTransaction",
+          "control": "lookup",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": null,
+          "targetClass": "MyOrg-TheLending-Data-LendingTransaction",
+          "displayField": "LendingTransactionName"
+        },
+        {
+          "region": "Fields",
+          "name": "Customer",
+          "label": "Customer",
+          "control": "lookup",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": null,
+          "targetClass": "MyOrg-TheLending-Data-Customer",
+          "displayField": "CustomerName"
+        }
+      ]
+    },
+    {
+      "name": "RequestDocuments",
+      "caseTypeCode": "LendingReview",
+      "fields": [
+        {
+          "region": "Fields",
+          "name": "ReviewRequestedDate",
+          "label": "ReviewRequestedDate",
+          "control": "date",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": null,
+          "targetClass": null,
+          "displayField": ""
+        },
+        {
+          "region": "Fields",
+          "name": "SupportingDocumentation",
+          "label": "SupportingDocumentation",
+          "control": "attachment",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": null,
+          "targetClass": null,
+          "displayField": ""
+        }
+      ]
+    },
+    {
+      "name": "CollectTransactionData",
+      "caseTypeCode": "RiskAssessment",
+      "fields": [
+        {
+          "region": "Fields",
+          "name": "LendingTransaction",
+          "label": "LendingTransaction",
+          "control": "lookup",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": null,
+          "targetClass": "MyOrg-TheLending-Data-LendingTransaction",
+          "displayField": "LendingTransactionName"
+        },
+        {
+          "region": "Fields",
+          "name": "Customer",
+          "label": "Customer",
+          "control": "lookup",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": null,
+          "targetClass": "MyOrg-TheLending-Data-Customer",
+          "displayField": "CustomerName"
+        }
+      ]
+    },
+    {
+      "name": "AnalyzeRiskProfile",
+      "caseTypeCode": "RiskAssessment",
+      "fields": [
+        {
+          "region": "Fields",
+          "name": "RiskAssessmentName",
+          "label": "RiskAssessmentName",
+          "control": "text",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": null,
+          "targetClass": null,
+          "displayField": ""
+        },
+        {
+          "region": "Fields",
+          "name": "LendingTransaction",
+          "label": "LendingTransaction",
+          "control": "lookup",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": null,
+          "targetClass": "MyOrg-TheLending-Data-LendingTransaction",
+          "displayField": "LendingTransactionName"
+        },
+        {
+          "region": "Fields",
+          "name": "RiskRating",
+          "label": "RiskRating",
+          "control": "choice",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": "RiskRating",
+          "targetClass": null,
+          "displayField": ""
+        },
+        {
+          "region": "Fields",
+          "name": "AssessmentSummary",
+          "label": "AssessmentSummary",
+          "control": "text",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": null,
+          "targetClass": null,
+          "displayField": ""
+        }
+      ]
+    },
+    {
+      "name": "ReviewRecommendations",
+      "caseTypeCode": "RiskAssessment",
+      "fields": [
+        {
+          "region": "Fields",
+          "name": "ControlsApplied",
+          "label": "ControlsApplied",
+          "control": "text",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": null,
+          "targetClass": null,
+          "displayField": ""
+        },
+        {
+          "region": "Fields",
+          "name": "MitigationSteps",
+          "label": "MitigationSteps",
+          "control": "text",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": null,
+          "targetClass": null,
+          "displayField": ""
+        }
+      ]
+    },
+    {
+      "name": "CaptureActivity",
+      "caseTypeCode": "ComplianceMonitoring",
+      "fields": [
+        {
+          "region": "Fields",
+          "name": "LendingTransaction",
+          "label": "LendingTransaction",
+          "control": "lookup",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": null,
+          "targetClass": "MyOrg-TheLending-Data-LendingTransaction",
+          "displayField": "LendingTransactionName"
+        },
+        {
+          "region": "Fields",
+          "name": "ComplianceMonitoringName",
+          "label": "ComplianceMonitoringName",
+          "control": "text",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": null,
+          "targetClass": null,
+          "displayField": ""
+        },
+        {
+          "region": "Fields",
+          "name": "BusinessUnit",
+          "label": "BusinessUnit",
+          "control": "text",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": null,
+          "targetClass": null,
+          "displayField": ""
+        }
+      ]
+    },
+    {
+      "name": "EvaluateIssue",
+      "caseTypeCode": "ComplianceMonitoring",
+      "fields": [
+        {
+          "region": "Fields",
+          "name": "IssueSeverity",
+          "label": "IssueSeverity",
+          "control": "choice",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": "IssueSeverity",
+          "targetClass": null,
+          "displayField": ""
+        },
+        {
+          "region": "Fields",
+          "name": "AssessmentOutcome",
+          "label": "AssessmentOutcome",
+          "control": "choice",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": "AssessmentOutcome",
+          "targetClass": null,
+          "displayField": ""
+        }
+      ]
+    },
+    {
+      "name": "ImplementSolution",
+      "caseTypeCode": "ComplianceMonitoring",
+      "fields": [
+        {
+          "region": "Fields",
+          "name": "CorrectiveActionPlan",
+          "label": "CorrectiveActionPlan",
+          "control": "text",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": null,
+          "targetClass": null,
+          "displayField": ""
+        },
+        {
+          "region": "Fields",
+          "name": "ResolutionStatus",
+          "label": "ResolutionStatus",
+          "control": "choice",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": "ResolutionStatus",
+          "targetClass": null,
+          "displayField": ""
+        }
+      ]
+    },
+    {
+      "name": "CaptureEscalation",
+      "caseTypeCode": "EscalationManagement",
+      "fields": [
+        {
+          "region": "Fields",
+          "name": "EscalationReason",
+          "label": "EscalationReason",
+          "control": "text",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": null,
+          "targetClass": null,
+          "displayField": ""
+        },
+        {
+          "region": "Fields",
+          "name": "EscalationInitiatedBy",
+          "label": "EscalationInitiatedBy",
+          "control": "text",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": null,
+          "targetClass": null,
+          "displayField": ""
+        },
+        {
+          "region": "Fields",
+          "name": "LendingTransaction",
+          "label": "LendingTransaction",
+          "control": "lookup",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": null,
+          "targetClass": "MyOrg-TheLending-Data-LendingTransaction",
+          "displayField": "LendingTransactionName"
+        }
+      ]
+    },
+    {
+      "name": "GatherReviewDetails",
+      "caseTypeCode": "QualityRecommendation",
+      "fields": [
+        {
+          "region": "Fields",
+          "name": "AssociatedLendingTransaction",
+          "label": "AssociatedLendingTransaction",
+          "control": "lookup",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": null,
+          "targetClass": "MyOrg-TheLending-Data-LendingTransaction",
+          "displayField": "LendingTransactionName"
+        },
+        {
+          "region": "Fields",
+          "name": "LinkedRiskAssessment",
+          "label": "LinkedRiskAssessment",
+          "control": "lookup",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": null,
+          "targetClass": "MyOrg-TheLending-Data-RiskAssessment",
+          "displayField": "RiskAssessmentName"
+        },
+        {
+          "region": "Fields",
+          "name": "QualityReview",
+          "label": "QualityReview",
+          "control": "lookup",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": null,
+          "targetClass": "MyOrg-TheLending-Data-QualityReview",
+          "displayField": "QualityReviewName"
+        }
+      ]
+    },
+    {
+      "name": "EvaluateRiskFactors",
+      "caseTypeCode": "QualityRecommendation",
+      "fields": [
+        {
+          "region": "Fields",
+          "name": "AssessmentRationale",
+          "label": "AssessmentRationale",
+          "control": "text",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": null,
+          "targetClass": null,
+          "displayField": ""
+        },
+        {
+          "region": "Fields",
+          "name": "LinkedRiskAssessment",
+          "label": "LinkedRiskAssessment",
+          "control": "lookup",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": null,
+          "targetClass": "MyOrg-TheLending-Data-RiskAssessment",
+          "displayField": "RiskAssessmentName"
+        }
+      ]
+    },
+    {
+      "name": "DraftRecommendations",
+      "caseTypeCode": "QualityRecommendation",
+      "fields": [
+        {
+          "region": "Fields",
+          "name": "QualityRecommendationName",
+          "label": "QualityRecommendationName",
+          "control": "text",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": null,
+          "targetClass": null,
+          "displayField": ""
+        },
+        {
+          "region": "Fields",
+          "name": "RecommendationDescription",
+          "label": "RecommendationDescription",
+          "control": "text",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": null,
+          "targetClass": null,
+          "displayField": ""
+        },
+        {
+          "region": "Fields",
+          "name": "AssessmentRationale",
+          "label": "AssessmentRationale",
+          "control": "text",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": null,
+          "targetClass": null,
+          "displayField": ""
+        },
+        {
+          "region": "Fields",
+          "name": "RecommendationType",
+          "label": "RecommendationType",
+          "control": "choice",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": "RecommendationType",
+          "targetClass": null,
+          "displayField": ""
+        }
+      ]
+    },
+    {
+      "name": "CancelAssignment",
+      "caseTypeCode": "QualityRecommendation",
+      "fields": [
+        {
+          "region": "Fields",
+          "name": "pyNote",
+          "label": "Note",
+          "control": "multiline",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": null,
+          "targetClass": null,
+          "displayField": ""
+        }
+      ]
+    },
+    {
+      "name": "ReviewDocumentation",
+      "caseTypeCode": "LendingReview",
+      "fields": [
+        {
+          "region": "Fields",
+          "name": "SupportingDocumentation",
+          "label": "SupportingDocumentation",
+          "control": "attachment",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": null,
+          "targetClass": null,
+          "displayField": ""
+        },
+        {
+          "region": "Fields",
+          "name": "RegulatoryComplianceCheck",
+          "label": "RegulatoryComplianceCheck",
+          "control": "boolean",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": null,
+          "targetClass": null,
+          "displayField": ""
+        },
+        {
+          "region": "Fields",
+          "name": "QualityReviewOutcome",
+          "label": "QualityReviewOutcome",
+          "control": "choice",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": "QualityReviewOutcome",
+          "targetClass": null,
+          "displayField": ""
+        }
+      ]
+    },
+    {
+      "name": "EscalateToRisk",
+      "caseTypeCode": "LendingReview",
+      "fields": [
+        {
+          "region": "Fields",
+          "name": "EscalationStatus",
+          "label": "EscalationStatus",
+          "control": "choice",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": "EscalationStatus",
+          "targetClass": null,
+          "displayField": ""
+        }
+      ]
+    },
+    {
+      "name": "ResubmitData",
+      "caseTypeCode": "RiskAssessment",
+      "fields": [
+        {
+          "region": "Fields",
+          "name": "LendingTransaction",
+          "label": "LendingTransaction",
+          "control": "lookup",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": null,
+          "targetClass": "MyOrg-TheLending-Data-LendingTransaction",
+          "displayField": "LendingTransactionName"
+        }
+      ]
+    },
+    {
+      "name": "ResubmitRecords",
+      "caseTypeCode": "ComplianceMonitoring",
+      "fields": [
+        {
+          "region": "Fields",
+          "name": "CorrectiveActionPlan",
+          "label": "CorrectiveActionPlan",
+          "control": "text",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": null,
+          "targetClass": null,
+          "displayField": ""
+        },
+        {
+          "region": "Fields",
+          "name": "SupportingEvidence",
+          "label": "SupportingEvidence",
+          "control": "attachment",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": null,
+          "targetClass": null,
+          "displayField": ""
+        }
+      ]
+    },
+    {
+      "name": "ReviewTransaction",
+      "caseTypeCode": "EscalationManagement",
+      "fields": [
+        {
+          "region": "Fields",
+          "name": "LendingTransaction",
+          "label": "LendingTransaction",
+          "control": "lookup",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": null,
+          "targetClass": "MyOrg-TheLending-Data-LendingTransaction",
+          "displayField": "LendingTransactionName"
+        },
+        {
+          "region": "Fields",
+          "name": "RiskAssessment",
+          "label": "RiskAssessment",
+          "control": "lookup",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": null,
+          "targetClass": "MyOrg-TheLending-Data-RiskAssessment",
+          "displayField": "RiskAssessmentName"
+        },
+        {
+          "region": "Fields",
+          "name": "ComplianceFinding",
+          "label": "ComplianceFinding",
+          "control": "lookup",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": null,
+          "targetClass": "MyOrg-TheLending-Data-ComplianceFinding",
+          "displayField": "ComplianceFindingName"
+        },
+        {
+          "region": "Fields",
+          "name": "Customer",
+          "label": "Customer",
+          "control": "lookup",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": null,
+          "targetClass": "MyOrg-TheLending-Data-Customer",
+          "displayField": "CustomerName"
+        }
+      ]
+    },
+    {
+      "name": "DocumentQuestions",
+      "caseTypeCode": "EscalationManagement",
+      "fields": [
+        {
+          "region": "Fields",
+          "name": "EscalationReason",
+          "label": "EscalationReason",
+          "control": "text",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": null,
+          "targetClass": null,
+          "displayField": ""
+        },
+        {
+          "region": "Fields",
+          "name": "AssessmentSummary",
+          "label": "AssessmentSummary",
+          "control": "text",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": null,
+          "targetClass": null,
+          "displayField": ""
+        }
+      ]
+    },
+    {
+      "name": "ProvideRecommendation",
+      "caseTypeCode": "EscalationManagement",
+      "fields": [
+        {
+          "region": "Fields",
+          "name": "RecommendationOutcome",
+          "label": "RecommendationOutcome",
+          "control": "choice",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": "RecommendationOutcome",
+          "targetClass": null,
+          "displayField": ""
+        },
+        {
+          "region": "Fields",
+          "name": "ResolutionDetails",
+          "label": "ResolutionDetails",
+          "control": "text",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": null,
+          "targetClass": null,
+          "displayField": ""
+        }
+      ]
+    },
+    {
+      "name": "CaptureCorrections",
+      "caseTypeCode": "EscalationManagement",
+      "fields": [
+        {
+          "region": "Fields",
+          "name": "EscalationManagementName",
+          "label": "EscalationManagementName",
+          "control": "text",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": null,
+          "targetClass": null,
+          "displayField": ""
+        },
+        {
+          "region": "Fields",
+          "name": "EscalationReason",
+          "label": "EscalationReason",
+          "control": "text",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": null,
+          "targetClass": null,
+          "displayField": ""
+        }
+      ]
+    },
+    {
+      "name": "ValidateActions",
+      "caseTypeCode": "QualityRecommendation",
+      "fields": [
+        {
+          "region": "Fields",
+          "name": "ResolutionDetails",
+          "label": "ResolutionDetails",
+          "control": "text",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": null,
+          "targetClass": null,
+          "displayField": ""
+        },
+        {
+          "region": "Fields",
+          "name": "ValidationOutcome",
+          "label": "ValidationOutcome",
+          "control": "choice",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": "ValidationOutcome",
+          "targetClass": null,
+          "displayField": ""
+        },
+        {
+          "region": "Fields",
+          "name": "ResponsibleOversightTeam",
+          "label": "ResponsibleOversightTeam",
+          "control": "choice",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": "ResponsibleOversightTeam",
+          "targetClass": null,
+          "displayField": ""
+        }
+      ]
+    },
+    {
+      "name": "ConfirmCompletion",
+      "caseTypeCode": "QualityRecommendation",
+      "fields": [
+        {
+          "region": "Fields",
+          "name": "RecommendationStatus",
+          "label": "RecommendationStatus",
+          "control": "choice",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": "RecommendationStatus",
+          "targetClass": null,
+          "displayField": ""
+        },
+        {
+          "region": "Fields",
+          "name": "ResolutionSummary",
+          "label": "ResolutionSummary",
+          "control": "lookup",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": null,
+          "targetClass": "MyOrg-TheLending-Data-ResolutionSummary",
+          "displayField": "ResolutionSummaryName"
+        },
+        {
+          "region": "Fields",
+          "name": "ValidationOutcome",
+          "label": "ValidationOutcome",
+          "control": "choice",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": "ValidationOutcome",
+          "targetClass": null,
+          "displayField": ""
+        },
+        {
+          "region": "Fields",
+          "name": "ResponsibleOversightTeam",
+          "label": "ResponsibleOversightTeam",
+          "control": "choice",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": "ResponsibleOversightTeam",
+          "targetClass": null,
+          "displayField": ""
+        }
+      ]
+    },
+    {
+      "name": "ReviewException",
+      "caseTypeCode": "QualityRecommendation",
+      "fields": [
+        {
+          "region": "Fields",
+          "name": "OversightCase",
+          "label": "OversightCase",
+          "control": "lookup",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": null,
+          "targetClass": "MyOrg-TheLending-Data-OversightCase",
+          "displayField": "OversightCaseName"
+        },
+        {
+          "region": "Fields",
+          "name": "AssignedOwner",
+          "label": "AssignedOwner",
+          "control": "user",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": null,
+          "targetClass": null,
+          "displayField": ""
+        },
+        {
+          "region": "Fields",
+          "name": "ResolutionDetails",
+          "label": "ResolutionDetails",
+          "control": "text",
+          "required": false,
+          "readOnly": false,
+          "choiceSet": null,
+          "targetClass": null,
+          "displayField": ""
+        }
+      ]
+    }
+  ]
+}

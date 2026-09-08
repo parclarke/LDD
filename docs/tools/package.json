@@ -1,0 +1,14 @@
+{
+  "name": "ldd-docs-tools",
+  "private": true,
+  "type": "module",
+  "description": "Converts the LDD markdown documents to Word (.docx).",
+  "scripts": {
+    "build": "node md-to-html.mjs ../source/LDD-Requirements-Analysis-Report-v1.0.md ./LDD-Requirements-Analysis-Report-v1.0.html && node md-to-html.mjs ../source/LDD-Solution-Design-v1.0.md ./LDD-Solution-Design-v1.0.html && node md-to-html.mjs ../source/LDD-Data-Model-v1.0.md ./LDD-Data-Model-v1.0.html && node html-to-docx.mjs . .. && node add-toc.mjs .."
+  },
+  "dependencies": {
+    "adm-zip": "^0.5.16",
+    "html-to-docx": "^1.8.0",
+    "marked": "^16.4.1"
+  }
+}
