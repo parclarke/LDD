@@ -250,19 +250,34 @@ def divider(number, title, blurb):
 
 
 # ------------------------------------------------------------------ facts ---
-# All verified against the PoC artefacts. See module docstring.
+# Single source of truth for every figure quoted in the deck. All verified
+# against the PoC artefacts - see the module docstring.
+#
+# These must be USED, not just declared. check-deck.py asserts that the numbers
+# rendered into the .pptx match this dict, because a figure hardcoded at the
+# call site silently goes stale when the underlying count moves. That is exactly
+# how the deck came to understate its own verification coverage by 9 checks.
 F = dict(
     case_types=5, stages=39, steps=80, views=24, view_fields=59,
     choice_sets=26, choice_values=107, decisions=10, decision_rows=28,
-    roles=19, data_objects=10, tables=27,
-    tests_pass=49, tests_fail=0,
+    roles=19, data_objects=10, tables=28,
+    tests_pass=58, tests_fail=0,
     rule_instances=1096, properties=334,
     flows=35, flow_actions=39, notifications=27, correspondence=27,
     transforms=20, notify_steps=17, doc_steps=4, workbaskets=18,
     role_grants=30, reports=30, attach_cats=12,
     src_loc=3503, script_loc=2892, gen_loc=4987,
     steps_working=39, steps_simulated=41,
+    # Of the 41 simulated steps, the 17 notification steps had their wording
+    # recovered in full, so only the transforms and documents need business input.
+    needs_business_input=24,
+    flow_branches=26, terminal_branches=2, connector_transitions=264,
 )
+
+# Rendered forms, so a count can only be changed in one place.
+TESTS = f"{F['tests_pass']}/{F['tests_pass'] + F['tests_fail']}"
+TESTS_WORDS = f"{F['tests_pass']} passed / {F['tests_fail']} failed"
+BUSINESS_INPUT = f"{F['needs_business_input']} of {F['steps']}"
 
 APP_URL = ("https://apps.powerapps.com/play/e/158bbd11-b487-e44e-b175-"
            "46d9e2809617/app/175161cf-c385-4c35-8b29-133f0b397d0d")
@@ -338,9 +353,9 @@ num(divider(1, "Executive Summary", "Objective, challenges and outcomes"))
 s = base("A working migration, not a feasibility study", eyebrow="Executive Summary")
 kpis(s, [("0", "Business workshops\nrequired"),
          ("100%", "Case lifecycle structure\nmigrated automatically"),
-         ("58/58", "Automated verification\nchecks passing"),
+         (TESTS, "Automated verification\nchecks passing"),
          ("5 of 5", "Case types running\nend to end"),
-         ("24 of 80", "Step bodies needing\nbusiness input")])
+         (BUSINESS_INPUT, "Step bodies needing\nbusiness input")])
 bullets(s, [
     ("Objective", 0, True),
     "Prove that a production Pega application can be migrated to the Power "
@@ -722,7 +737,7 @@ bullets(s, [
     "Human assignments and approval sub-processes",
     "SLA goal and deadline calculation in business days",
     "Full audit trail on every case event",
-    "Automated verification harness (58 checks)",
+    f"Automated verification harness ({F['tests_pass']} checks)",
     "Deployed to the Patrick Clarke environment",
 ], x=0.62, y=2.10, w=5.95, size=12.5, gap=5)
 
@@ -956,7 +971,7 @@ table(s,
         "*Reusable as-is"],
        ["*Case engine", "Built - pure and configuration-driven",
         "*Reusable as-is"],
-       ["*Verification harness", "Built - 58 checks",
+       ["*Verification harness", f"Built - {F['tests_pass']} checks",
         "*Extend per application"],
        ["*Guard inference", "Heuristic from decision results",
         "*Flow-rule extractor built and reusable"],
@@ -976,7 +991,8 @@ num(s)
 num(divider(8, "Validation Results", "Functional outcomes, observations and gaps"))
 
 s = base("Functional validation", eyebrow="Validation Results")
-kpis(s, [("49", "Checks passing"), ("0", "Checks failing"),
+kpis(s, [(str(F["tests_pass"]), "Checks passing"),
+         (str(F["tests_fail"]), "Checks failing"),
          ("5 of 5", "Case types resolving"), ("100%", "Lifecycle coverage")],
      y=1.58, h=1.15)
 table(s,
@@ -1307,7 +1323,7 @@ table(s,
        ["*schema-v2.mjs", "27-table Dataverse schema definition", "Template"],
        ["*provision-dataverse.mjs", "Creates tables in the solution", "*Yes"],
        ["*gen-detail-columns.mjs", "Generates typed detail column mappings", "*Yes"],
-       ["*verify-engine.mjs", "Live end-to-end verification, 58 checks", "*Yes"],
+       ["*verify-engine.mjs", f"Live end-to-end verification, {F['tests_pass']} checks", "*Yes"],
        ["*engine.ts", "Pure case planner", "*Yes"],
        ["*orchestrator.ts", "Engine plans to Dataverse writes", "*Yes"],
        ["*DynamicForm.tsx", "Renders any view from metadata", "*Yes"],
@@ -1354,8 +1370,8 @@ para(_tf(tb),
      "Pega to Power Platform  ·  Lending Due Diligence PoC",
      size=15, color=RGBColor(0xD6, 0xEC, 0xEE), first=True, space_after=6)
 para(_tf(tb),
-     "5 case types  ·  39 stages  ·  80 steps  ·  58/58 verification checks  ·  "
-     "0 business workshops",
+     f"5 case types  ·  {F['stages']} stages  ·  {F['steps']} steps  ·  "
+     f"{TESTS} verification checks  ·  0 business workshops",
      size=13, color=RGBColor(0xBF, 0xDF, 0xE3), space_after=0)
 num(s)
 

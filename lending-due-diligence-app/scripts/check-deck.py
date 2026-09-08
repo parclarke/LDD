@@ -9,6 +9,7 @@ a clean run means real PowerPoint rendering has headroom.
 Usage: python scripts/check-deck.py <deck.pptx>
 """
 
+import re
 import sys
 from pptx import Presentation
 from pptx.util import Emu
@@ -136,6 +137,64 @@ for i, slide in enumerate(p.slides, 1):
                     f"(x {max(ax, bx):.2f}, y {max(ay, by):.2f})")
 
 print(f"{deck}\n{len(p.slides)} slides at {SW:.2f} x {SH:.2f} in\n")
+
+# ---------------------------------------------------------------- facts ---
+# Layout being valid is not enough: a figure hardcoded at a call site goes
+# stale silently when the underlying count moves. Assert the rendered deck
+# agrees with build-deck.py's declared source of truth.
+facts_problems = []
+try:
+    src = open("scripts/build-deck.py", encoding="utf-8").read()
+    m = re.search(r"^F = dict\((.*?)^\)", src, re.S | re.M)
+    F = dict(re.findall(r"(\w+)\s*=\s*(\d+)", m.group(1))) if m else {}
+    F = {k: int(v) for k, v in F.items()}
+
+    all_text = []
+    for slide in p.slides:
+        for sh in slide.shapes:
+            if sh.has_text_frame:
+                all_text.append(sh.text_frame.text)
+            if sh.has_table:
+                for row in sh.table.rows:
+                    for cell in row.cells:
+                        all_text.append(cell.text)
+    blob = " ".join(all_text)
+
+    tests = F.get("tests_pass")
+    if tests:
+        # Only treat an "N/N" as a verification count when it is actually
+        # described as one - "27 of 27" notification bodies is not a test count.
+        for m in re.finditer(r"\b(\d{2})\s*/\s*\1\b", blob):
+            ctx = blob[max(0, m.start() - 60):m.end() + 60].lower()
+            if "verification" not in ctx and "check" not in ctx:
+                continue
+            if int(m.group(1)) != tests:
+                facts_problems.append(
+                    f"deck shows {m.group(1)}/{m.group(1)} verification checks; "
+                    f"F says {tests}")
+        for stale in set(re.findall(r"\b(\d{2,3})\s+checks\b", blob)):
+            if int(stale) != tests:
+                facts_problems.append(
+                    f"deck says '{stale} checks'; F says {tests}")
+        for stale in set(re.findall(r"\b(\d{2,3})\s+passed\b", blob)):
+            if int(stale) != tests:
+                facts_problems.append(
+                    f"deck says '{stale} passed'; F says {tests}")
+
+    need = F.get("needs_business_input")
+    steps = F.get("steps")
+    if need and steps and f"{need} of {steps}" not in blob:
+        facts_problems.append(
+            f"deck does not state the business-input figure '{need} of {steps}'")
+except Exception as exc:  # noqa: BLE001 - reporting beats failing the whole check
+    facts_problems.append(f"fact check could not run: {exc}")
+
+if facts_problems:
+    print(f"STALE FACTS ({len(facts_problems)}):")
+    for x in facts_problems:
+        print("  " + x)
+    print()
+
 if problems:
     print(f"PROBLEMS ({len(problems)}):")
     for x in problems:
@@ -147,4 +206,4 @@ if warnings:
     for x in warnings:
         print("  " + x)
 
-sys.exit(1 if problems else 0)
+sys.exit(1 if (problems or facts_problems) else 0)
