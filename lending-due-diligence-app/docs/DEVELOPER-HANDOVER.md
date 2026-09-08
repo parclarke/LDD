@@ -139,6 +139,55 @@ lifecycle for each of the 5 case types.
 
 ---
 
+## 3a. Pega rule coverage
+
+The export declares **6 rulesets** - `TheLending`, `MyOrg`, `MyOrgInt` and a
+`_Branch_BP-1` branch of each, all at version `01-01-01`. Rulesets are Pega's
+versioning containers and have no Power Platform equivalent, so what matters is
+which *rules inside them* were imported. Counts below are from the export's own
+`coverage.inventory` and were verified against live Dataverse row counts.
+
+### Applied
+
+| Pega rule type | In export | In Dataverse |
+|---|---|---|
+| `RULE-OBJ-CASETYPE` | 5 | 5 |
+| Stages (derived from case types) | 39 | 39 |
+| Steps (derived from case types) | 80 | 80 |
+| `RULE-DECLARE-DECISIONTABLE` | 10 | 10 tables + 28 rows |
+| `RULE-UI-VIEW` (step-bound only) | 24 of 191 | 24 views + 59 fields |
+| Choice sets / `RULE-OBJ-FIELDVALUE` | 26 | 26 sets + 107 values |
+| `RULE-ACCESS-ROLE-NAME` | 19 | 19 rows (**not enforced** - see 4.4) |
+| `RULE-DATAOBJECT` | 10 | 9 tables |
+
+### Not applied
+
+| Pega rule type | Count | Why / where it is handled |
+|---|---|---|
+| `RULE-OBJ-FLOW` / `RULE-OBJ-FLOWACTION` | 35 / 39 | Only present in the compiled `.jar` binaries. This is where the stage-change `when` guards live - worked around by the inferred guards and the re-visit cap (section 2). |
+| `RULE-NOTIFICATION` / `RULE-OBJ-CORR` | 27 / 27 | Simulated - see 4.3 |
+| `RULE-OBJ-MODEL` (data transforms) | 5 | Simulated - see 4.3 |
+| `RULE-ACCESS-ROLE-OBJ` (privilege grants) | 30 | Not enforced - see 4.4 |
+| `DATA-ADMIN-WORKBASKET` | 18 | Held as strings; not mapped to Dataverse teams - see 4.4 |
+| `RULE-OBJ-ATTACHMENTCATEGORY` | 12 | No document store wired - see 4.5 |
+| `RULE-OBJ-REPORT-DEFINITION` | 30 | Reporting not in scope; use Power BI over Dataverse |
+| `RULE-UI-VIEW` (remainder) | 167 | Landing pages, list views and insights that are not bound to a step |
+| `RULE-UI-INSIGHT` / `RULE-PORTAL` / `RULE-PERSONA` | 30 / 3 / 16 | Portal chrome, replaced by the React UI |
+
+### Checked and deliberately skipped
+
+`RULE-DECLARE-EXPRESSIONS` (36) are recoverable from `raw/document.txt`. All 36
+were extracted and inspected: every one sets a **literal default value**
+(for example `.IsActive = true`, `.OutstandingBalance = 0`, and fixed date
+constants) rather than performing a calculation. No business logic is lost by
+not importing them. If Pega later adds real calculated properties, they would
+need to become either Dataverse calculated columns or logic in the orchestrator.
+
+`RULE-DECLARE-PAGES` (30) are data page definitions - the Dataverse tables and
+generated services replace them.
+
+---
+
 ## 4. What a developer must do for production
 
 Ordered by priority. Items 4.1 to 4.4 are required; 4.5 onwards are hardening.

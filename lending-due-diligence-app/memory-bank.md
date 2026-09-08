@@ -116,7 +116,8 @@ npm run build && npm run lint && pa app push
 
 ## Next steps / not yet built
 
-Full detail in `docs/DEVELOPER-HANDOVER.md` section 4. Headlines:
+Full detail in `docs/DEVELOPER-HANDOVER.md` section 4, with a rule-by-rule
+coverage matrix in section 3a. Headlines:
 
 - Replace the four inferred stage-change guards with the real Pega `when` conditions
 - Real user identity via `getContext()` from `@microsoft/power-apps/app`
