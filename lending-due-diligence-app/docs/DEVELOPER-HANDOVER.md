@@ -73,7 +73,7 @@ src/screens + components React UI
 |---|---|---|
 | Config extraction | `scripts/extract-prototype.mjs` | Pega JSON -> normalised config JSON |
 | Config load | `scripts/seed-prototype.mjs` | Config JSON -> Dataverse (idempotent upserts) |
-| Schema | `scripts/schema-v2.mjs` | The 28 Dataverse tables |
+| Schema | `scripts/schema-v2.mjs` | The 29 Dataverse tables |
 | Data access | `src/lib/data.ts` | Thin wrappers over the generated Dataverse services |
 | Engine | `src/lib/engine.ts` | `planNextActions`, `evaluateDecision`, `utilityEffect`. Pure functions. |
 | Orchestration | `src/lib/orchestrator.ts` | `createCase`, `advanceCase`, `submitAssignment`, `submitApproval` |
@@ -85,8 +85,9 @@ src/screens + components React UI
   `ava_lddstep`, `ava_lddview`, `ava_lddviewfield`, `ava_lddchoiceset`,
   `ava_lddchoicevalue`, `ava_ldddecision`, `ava_ldddecisionrow`, `ava_lddrole`
 - **Data objects (9 tables)** - customers, lending transactions, etc.
-- **Work / runtime (4 tables)** - `ava_lddworkcase` (shared case envelope),
-  `ava_lddassignment`, `ava_lddapproval`, `ava_lddcasehistory` (audit trail)
+- **Work / runtime (5 tables)** - `ava_lddworkcase` (shared case envelope),
+  `ava_lddassignment`, `ava_lddapproval`, `ava_lddcasehistory` (audit trail),
+  `ava_lddnotification` (delivery outbox)
 - **Detail (5 tables)** - one strongly-typed detail row per case type
 
 The split between a shared `ava_lddworkcase` envelope and per-type detail tables
@@ -406,13 +407,36 @@ are currently logged to the audit trail but **not executed** - see
 
 Remove each `kind` from `SIMULATED_EFFECTS` as it becomes real.
 
-### 4.3a Data transforms: what is actually in this export
+### 4.3a Data transforms: what they are, and what is in this export
 
-A Pega **data transform** (rule type `Rule-Obj-Model`) is a declarative
-list of assignments that maps or derives property values - set this field from
-that one, apply a default, convert a type, copy a page. In a flow it appears as
-a `pzRunDataTransform` utility step and runs unattended between human steps.
-It is Pega's equivalent of a mapping or calculation function.
+**If you come from Power Platform**, a Pega *data transform* (rule type
+`Rule-Obj-Model`) is closest to a **Power Automate flow made only of Compose and
+Set variable actions** - or to the mapping code you would write in a plugin or
+just before a Dataverse save. It is a declarative list of assignments:
+
+```
+.CaseOwner        = .LendingTransaction.RelationshipManager
+.RiskCategory     = "Standard"
+.TotalExposure    = .PrincipalAmount + .OutstandingBalance
+.ReviewDueDate    = @addDays(.SubmittedDate, 5)
+```
+
+No UI, no user, no branching to speak of. It copies, defaults, derives and
+converts field values. In a case lifecycle it appears as a
+`pzRunDataTransform` **utility step**, sitting between two human steps and
+running unattended - the direct equivalent of a Power Automate action that runs
+between two approvals.
+
+Rough equivalence table:
+
+| Pega data transform does | In Power Platform you would use |
+|---|---|
+| Copy a value from a related record | A lookup + `Set variable`, or an expression in the app |
+| Default a field on case creation | A column default, or logic in `createCase` |
+| Derive a field from two others | A Dataverse **calculated column**, or a formula column |
+| Aggregate child rows | A Dataverse **rollup column** |
+| Convert or format a value | An expression in the app or flow |
+| Anything with real branching | A Power Automate flow, or code in `orchestrator.ts` |
 
 **This export contains no authored data transforms.** Verified against the rule
 inventory:
@@ -431,8 +455,24 @@ references.
 
 So the 20 transform steps in this application are **named placeholders with no
 behaviour**. There is nothing to port, and the app's current behaviour (log the
-step, carry on) is faithful to what the source application actually does. What
-each transform *should* do is a business question, not a recovery exercise.
+step, carry on) is faithful to what the source application actually does.
+
+#### What a developer does about them
+
+Nothing, until the business says what each should do. When they do, the decision
+is where to put the logic, and the Power Platform answer is usually *not* code:
+
+1. **Derived from other columns on the same row** -> Dataverse calculated column.
+   No app change at all.
+2. **Aggregated from child rows** -> Dataverse rollup column.
+3. **Copied from a related record on save** -> handle it in the form save path.
+4. **Genuinely procedural, or calls something external** -> a `dataTransforms`
+   registry keyed by step name in `src/lib/transforms.ts`, dispatched from the
+   `runUtility` branch of `advanceCase`. That is the hook point; the branch
+   already receives the step, so adding a lookup there is a small change.
+
+Prefer 1 and 2 wherever the logic fits, because they need no deployment and stay
+visible to makers.
 
 > **For a real client application, expect the opposite.** Authored data
 > transforms are `Rule-Obj-Model` rules and live in the same `rules.jar` as the
@@ -442,7 +482,7 @@ each transform *should* do is a business question, not a recovery exercise.
 > validate it against the first real candidate before relying on it in an
 > estimate.
 
-### 4.3b Notifications: fully recovered from the export
+### 4.3b Notifications: content recovered, delivery is one Power Automate flow
 
 Pega notifications are three linked rules, all present in `rules.jar` and all
 readable with the UTF-16BE technique:
@@ -477,14 +517,60 @@ Example - ComplianceMonitoring / *Acknowledge Submission*:
 > review. Your submission has been received and logged into our system for
 > processing...
 
-The content is stored on `ava_lddstep` (`ava_NotifySubject`, `ava_NotifyBody`),
-shown in the app's Process model tab, and written into the audit trail when the
-step runs, so a case records what it would have sent.
+#### How delivery works: the outbox pattern
 
-**No business workshop is required to recover notification wording, and neither
-screenshots nor Dev Studio are needed.** What remains is delivery: wiring an
-Office 365 or Power Automate send, and deciding recipients - the recipient list
-is the one part not carried in the correspondence rule.
+The code app runs in the user's browser. It must not hold mail credentials or
+own retries, so it does not send anything itself. Instead it uses a standard
+**outbox**:
+
+```
+Case reaches a pzNotifyWrapper step
+        |
+        |  orchestrator.ts -> queueNotification()
+        v
+ava_lddnotification row, ava_Status = 'Pending'
+        |
+        |  Power Automate: "When a row is added" (Dataverse)
+        v
+Flow resolves the recipient, sends the mail
+        |
+        v
+Flow patches the row: ava_Status = 'Sent' | 'Failed', ava_SentOn, ava_ErrorMessage
+```
+
+**This half is already built.** The app writes the Pending row, with the subject
+and body recovered from Pega already populated. What a developer adds is one
+flow.
+
+| Column | Written by | Contains |
+|---|---|---|
+| `ava_Subject` | app | recovered Pega subject |
+| `ava_Body` | app | recovered Pega email body |
+| `ava_RecipientRole` | app | the step's workbasket, e.g. `TheLending:Users` |
+| `ava_Recipient` | **flow** | resolved address - blank on insert |
+| `ava_CaseNumber` / `ava_CaseTypeCode` / `ava_StepName` | app | context for routing and logging |
+| `ava_Status` | app then flow | `Pending` -> `Sent` / `Failed` |
+| `ava_SentOn`, `ava_ErrorMessage` | flow | delivery outcome |
+| `ava_WorkCaseId` | app | lookup to the case |
+
+**The flow to build** - one flow covers all 17 notification steps, because the
+content travels on the row:
+
+1. Trigger: **When a row is added** (Dataverse) on `ava_lddnotification`,
+   filtered to `ava_status eq 'Pending'`
+2. Resolve the recipient from `ava_RecipientRole` - a lookup from workbasket to
+   a Dataverse team or a distribution list. **This is the one piece the Pega
+   export does not carry**, so it needs a business decision (section 4.4)
+3. Send an email (Office 365 Outlook) using `ava_Subject` and `ava_Body`
+4. Update the row: `ava_Status = 'Sent'`, `ava_SentOn = utcNow()`
+5. Configure run-after on failure: `ava_Status = 'Failed'`, write
+   `ava_ErrorMessage`
+
+Because the send is decoupled, failures are visible and re-runnable in
+Dataverse, and the app is unaffected if mail is down.
+
+> `SIMULATED_EFFECTS` in `orchestrator.ts` still lists `notify`, which now only
+> affects the wording of the audit entry. Remove it once the flow is live.
 
 ### 4.3c Reports: no logic to port, but the capability was still needed
 

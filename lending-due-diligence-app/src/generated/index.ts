@@ -24,6 +24,7 @@ export * as Ava_lddescalationcasesModel from './models/Ava_lddescalationcasesMod
 export * as Ava_lddescalationlogsModel from './models/Ava_lddescalationlogsModel';
 export * as Ava_lddflowbranchsModel from './models/Ava_lddflowbranchsModel';
 export * as Ava_lddlendingreviewsModel from './models/Ava_lddlendingreviewsModel';
+export * as Ava_lddnotificationsModel from './models/Ava_lddnotificationsModel';
 export * as Ava_lddoversightcasesModel from './models/Ava_lddoversightcasesModel';
 export * as Ava_lddqualityreccasesModel from './models/Ava_lddqualityreccasesModel';
 export * as Ava_lddqualityreviewsModel from './models/Ava_lddqualityreviewsModel';
@@ -65,6 +66,7 @@ export * from './services/Ava_lddescalationcasesService';
 export * from './services/Ava_lddescalationlogsService';
 export * from './services/Ava_lddflowbranchsService';
 export * from './services/Ava_lddlendingreviewsService';
+export * from './services/Ava_lddnotificationsService';
 export * from './services/Ava_lddoversightcasesService';
 export * from './services/Ava_lddqualityreccasesService';
 export * from './services/Ava_lddqualityreviewsService';

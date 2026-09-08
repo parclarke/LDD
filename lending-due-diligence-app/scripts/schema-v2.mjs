@@ -364,6 +364,31 @@ const workTables = [
       L('ava_WorkCaseId', 'ava_lddworkcase'),
     ],
   },
+  {
+    schema: 'ava_LddNotification',
+    display: 'LDD Notification',
+    plural: 'LDD Notifications',
+    description:
+      'Outbox for notifications raised by a case. The code app writes a Pending ' +
+      'row; a Power Automate flow triggers on create, sends it and stamps the ' +
+      'result back. Keeps delivery out of the browser and gives retries for free.',
+    primary: { schema: 'ava_Name', display: 'Notification', len: 250 },
+    columns: [
+      S('ava_Subject', 250),
+      M('ava_Body'),
+      S('ava_Recipient', 250),
+      S('ava_RecipientRole', 100),
+      S('ava_CaseNumber', 50),
+      S('ava_CaseTypeCode', 100),
+      S('ava_StepName', 200),
+      // Pending -> Sent | Failed. The flow owns everything after Pending.
+      S('ava_Status', 20),
+      DT('ava_QueuedOn'),
+      DT('ava_SentOn'),
+      M('ava_ErrorMessage'),
+      L('ava_WorkCaseId', 'ava_lddworkcase'),
+    ],
+  },
 ];
 
 /* ------------------------------------------------------------------ *

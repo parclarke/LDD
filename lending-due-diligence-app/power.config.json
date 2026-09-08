@@ -203,6 +203,11 @@
           "entitySetName": "ava_lddflowbranchs",
           "logicalName": "ava_lddflowbranch",
           "isHidden": false
+        },
+        "lddnotifications": {
+          "entitySetName": "ava_lddnotifications",
+          "logicalName": "ava_lddnotification",
+          "isHidden": false
         }
       },
       "environmentVariableName": ""

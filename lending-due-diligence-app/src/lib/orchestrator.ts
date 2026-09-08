@@ -21,6 +21,7 @@ import {
   listAssignmentsForCase,
   listHistoryForCase,
   listWorkCases,
+  queueNotification,
   updateCaseDetail,
   updateWorkCase,
 } from './data';
@@ -167,17 +168,39 @@ export async function advanceCase(
       case 'runUtility': {
         const { step, effect } = action;
         const simulated = SIMULATED_EFFECTS.has(effect.kind);
-        // Notification wording was recovered from the Pega correspondence rules,
-        // so the audit trail records what the case would actually have sent.
+        // Notification wording was recovered from the Pega correspondence rules.
         const notify =
           effect.kind === 'notify' && step.ava_notifysubject
             ? { subject: step.ava_notifysubject, body: step.ava_notifybody ?? '' }
             : null;
+
+        // Queue it for delivery. The app never sends mail itself - a Power
+        // Automate flow triggers on this row and owns the send.
+        if (notify) {
+          const workbasket = step.ava_workbasket || defaultWorkbasket(current, config);
+          await queueNotification({
+            ava_name: `${current.ava_name} - ${step.ava_name}`.slice(0, 250),
+            ava_subject: notify.subject,
+            ava_body: notify.body,
+            // Resolved by the flow: the recipient is not carried in the Pega
+            // correspondence rule, only the routing target is.
+            ava_recipient: '',
+            ava_recipientrole: workbasket,
+            ava_casenumber: current.ava_name ?? '',
+            ava_casetypecode: current.ava_casetypecode ?? '',
+            ava_stepname: step.ava_name ?? '',
+            ava_status: 'Pending',
+            ava_queuedon: new Date().toISOString(),
+            'ava_WorkCaseId@odata.bind': bind('ava_lddworkcases', current.ava_lddworkcaseid),
+            statecode: 0,
+          });
+        }
+
         await log(
           current.ava_lddworkcaseid,
           'Utility',
           notify
-            ? `${step.ava_name}: "${notify.subject}"${simulated ? ' (not sent)' : ''}`
+            ? `${step.ava_name}: "${notify.subject}" (queued)`
             : `${step.ava_name} (${effect.kind}${simulated ? ', simulated' : ''})`,
           user,
           {

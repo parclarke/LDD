@@ -145,6 +145,13 @@ export const dataSourcesInfo = {
     "dataSourceType": "Dataverse",
     "apis": {}
   },
+  "ava_lddnotifications": {
+    "tableId": "",
+    "version": "",
+    "primaryKey": "ava_lddnotificationid",
+    "dataSourceType": "Dataverse",
+    "apis": {}
+  },
   "ava_lddoversightcases": {
     "tableId": "",
     "version": "",

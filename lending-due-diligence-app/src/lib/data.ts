@@ -17,6 +17,7 @@ import { Ava_ldddecisionsService } from '../generated/services/Ava_ldddecisionsS
 import { Ava_ldddecisionrowsService } from '../generated/services/Ava_ldddecisionrowsService';
 import { Ava_lddrolesService } from '../generated/services/Ava_lddrolesService';
 import { Ava_lddflowbranchsService } from '../generated/services/Ava_lddflowbranchsService';
+import { Ava_lddnotificationsService } from '../generated/services/Ava_lddnotificationsService';
 import { Ava_lddworkcasesService } from '../generated/services/Ava_lddworkcasesService';
 import { Ava_lddassignmentsService } from '../generated/services/Ava_lddassignmentsService';
 import { Ava_lddapprovalsService } from '../generated/services/Ava_lddapprovalsService';
@@ -42,6 +43,7 @@ import type {
   LddCaseHistory,
   LddComplianceFinding,
   LddCustomer,
+  LddNotification,
   LddOversightCase,
   LddQualityReview,
   LddResolutionSummary,
@@ -292,6 +294,27 @@ export async function listHistoryForCase(workCaseId: string): Promise<LddCaseHis
 
 export async function addHistory(record: Record<string, unknown>): Promise<void> {
   await Ava_lddcasehistoriesService.create(record as never);
+}
+
+/**
+ * Queues a notification for delivery.
+ *
+ * The code app runs in the browser and does not send mail itself. It writes a
+ * Pending row here; a Power Automate flow triggers on create, sends it, and
+ * stamps ava_Status / ava_SentOn back. That keeps credentials, retries and
+ * error handling in the platform rather than in app code.
+ */
+export async function queueNotification(record: Record<string, unknown>): Promise<void> {
+  await Ava_lddnotificationsService.create(record as never);
+}
+
+export async function listNotificationsForCase(workCaseId: string): Promise<LddNotification[]> {
+  const res = await Ava_lddnotificationsService.getAll({
+    filter: `_ava_workcaseid_value eq ${workCaseId}`,
+    orderBy: ['ava_queuedon desc'],
+    top: 100,
+  });
+  return unwrap(res, 'Load notifications') ?? [];
 }
 
 /* -------------------------------------------------------------------------- *
