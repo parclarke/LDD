@@ -42,7 +42,7 @@ bodies, roughly 51%, require manual implementation** - the notifications, data
 transforms and document generation - because Pega executes that logic inside a
 proprietary engine and does not expose it.
 
-Critically, **those 41 steps are not unknowns**. For every one of them the
+Critically, **those 41 steps are not 41 unknowns**. Notification wording was recovered in full, so only **24 of the 80 steps - 30% - need any business input at all**. For every one of them the
 artefacts already give the case type, the stage, the position in the sequence,
 the step name and the step type. What is missing is only the body. So the
 residual business conversation is not "what notifications does this process
@@ -102,7 +102,8 @@ switch - avoids the last one entirely.
 | Dataverse tables provisioned | 27 |
 | Automated verification checks | 58 passed, 0 failed |
 | Business workshops required | 0 |
-| Step bodies requiring manual implementation | 41 of 80 (~51%) |
+| Step bodies still requiring implementation | 41 of 80 (51%) |
+| ... of those, needing any business input | 24 of 80 (30%) |
 | Flow connector transitions extracted | 264 (0 conditional) |
 | Decision branches extracted and validated | 26 (100% validated) |
 | Notification subjects and bodies recovered | 27 of 27 |

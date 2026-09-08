@@ -71,7 +71,7 @@ lifecycle for every case type against live Dataverse, then cleans up after itsel
 node scripts/verify-engine.mjs          # --keep leaves the records behind
 ```
 
-Current result: **49 passed / 0 failed**.
+Current result: **58 passed / 0 failed**.
 
 ## Provision and seed
 

@@ -338,9 +338,9 @@ num(divider(1, "Executive Summary", "Objective, challenges and outcomes"))
 s = base("A working migration, not a feasibility study", eyebrow="Executive Summary")
 kpis(s, [("0", "Business workshops\nrequired"),
          ("100%", "Case lifecycle structure\nmigrated automatically"),
-         ("49/49", "Automated verification\nchecks passing"),
+         ("58/58", "Automated verification\nchecks passing"),
          ("5 of 5", "Case types running\nend to end"),
-         ("~51%", "Step bodies needing\nconfirmation")])
+         ("24 of 80", "Step bodies needing\nbusiness input")])
 bullets(s, [
     ("Objective", 0, True),
     "Prove that a production Pega application can be migrated to the Power "
@@ -354,15 +354,16 @@ bullets(s, [
     ("The headline finding", 0, True),
     "Process structure migrates almost entirely through automation. Process "
     "behaviour - notifications, data transforms, document generation - does "
-    "not, because Pega does not expose it. But every one of those steps is "
-    "recovered by name and position, so the residual business conversation is "
-    "confirmation rather than discovery.",
+    "not. But 41 steps still needing implementation is not the same as 41 "
+    "unknowns: notification wording is fully recovered, so only 24 steps "
+    "require any business input at all.",
 ], y=3.20, gap=7, size=13.5)
 notes(s, "Lead with the fact that this is a completed implementation. The five "
-         "KPIs are all measured, not estimated. The 51% figure is the honest "
-         "counterweight to the 100% - be upfront about it, then immediately "
-         "qualify it: those 41 steps are named and located, so they are a "
-         "confirmation exercise, not a discovery exercise.")
+         "KPIs are all measured, not estimated. Be precise about the two "
+         "different numbers: 41 of 80 step bodies (51%) still need building, "
+         "which is the effort story; but only 24 of 80 (30%) need business "
+         "input, because the 17 notification steps had their wording recovered "
+         "in full from the export.")
 num(s)
 
 s = base("The real bottleneck is requirements elicitation", eyebrow="Executive Summary")
@@ -721,7 +722,7 @@ bullets(s, [
     "Human assignments and approval sub-processes",
     "SLA goal and deadline calculation in business days",
     "Full audit trail on every case event",
-    "Automated verification harness (49 checks)",
+    "Automated verification harness (58 checks)",
     "Deployed to the Patrick Clarke environment",
 ], x=0.62, y=2.10, w=5.95, size=12.5, gap=5)
 
@@ -955,7 +956,7 @@ table(s,
         "*Reusable as-is"],
        ["*Case engine", "Built - pure and configuration-driven",
         "*Reusable as-is"],
-       ["*Verification harness", "Built - 49 checks",
+       ["*Verification harness", "Built - 58 checks",
         "*Extend per application"],
        ["*Guard inference", "Heuristic from decision results",
         "*Flow-rule extractor built and reusable"],
@@ -1306,7 +1307,7 @@ table(s,
        ["*schema-v2.mjs", "27-table Dataverse schema definition", "Template"],
        ["*provision-dataverse.mjs", "Creates tables in the solution", "*Yes"],
        ["*gen-detail-columns.mjs", "Generates typed detail column mappings", "*Yes"],
-       ["*verify-engine.mjs", "Live end-to-end verification, 49 checks", "*Yes"],
+       ["*verify-engine.mjs", "Live end-to-end verification, 58 checks", "*Yes"],
        ["*engine.ts", "Pure case planner", "*Yes"],
        ["*orchestrator.ts", "Engine plans to Dataverse writes", "*Yes"],
        ["*DynamicForm.tsx", "Renders any view from metadata", "*Yes"],
@@ -1353,7 +1354,7 @@ para(_tf(tb),
      "Pega to Power Platform  ·  Lending Due Diligence PoC",
      size=15, color=RGBColor(0xD6, 0xEC, 0xEE), first=True, space_after=6)
 para(_tf(tb),
-     "5 case types  ·  39 stages  ·  80 steps  ·  49/49 verification checks  ·  "
+     "5 case types  ·  39 stages  ·  80 steps  ·  58/58 verification checks  ·  "
      "0 business workshops",
      size=13, color=RGBColor(0xBF, 0xDF, 0xE3), space_after=0)
 num(s)
