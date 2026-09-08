@@ -456,26 +456,27 @@ num(s)
 s = base("Challenges and limitations of the current platform",
          eyebrow="Current State")
 bullets(s, [
-    ("Rule logic is not portable", 0, True),
-    "Rule bodies ship as proprietary binaries. The export contains rules.jar at "
-    "22.9 MB, holding instances_*.bin members up to 26.6 MB, which cannot be "
-    "decoded outside a Pega instance.",
-    ("Conditional routing is invisible", 0, True),
-    "The when conditions that guard stage transitions live inside compiled flow "
-    "rules. They are absent from every exportable artefact - export, application "
-    "document and the DX API alike.",
-    ("Behaviour is locked to the engine", 0, True),
+    ("Rule bodies are recoverable - but only if you know the encoding", 0, True),
+    "Rule bodies ship inside rules.jar as a Java-serialised stream. An ASCII "
+    "scan finds nothing, so the format is widely assumed opaque. The payload "
+    "strings are UTF-16BE; decoding them makes every rule body readable.",
+    ("Conditional routing genuinely does not exist", 0, True),
+    "Having extracted the flow bodies, all 264 connector transitions are "
+    "unconditional - 225 Always, 32 Action, 7 Else. Not one is when-guarded.",
+    ("Behaviour is still locked to the engine", 0, True),
     "Data transforms, correspondence bodies and notification templates are "
     "engine-executed and have no exportable representation.",
     ("Skills and cost", 0, True),
     "Certified Pega specialists are scarce and expensive relative to the "
     "React / TypeScript / Dataverse talent pool.",
 ], size=13.5, gap=7)
-callout(s, "These are platform constraints, not gaps in the migration tooling. "
-           "Any migration approach faces them identically.", tone=AMBER)
-notes(s, "This slide pre-empts the obvious challenge - 'could better tooling "
-         "have extracted more?' The answer is no, and the file sizes are cited "
-         "as evidence.")
+callout(s, "The routing finding is a defect in the source application, not a "
+           "migration gap - those flows really would loop.", tone=AMBER)
+notes(s, "This slide originally claimed the rule bodies could not be decoded "
+         "outside a Pega instance, repeating the extraction tool's own "
+         "documentation. That was wrong, and testing it changed the "
+         "recommendation: there are no guards to recover, so the engine's "
+         "re-visit cap is permanent design rather than a stopgap.")
 num(s)
 
 # ========================================================= 3. TARGET STATE
@@ -596,7 +597,7 @@ table(s,
        ["*Choice sets", "26", "26", "Migrated with 107 values"],
        ["*Properties", "334", "All", "Mapped to typed Dataverse columns"],
        ["*Access groups", "19", "19", "Imported as data; not yet enforced"],
-       ["*Flow rules", "35", "Inventory only", "*Bodies not decodable"],
+       ["*Flow rules", "35", "*Bodies extracted", "*0 conditional transitions"],
        ["*Notifications", "27", "Inventory only", "*Bodies not exportable"],
        ["*Declarative expressions", "36", "All", "All literal defaults - no logic lost"]],
       y=1.68, widths=[3.0, 2.1, 2.1, 5.0], size=11.5)
@@ -670,8 +671,7 @@ table(s,
       ["#", "Assumption or constraint", "Consequence if it changes"],
       [["*1", "The Pega export plus DX API access represents the complete "
         "application", "Additional rules would need a further extraction pass"],
-       ["*2", "Flow when conditions can be recovered from Dev Studio or "
-        "business workshops", "*Guards remain inferred - the main open risk"],
+       ["*2", "Rework conditions can be agreed with the business", "*Extraction proved none exist in Pega to recover"],
        ["*3", "Notification and correspondence content can be re-authored, "
         "not migrated", "Effort increases if exact templates are mandatory"],
        ["*4", "Dataverse security roles can express the 19 Pega access groups",
@@ -773,11 +773,10 @@ table(s,
       [["*Notification content", "17 steps / 27 rules",
         "Correspondence bodies are engine-held with no export representation"],
        ["*Data transform logic", "20 steps",
-        "Transform rules compile into the proprietary binary"],
+        "Transform bodies are engine-executed with no exported representation"],
        ["*Document generation", "4 steps",
         "Templates and merge logic are not exposed"],
-       ["*Stage transition guards", "4 inferred",
-        "when conditions live inside compiled flow rules"],
+       ["*Stage transition guards", "4 inferred", "Extraction shows Pega has no conditional transitions at all"],
        ["*Security enforcement", "19 roles / 30 grants / 18 workbaskets",
         "Pega and Dataverse security models differ structurally"]],
       y=3.15, widths=[2.9, 2.3, 6.9], size=11.5)
@@ -825,7 +824,7 @@ table(s,
        ["*Verification harness", "Built - 49 checks",
         "*Extend per application"],
        ["*Guard inference", "Heuristic from decision results",
-        "Improve with Dev Studio extraction"],
+        "*Flow-rule extractor built and reusable"],
        ["*Notification scaffolding", "Manual today",
         "Generate flow skeletons from step metadata"],
        ["*Data transform scaffolding", "Manual today",
@@ -896,7 +895,7 @@ s = base("Gaps identified and areas needing further analysis",
 table(s,
       ["Gap", "Severity", "Required analysis"],
       [["*Stage transition guards are inferred", "*High",
-        "Dev Studio extraction of 35 flow rules, or business workshops"],
+        "Extraction done - now a business decision on rework conditions"],
        ["*Notification content unavailable", "Medium",
         "Business review of 27 correspondence rules; re-author as templates"],
        ["*Data transform logic unavailable", "*High",
@@ -923,7 +922,7 @@ num(divider(9, "Effort & Risk Assessment", "Estimates, risks and mitigations"))
 s = base("Estimated migration effort", eyebrow="Effort & Risk")
 table(s,
       ["Workstream", "Basis", "Days"],
-      [["*Guard and flow logic recovery", "35 flow rules, workshops", "10 - 15"],
+      [["*Rework-condition workshops", "Business decision, not extraction", "4 - 6"],
        ["*Data transform implementation", "20 transform steps", "15 - 20"],
        ["*Notification implementation", "17 steps / 27 rules", "8 - 12"],
        ["*Document generation", "4 steps", "5 - 8"],
@@ -933,7 +932,7 @@ table(s,
        ["*Unit tests and hardening", "Engine is pure - straightforward", "10 - 15"],
        ["*ALM pipeline and environments", "Managed solution, 3 environments", "8 - 12"],
        ["*UAT, data migration and cutover", "Including in-flight strategy", "15 - 25"],
-       ["*TOTAL", "*One application of this complexity", "*93 - 141"]],
+       ["*TOTAL", "*One application of this complexity", "*87 - 132"]],
       y=1.65, widths=[3.8, 5.3, 1.6], w=10.05, size=11.5)
 bullets(s, [
     ("Calibration", 0, True),
@@ -968,7 +967,7 @@ table(s,
        ["*Low-fidelity re-extraction corrupts config", "*L", "*H",
         "*Already mitigated - the loader refuses degraded extractions"],
        ["*Pega SME availability", "M", "M",
-        "Book Dev Studio access and SME time before Phase 1 starts"],
+        "Book SME time before Phase 1 starts"],
        ["*Scope creep from unmigrated reporting", "M", "L",
         "Explicitly phase reporting into a separate Power BI workstream"]],
       y=1.70, widths=[3.4, 0.5, 0.5, 7.7], size=11)
@@ -980,8 +979,7 @@ num(s)
 s = base("Dependencies", eyebrow="Effort & Risk")
 table(s,
       ["Dependency", "Needed for", "Timing", "Owner"],
-      [["*Pega Dev Studio access", "Extracting the 35 flow rule bodies",
-        "*Before Phase 1", "Pega platform team"],
+      [["*Business SME workshops", "Agreeing the rework conditions", "*Phase 1 weeks 1 to 2", "Business"],
        ["*Pega sandbox with DX API", "High-fidelity extraction of each app",
         "*Before assessment", "Pega platform team"],
        ["*Business SMEs", "Restating 20 transforms and 27 notifications",
@@ -1016,9 +1014,7 @@ bullets(s, [
     "The migration assets - extract pipeline, engine, dynamic forms, "
     "verification harness - are application-agnostic and reusable.",
     ("Condition", 0, True),
-    "Secure Pega Dev Studio access and business SME time before Phase 1 "
-    "starts. These are the two hard dependencies, and both sit outside the "
-    "delivery team.",
+    "Secure business SME time before Phase 1 starts. Flow-rule extraction is solved; what remains needs business input, not platform access.",
 ], y=1.60, size=14, gap=8)
 callout(s, "Recommended next action: a two-week inception to recover the 35 "
            "flow rule bodies and confirm the security model. That retires the "
@@ -1168,8 +1164,7 @@ bullets(s, [
     "A hard stage re-visit cap in the engine means a wrong guard degrades to a "
     "skipped step rather than an infinite loop. Both layers are required.",
     ("Phase 1 action", 0, True),
-    "Replace with the real when conditions from Dev Studio. Because guards are "
-    "Dataverse rows, this is a data edit with no code change or redeploy.",
+    "Extraction proved Pega has no conditional transitions, so these encode a business decision rather than a recovered rule. Confirm with SMEs; because guards are Dataverse rows it is a data edit, no redeploy.",
 ], y=3.55, size=12.5, gap=6)
 num(s)
 

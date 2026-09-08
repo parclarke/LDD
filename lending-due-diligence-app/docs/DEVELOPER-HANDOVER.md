@@ -88,10 +88,9 @@ terminates at an assignment, an approval, or a resolution:
 
 ### The rework-loop guard (important)
 
-Pega's `when` conditions on stage-change steps are **not present in the export** -
-they live inside compiled flow rules in the `.jar` binaries. Without them,
-`Change to previous stage` in a resolution stage fires unconditionally and the
-case ping-pongs forever. Two mitigations are in place:
+Pega's `when` guards on stage-change steps are **not present in the export**.
+Without them, `Change to previous stage` in a resolution stage fires
+unconditionally and the case ping-pongs forever. Two mitigations are in place:
 
 1. **Inferred guards.** `extract-prototype.mjs` walks backwards from each
    backward stage-change step to the nearest preceding `Decision` step, reads
@@ -111,9 +110,11 @@ case ping-pongs forever. Two mitigations are in place:
    and carries on. `advanceCase` derives the visit counts from the
    `ava_lddcasehistory` audit trail, so the cap survives across sessions.
 
-> **Action required:** replace the inferred guards with the real Pega `when`
-> conditions. Because the guards are Dataverse rows, this is a data edit - no
-> code change and no redeploy. See section 4.1.
+> **Update:** the flow rule bodies were subsequently extracted (section 3b) and
+> contain **no** conditional transitions at all. The guards were never missing -
+> they do not exist in the source application. The re-visit cap is therefore
+> permanent design, and the inferred guards need business validation rather than
+> technical recovery.
 
 ---
 
@@ -188,8 +189,7 @@ generated services replace them.
 
 ### Confirmed by the extraction tool
 
-pegakit's own documentation lists what no Pega artefact exposes, and it matches
-the gaps above independently:
+pegakit's own documentation lists what no Pega artefact exposes:
 
 - Data transform logic (`pzRunDataTransform` steps)
 - Email / correspondence bodies
@@ -199,11 +199,64 @@ the gaps above independently:
 > "Rule bodies in the export (`instances_*.bin`) are a proprietary binary format
 > and cannot be decoded outside a Pega instance."
 
-Verified against the source archive: `TheLending.zip` contains
-`TheLending_010101_..._rules.jar` (22.9 MB), which holds `instances_*.bin`
-members up to 26.6 MB. This is where flow rules - and therefore the
-stage-change `when` guards - live. Recovering them requires Dev Studio access
-or a business workshop; there is no offline path.
+**That last claim is wrong, and this project originally repeated it.** See
+section 3b.
+
+---
+
+## 3b. Flow rule bodies ARE recoverable
+
+`instances_*.bin` inside `rules.jar` is a Java-serialised stream whose **payload
+strings are UTF-16BE**. An ASCII scan of the file finds nothing, which is why
+the format is widely assumed to be opaque. Decoding the member as UTF-16BE makes
+the rule bodies directly readable - no Pega instance, no Dev Studio, no
+proprietary tooling.
+
+`scripts/extract-flow-rules.py` does this. Run it against the raw export:
+
+```bash
+python scripts/extract-flow-rules.py <TheLending.zip> --json flow-rules.json
+```
+
+### What the extraction shows
+
+| Measure | Result |
+|---|---|
+| Flow rules in the export index | 35 |
+| Flow bodies recovered | 28 |
+| Connector transitions found | 264 |
+| ... of type `Always` | 225 |
+| ... of type `Action` | 32 |
+| ... of type `Else` | 7 |
+| **Conditional (`when`-guarded) transitions** | **0** |
+
+The extractor also recovers the stage-change targets directly, for example
+ComplianceMonitoring's `pxChangeToSpecifiedStage` resolving to `PRIM3` - which
+matches the value this project had inferred independently.
+
+### Why this matters more than the extraction itself
+
+The working assumption throughout was that the rework-loop guards existed in
+Pega and were merely unreachable. **They do not exist.** Every connector in the
+exported application is unconditional. The source application really would
+ping-pong between its resolution and remediation stages; the defect is in the
+Pega application, not in the migration.
+
+Three consequences:
+
+1. The inferred guards are **not** a stopgap awaiting the real conditions. There
+   are no real conditions. They are a genuine design decision that has to be
+   validated against business intent, not recovered from a rule.
+2. The engine's stage re-visit cap is **permanent, load-bearing design**, not a
+   temporary safety net.
+3. Phase 1 effort for "guard and flow logic recovery" drops sharply - the
+   recovery is done, and what remains is a business conversation about what the
+   rework conditions *should* be.
+
+Note this application was generated (operator `patrick.a.a.clarke@avanade.com`,
+created 2026-08-10), so unconditional connectors may be an artefact of how it
+was produced. Re-run the extractor against any real candidate application before
+assuming the same holds.
 
 ---
 
@@ -211,16 +264,28 @@ or a business workshop; there is no offline path.
 
 Ordered by priority. Items 4.1 to 4.4 are required; 4.5 onwards are hardening.
 
-### 4.1 Replace the inferred stage-change guards (required)
+### 4.1 Validate the stage-change guards with the business (required)
 
-The four guards in the table above are heuristics. Extract the real `when`
-conditions from the Pega flow rules and update the corresponding
-`ava_lddstep` rows (`ava_guarddecision`, `ava_guardresults`). If a guard needs
-more than "last decision result is in this list" - for example a compound
-expression over case fields - extend `guardAllows()` in `src/lib/engine.ts` to
-evaluate an expression string, and store that expression in `ava_guardresults`.
+**This item changed materially - see section 3b.** The original plan was to
+recover the real `when` conditions from Dev Studio. Extraction of the flow rule
+bodies shows there is nothing to recover: **all 264 connector transitions in the
+exported application are unconditional** (225 `Always`, 32 `Action`, 7 `Else`).
+Zero are `when`-guarded.
 
-Keep `maxStageRevisits` in place afterwards as a safety net.
+So the four inferred guards are not placeholders for a rule that exists
+somewhere. They are a design decision, and the work is a **business
+conversation** rather than a technical extraction: confirm with SMEs when a case
+*should* return to a previous stage for rework, then encode that in the
+`ava_guarddecision` / `ava_guardresults` columns.
+
+Keep `maxStageRevisits` permanently. Since the source application's transitions
+are unconditional, the cap is the only structural guarantee that a case
+terminates - it is load-bearing, not a safety net.
+
+If a guard needs more than "last decision result is in this list" - for example
+a compound expression over case fields - extend `guardAllows()` in
+`src/lib/engine.ts` to evaluate an expression string, and store that expression
+in `ava_guardresults`.
 
 ### 4.2 Real user identity (required)
 
@@ -386,7 +451,9 @@ pa app push
 
 ## 6. Known limitations
 
-- Guards on backward stage changes are inferred, not extracted (section 4.1).
+- Guards on backward stage changes are inferred. The flow bodies were extracted
+  and contain no conditional transitions, so these need business validation
+  rather than technical recovery (sections 3b and 4.1).
 - Notification, data transform and document generation are logged, not executed
   (section 4.3).
 - Current user is hard-coded (section 4.2).
