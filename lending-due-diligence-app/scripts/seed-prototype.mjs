@@ -3,7 +3,7 @@
 // reference data objects and demo cases.
 //
 // Idempotent - every write is an upsert keyed on a natural key.
-// Usage: node scripts/seed-prototype.mjs [--config <path>] [--no-demo]
+// Usage: node scripts/seed-prototype.mjs [--config <path>] [--no-demo] [--force]
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -18,6 +18,7 @@ const CONFIG_PATH =
     ? process.argv[configFlag + 1]
     : fileURLToPath(new URL('../prototype/ldd-prototype-config.json', import.meta.url));
 const WITH_DEMO = !process.argv.includes('--no-demo');
+const FORCE = process.argv.includes('--force');
 
 const TOKEN = execFileSync(
   'az',
@@ -99,7 +100,41 @@ const cfg = JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf8'));
 const counts = {};
 const bump = (k, n = 1) => (counts[k] = (counts[k] ?? 0) + n);
 
+/**
+ * The prototype is produced by pegakit, which only recovers views and choice
+ * sets when it is run against a live instance via the DX API. An
+ * export-plus-document run yields a structurally valid config with none of
+ * them - seeding that would delete the metadata the assignment forms render
+ * from. Refuse rather than silently degrade the app.
+ */
+function assertFidelity() {
+  const views = cfg.views?.length ?? 0;
+  const choiceSets = cfg.choiceSets?.length ?? 0;
+  const fields = (cfg.views ?? []).reduce((n, v) => n + (v.fields?.length ?? 0), 0);
+  if (views && choiceSets && fields) return;
+
+  if (FORCE) {
+    console.warn(
+      `WARNING: seeding a low-fidelity config (views=${views}, fields=${fields}, ` +
+        `choiceSets=${choiceSets}) because --force was passed.\n`
+    );
+    return;
+  }
+
+  console.error('Refusing to seed: the prototype config is missing UI metadata.\n');
+  console.error(`  views       ${views}`);
+  console.error(`  view fields ${fields}`);
+  console.error(`  choice sets ${choiceSets}\n`);
+  console.error('This is what an offline pegakit run (--export + --doc only) produces.');
+  console.error('Re-run pegakit against a sandbox with --host/--id/--secret so the DX');
+  console.error('API can capture views, fields and choice values, then re-extract.');
+  console.error('See docs/DEVELOPER-HANDOVER.md "Prototype provenance".\n');
+  console.error('Override with --force if you genuinely intend to seed config only.');
+  process.exit(1);
+}
+
 async function main() {
+  assertFidelity();
   console.log(`Seeding "${cfg.app.name}" v${cfg.app.version} into ${ORG}\n`);
 
   /* --------------------------- choice sets --------------------------- */

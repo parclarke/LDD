@@ -84,6 +84,13 @@ node scripts/extract-prototype.mjs <prototype-dir> prototype/ldd-prototype-confi
 node scripts/seed-prototype.mjs         # --no-demo to skip demo cases
 ```
 
+> **Before re-extracting**, check the prototype's fidelity. The `myapp`
+> directory is produced by **pegakit**, which yields views and choice sets only
+> when it is run against a live instance via the DX API. An export-plus-document
+> run produces a valid-looking `model.json` with **zero** views and choice sets,
+> and seeding it would wipe the metadata the assignment forms render from.
+> See [Prototype provenance](./docs/DEVELOPER-HANDOVER.md#prototype-provenance-read-before-re-extracting).
+
 ## Further reading
 
 - [`docs/DEVELOPER-HANDOVER.md`](./docs/DEVELOPER-HANDOVER.md) — architecture, the rework-loop

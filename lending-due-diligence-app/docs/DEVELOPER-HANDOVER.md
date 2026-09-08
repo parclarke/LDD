@@ -186,6 +186,25 @@ need to become either Dataverse calculated columns or logic in the orchestrator.
 `RULE-DECLARE-PAGES` (30) are data page definitions - the Dataverse tables and
 generated services replace them.
 
+### Confirmed by the extraction tool
+
+pegakit's own documentation lists what no Pega artefact exposes, and it matches
+the gaps above independently:
+
+- Data transform logic (`pzRunDataTransform` steps)
+- Email / correspondence bodies
+- Dashboard and insight definitions
+- AI agent prompts and tool bindings
+
+> "Rule bodies in the export (`instances_*.bin`) are a proprietary binary format
+> and cannot be decoded outside a Pega instance."
+
+Verified against the source archive: `TheLending.zip` contains
+`TheLending_010101_..._rules.jar` (22.9 MB), which holds `instances_*.bin`
+members up to 26.6 MB. This is where flow rules - and therefore the
+stage-change `when` guards - live. Recovering them requires Dev Studio access
+or a business workshop; there is no offline path.
+
 ---
 
 ## 4. What a developer must do for production
@@ -288,6 +307,9 @@ environment.
 
 ### Re-import the process after a Pega change
 
+> **Check the extraction fidelity first.** See "Prototype provenance" below. A
+> low-fidelity re-extraction will silently wipe out views and choice sets.
+
 ```bash
 cd lending-due-diligence-app
 node scripts/extract-prototype.mjs <prototype-dir> prototype/ldd-prototype-config.json
@@ -295,6 +317,51 @@ node scripts/seed-prototype.mjs --no-demo      # omit --no-demo to also reseed d
 ```
 
 The seeder upserts by natural key, so it is safe to re-run.
+
+### Prototype provenance (read before re-extracting)
+
+The `myapp` prototype directory is produced by **pegakit**, a Python tool that
+extracts a Pega application into `model.json` plus a static analysis site. It
+accepts three independent sources and **the fidelity of its output depends
+entirely on which ones were supplied**:
+
+| pegakit source | Flag | Contributes |
+|---|---|---|
+| Application export (`.zip`) | `--export` | SQL schema, rule inventory |
+| Application document (`.docx`) | `--doc` | Stages, flows, decision tables, security |
+| Live instance via DX API | `--host --id --secret` | **Views, fields, choice values, theme** |
+
+**This app was built from a full three-source extraction.** Verify any
+replacement before seeding, because an export-plus-document run produces a
+structurally valid `model.json` that is missing everything the UI needs:
+
+| | Offline run (export + doc) | Full run (all three) |
+|---|---|---|
+| Views captured | **0** of 49 | 28 of 49 |
+| Choice sets | **0** | 27 |
+| Forms | **0** | 31 |
+| Theme | absent | present |
+| ComplianceMonitoring stages | 10 | 7 |
+
+The stage counts differ because the document-text parser infers the lifecycle
+from prose, whereas a DX API run walks real cases and records actual traces.
+**Treat the DX API run as authoritative for stages and steps.**
+
+Sanity-check before seeding:
+
+```bash
+node -e "const m=require('<prototype-dir>/model.json'); \
+  console.log('views', m.coverage.viewsCaptured.length, \
+              'choiceSets', Object.keys(m.choiceSets||{}).length, \
+              'theme', !!m.theme)"
+```
+
+If views or choice sets are `0`, **stop** - the extraction was run without the
+DX API and seeding it would delete the 24 views, 59 view fields and 26 choice
+sets the assignment forms are rendered from. Re-run pegakit with `--host`,
+`--id` and `--secret` against a sandbox. Note that the DX API harvest creates
+real cases and advances them through their lifecycles, so never point it at
+production.
 
 ### Change the schema
 
