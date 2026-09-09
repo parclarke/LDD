@@ -355,7 +355,7 @@ kpis(s, [("0", "Business workshops\nrequired"),
          ("100%", "Case lifecycle structure\nmigrated automatically"),
          (TESTS, "Automated verification\nchecks passing"),
          ("5 of 5", "Case types running\nend to end"),
-         (BUSINESS_INPUT, "Step bodies needing\nbusiness input")])
+         (BUSINESS_INPUT, "Step bodies never\nimplemented in Pega")])
 bullets(s, [
     ("Objective", 0, True),
     "Prove that a production Pega application can be migrated to the Power "
@@ -370,15 +370,19 @@ bullets(s, [
     "Process structure migrates almost entirely through automation. Process "
     "behaviour - notifications, data transforms, document generation - does "
     "not. But 41 steps still needing implementation is not the same as 41 "
-    "unknowns: notification wording is fully recovered, so only 24 steps "
-    "require any business input at all.",
+    "unknowns: notification wording is fully recovered, and the remaining 24 "
+    "were never implemented in Pega either, so there is no source logic to "
+    "port and no Dev Studio session that would reveal any.",
 ], y=3.20, gap=7, size=13.5)
 notes(s, "Lead with the fact that this is a completed implementation. The five "
          "KPIs are all measured, not estimated. Be precise about the two "
          "different numbers: 41 of 80 step bodies (51%) still need building, "
-         "which is the effort story; but only 24 of 80 (30%) need business "
-         "input, because the 17 notification steps had their wording recovered "
-         "in full from the export.")
+         "which is the effort story; 24 of those have no implementation "
+         "anywhere in the source. Expect the challenge 'could a developer not "
+         "just read these in Dev Studio?' - the answer is no, because the rules "
+         "do not exist: 0 of 20 transform steps resolve to a transform rule, "
+         "and Pega's own design-time warning on every document step says the "
+         "template field cannot be blank. See the Migration Findings section.")
 num(s)
 
 s = base("The real bottleneck is requirements elicitation", eyebrow="Executive Summary")
@@ -960,6 +964,41 @@ notes(s, "This is the practical answer to 'we have no time for requirements'. "
          "You are not asking them to specify an application. Two of the five "
          "rows have collapsed to nothing since the artefacts were mined "
          "properly, and the rest are specific questions against named steps.")
+num(s)
+
+s = base("Could a developer just read these in Dev Studio?", eyebrow="Migration Findings")
+bullets(s, [
+    ("A fair challenge, and the answer is no - because the rules do not exist", 0, True),
+    "Dev Studio shows you rules. For these 24 steps there is no rule to open: "
+    "the shape carries a display name and nothing behind it. A developer would "
+    "see exactly what the export shows.",
+], y=1.52, size=13.5)
+table(s,
+      ["Evidence", "Result"],
+      [["*Is the export complete, or a partial slice?",
+        "*Complete - 6,872 instances, matching the manifest count, across all "
+        "application rulesets"],
+       ["*Does the export carry rule bodies at all, or only headers?",
+        "*Bodies - notification email text, decision table results, 264 flow "
+        "connectors and case type descriptions all recovered"],
+       ["*Do the 20 transform steps resolve to a transform rule?",
+        "*0 of 20. Two names appeared to match, but one is a decision table "
+        "and one a property - name collisions, not transforms"],
+       ["*Are the 4 document steps configured?",
+        "*No. Pega's own design-time warning on every one reads "
+        "\"This field cannot be blank\" against the document name"]],
+      y=2.72, widths=[4.4, 7.7], size=11.5)
+callout(s, "Pega is telling us these steps were never finished. There is "
+           "nothing to migrate, so the behaviour has to be defined - and that "
+           "is a business question by definition, not a developer task.",
+        tone=AMBER)
+notes(s, "This slide exists because it is the first challenge a technical "
+         "reviewer raises, and it is a reasonable one. Be clear that the "
+         "finding is specific to this application: it was generated rather "
+         "than hand-built, which is why the shells are empty. For a real "
+         "hand-built application, expect the opposite - and note that the "
+         "UTF-16BE extraction reads those bodies straight from the export, so "
+         "even then Dev Studio is a convenience rather than a necessity.")
 num(s)
 
 s = base("Automation opportunities", eyebrow="Migration Findings")

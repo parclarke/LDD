@@ -42,7 +42,7 @@ bodies, roughly 51%, require manual implementation** - the notifications, data
 transforms and document generation - because Pega executes that logic inside a
 proprietary engine and does not expose it.
 
-Critically, **those 41 steps are not 41 unknowns**. Notification wording was recovered in full, so only **24 of the 80 steps - 30% - need any business input at all**. For every one of them the
+Critically, **those 41 steps are not 41 unknowns**. Notification wording was recovered in full, and the remaining **24 were never implemented in Pega either** - 0 of 20 transform steps resolve to a transform rule, and Pega's own design-time warning on every document step reads "This field cannot be blank". There is no source logic to port and no Dev Studio session that would reveal any, so what those steps should do is a business question by definition rather than a developer task. For every one of them the
 artefacts already give the case type, the stage, the position in the sequence,
 the step name and the step type. What is missing is only the body. So the
 residual business conversation is not "what notifications does this process
@@ -103,7 +103,7 @@ switch - avoids the last one entirely.
 | Automated verification checks | 58 passed, 0 failed |
 | Business workshops required | 0 |
 | Step bodies still requiring implementation | 41 of 80 (51%) |
-| ... of those, needing any business input | 24 of 80 (30%) |
+| ... of those, never implemented in Pega at all | 24 of 80 (30%) |
 | Flow connector transitions extracted | 264 (0 conditional) |
 | Decision branches extracted and validated | 26 (100% validated) |
 | Notification subjects and bodies recovered | 27 of 27 |

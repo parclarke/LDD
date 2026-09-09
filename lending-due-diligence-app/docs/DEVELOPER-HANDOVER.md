@@ -457,6 +457,36 @@ So the 20 transform steps in this application are **named placeholders with no
 behaviour**. There is nothing to port, and the app's current behaviour (log the
 step, carry on) is faithful to what the source application actually does.
 
+#### Would Dev Studio show a developer anything more?
+
+This is the obvious challenge, and it is a fair one: if the logic is not in the
+export, surely a developer could open Dev Studio and read it there? For this
+application the answer is **no, because the rules do not exist to be read**.
+
+| Evidence | Result |
+|---|---|
+| Is the export complete, or a partial slice? | **Complete** - 6,872 instances matching the manifest's `Instance-Count`, across all application rulesets (`TheLending`, `MyOrg`, `MyOrgInt` and their branches) |
+| Does the export carry rule *bodies*, or only headers? | **Bodies** - notification email text, decision table results, 264 flow connector transitions and case type descriptions were all recovered from it |
+| Do the 20 transform steps resolve to a transform rule? | **0 of 20.** Two step names appeared to match something in the rule index, but `IdentifyGaps` is a `RULE-DECLARE-DECISIONTABLE` and `Compliance Check` matched a `RULE-OBJ-PROPERTY` - name collisions, not transforms |
+| Are the 4 document steps configured? | **No.** Pega's own design-time warning on every `pxGenerateAndAttachDocument` shape reads *"This field cannot be blank"* against `pzRuleParamsHolder.pyDocumentName` |
+
+The last row is the strongest evidence, because it is Pega's own verdict rather
+than an inference from the export: the platform flagged these shapes as
+unconfigured at design time. A developer opening them in Dev Studio would see
+that same warning and an empty field.
+
+So there is no source implementation to port, and nothing a developer can read
+and translate. Someone has to decide what the step should do - and "what should
+this step do?" is a business question by definition. That is what
+`needs_business_input = 24` counts: **not** work being pushed onto the business,
+but work that has no technical source to draw on.
+
+> **This finding is specific to this application.** It was generated rather than
+> hand-built, which is why the shells are empty. For a real hand-built
+> application, expect the opposite - and note that the UTF-16BE technique in
+> section 3b reads rule bodies straight out of the export, so even then Dev
+> Studio is a convenience rather than a necessity.
+
 #### What a developer does about them
 
 Nothing, until the business says what each should do. When they do, the decision
