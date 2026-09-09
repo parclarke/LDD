@@ -8,6 +8,7 @@ import { NewCaseScreen } from './screens/NewCaseScreen';
 import { CaseScreen } from './screens/CaseScreen';
 import { ConfigScreen } from './screens/ConfigScreen';
 import { InsightsScreen } from './screens/InsightsScreen';
+import { RecordsScreen } from './screens/RecordsScreen';
 import { loadLookupSources, loadProcessConfig } from './lib/data';
 import type { LookupSources } from './lib/data';
 import type { CurrentUser, ProcessConfig, Route } from './lib/types';
@@ -71,7 +72,9 @@ function App() {
             </div>
           )}
 
-          {!config && !error && <div className="loading">Loading process configuration…</div>}
+          {!config && !error && route.name !== 'records' && (
+            <div className="loading">Loading process configuration…</div>
+          )}
 
           {config && route.name === 'worklist' && (
             <WorklistScreen
@@ -119,6 +122,9 @@ function App() {
               onOpenCase={(caseId) => setRoute({ name: 'case', caseId })}
             />
           )}
+
+          {/* Records Manager browses reference data and does not need the process model. */}
+          {route.name === 'records' && <RecordsScreen />}
 
           {config && route.name === 'config' && (
             <ConfigScreen config={config} appName={APP_NAME} />

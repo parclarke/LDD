@@ -130,6 +130,7 @@ export type Route =
   | { name: 'newCase' }
   | { name: 'case'; caseId: string; openAssignmentId?: string }
   | { name: 'insights' }
+  | { name: 'records' }
   | { name: 'config' };
 
 export interface CurrentUser {

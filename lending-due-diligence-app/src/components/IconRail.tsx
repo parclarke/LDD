@@ -1,4 +1,4 @@
-type RailRoute = 'worklist' | 'cases' | 'newCase' | 'insights' | 'config';
+type RailRoute = 'worklist' | 'cases' | 'newCase' | 'insights' | 'records' | 'config';
 
 interface Props {
   active: string;
@@ -10,6 +10,7 @@ const ITEMS: Array<{ key: Props['active']; icon: string; title: string; route: R
   { key: 'cases', icon: '☷', title: 'All cases', route: 'cases' },
   { key: 'newCase', icon: '⊕', title: 'Create case', route: 'newCase' },
   { key: 'insights', icon: '◔', title: 'Insights', route: 'insights' },
+  { key: 'records', icon: '▤', title: 'Records Manager', route: 'records' },
   { key: 'config', icon: '⚙', title: 'Process model', route: 'config' },
 ];
 
