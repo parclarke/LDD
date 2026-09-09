@@ -1,5 +1,4 @@
 import type { CurrentUser } from '../lib/types';
-import cibcLogo from '../assets/cibc-logo.png';
 
 interface Props {
   user: CurrentUser;
@@ -7,12 +6,16 @@ interface Props {
   appName: string;
 }
 
-/** Red masthead matching the CIBC / Pega application chrome. */
+/** White masthead matching the Pega Constellation application chrome. */
 export function AppHeader({ user, onHome, appName }: Props) {
   return (
     <header className="app-header">
       <button className="brand" onClick={onHome} type="button" aria-label="Return home">
-        <img className="brand-logo" src={cibcLogo} alt="CIBC" />
+        <span className="brand-waffle" aria-hidden="true">
+          {Array.from({ length: 9 }, (_, i) => (
+            <span key={i} />
+          ))}
+        </span>
       </button>
       <span className="brand-title">{appName}</span>
       <div className="header-spacer" />

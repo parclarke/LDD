@@ -18,12 +18,12 @@ from pptx.enum.text import PP_ALIGN, MSO_ANCHOR
 OUT = sys.argv[1] if len(sys.argv) > 1 else "Pega-to-PowerPlatform-Migration-PoC.pptx"
 
 # ---------------------------------------------------------------- palette ---
-# CIBC-inspired palette pulled from the public site styles.
-RED = RGBColor(0xC4, 0x1F, 0x3E)      # CIBC red
-TEAL = RGBColor(0x00, 0x7B, 0xA4)     # primary CIBC blue
-DEEP = RGBColor(0x00, 0x53, 0x77)     # darker blue for section slides
-LIGHT = RGBColor(0xA0, 0xD3, 0xE8)    # pale blue for contrast
-PALE = RGBColor(0xD3, 0xED, 0xEE)     # very light blue for subtext
+# Palette mirrors the Pega Constellation theme the app now uses.
+RED = RGBColor(0xA1, 0x00, 0xFF)      # brand accent
+TEAL = RGBColor(0x3F, 0x57, 0xE4)     # primary action blue
+DEEP = RGBColor(0x00, 0x1D, 0x54)     # navy ink for section slides
+LIGHT = RGBColor(0xA9, 0xB5, 0xF2)    # pale blue for contrast
+PALE = RGBColor(0xDC, 0xE1, 0xF7)     # very light blue for subtext
 INK = RGBColor(0x1A, 0x1A, 0x1A)
 BODY = RGBColor(0x3C, 0x3C, 0x3C)
 MUTE = RGBColor(0x6E, 0x6E, 0x6E)

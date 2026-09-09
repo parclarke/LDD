@@ -1,27 +1,31 @@
+/* Palette mirrors the Pega Constellation theme used by the generated
+   prototype, so the Code App and the reverse-engineered app read as the
+   same product. Token names are historical; only their values changed. */
 :root {
-  --brand-red: #be1e37;
-  --brand-red-dark: #9c1029;
-  --action-red: #c8102e;
-  --action-red-hover: #a60d26;
-  --case-teal: #2f8e9b;
-  --case-teal-dark: #24737e;
+  --brand-red: #a100ff;
+  --brand-red-dark: #7a00c2;
+  --action-red: #3f57e4;
+  --action-red-hover: #3346bd;
+  --case-teal: #a100ff;
+  --case-teal-dark: #7a00c2;
 
-  --ink: #1f1f1f;
-  --ink-muted: #5a5a5a;
-  --ink-faint: #767676;
-  --line: #d8d8d8;
-  --line-soft: #ececec;
+  --ink: #001d54;
+  --ink-muted: #4a5878;
+  --ink-faint: #6b7797;
+  --line: #cfd5e2;
+  --line-soft: #e6eaf4;
   --panel: #ffffff;
-  --canvas: #f2f2f2;
-  --chip-green: #d5ecd9;
-  --chip-green-ink: #14602a;
-  --chip-blue: #e3edfb;
-  --chip-blue-ink: #17427e;
+  --canvas: #e2e6f3;
+  --surface2: #f3f4fa;
+  --chip-green: #eafaf0;
+  --chip-green-ink: #0b6a2b;
+  --chip-blue: #e8ecfd;
+  --chip-blue-ink: #26379c;
 
-  --radius: 3px;
-  --shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  --radius: 0.75rem;
+  --shadow: 0 1px 3px rgba(0, 29, 84, 0.12);
 
-  font-family: 'Segoe UI', 'Open Sans', Arial, Helvetica, sans-serif;
+  font-family: 'Roboto Flex', 'Segoe UI', system-ui, sans-serif;
   font-size: 14px;
   color: var(--ink);
 }
@@ -53,14 +57,15 @@ button {
 }
 
 .app-header {
-  background: var(--brand-red);
-  color: #fff;
+  background: #fff;
+  color: var(--ink);
   height: 64px;
   display: flex;
   align-items: center;
   padding: 0 24px;
   gap: 20px;
   flex: 0 0 auto;
+  border-bottom: 1px solid var(--canvas);
 }
 
 .brand {
@@ -72,19 +77,33 @@ button {
   border: 0;
   background: transparent;
   padding: 0;
+  color: inherit;
 }
 
-.brand-logo {
-  display: block;
-  width: 138px;
-  max-height: 34px;
-  height: auto;
+/* Constellation-style waffle launcher */
+.brand-waffle {
+  display: grid;
+  grid-template-columns: repeat(3, 4px);
+  gap: 3px;
+  padding: 6px;
+  border-radius: 6px;
+}
+
+.brand-waffle span {
+  width: 4px;
+  height: 4px;
+  border-radius: 1px;
+  background: var(--ink);
+}
+
+.brand:hover .brand-waffle {
+  background: var(--surface2);
 }
 
 .brand-title {
   font-size: 17px;
   font-weight: 600;
-  margin-left: 16px;
+  margin-left: 4px;
 }
 
 .header-spacer {
@@ -99,11 +118,11 @@ button {
 }
 
 .header-right .divider {
-  opacity: 0.6;
+  color: var(--line);
 }
 
 .header-link {
-  color: #fff;
+  color: var(--ink);
   text-decoration: none;
   cursor: pointer;
 }
@@ -153,9 +172,9 @@ button {
   height: 34px;
   border: none;
   background: transparent;
-  color: #6b6b6b;
+  color: var(--ink-faint);
   font-size: 17px;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -163,7 +182,7 @@ button {
 }
 
 .rail-btn:hover {
-  background: #f3f3f3;
+  background: var(--surface2);
   color: var(--action-red);
 }
 
@@ -946,3 +965,149 @@ table.grid .case-link:hover {
 .stat { min-width: 120px; }
 .stat .stat-value { font-size: 24px; font-weight: 700; color: var(--brand-red); }
 .stat .stat-label { font-size: 12px; color: var(--ink-muted); }
+
+/* ---------------- Home dashboard ---------------- */
+.title-badge {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: var(--surface2);
+  color: var(--action-red);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.home-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+@media (max-width: 1100px) {
+  .home-grid { grid-template-columns: minmax(0, 1fr); }
+}
+
+.home-col { min-width: 0; }
+
+.announce {
+  position: relative;
+  overflow: hidden;
+  background: var(--brand-red);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 24px 26px 26px;
+  margin-bottom: 18px;
+}
+
+.announce h2 { margin: 0 0 8px; font-size: 19px; }
+.announce p { margin: 0 0 16px; max-width: 60ch; line-height: 1.45; }
+
+/* Oversized watermark echoing the Pega announcement banner. */
+.announce-mark {
+  position: absolute;
+  right: 18px;
+  top: -14px;
+  font-size: 86px;
+  font-weight: 700;
+  letter-spacing: -2px;
+  color: rgba(255, 255, 255, 0.16);
+  pointer-events: none;
+}
+
+.btn-ghost-light {
+  background: transparent;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  border-radius: 0.5rem;
+  padding: 7px 16px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.btn-ghost-light:hover { background: rgba(255, 255, 255, 0.15); }
+
+.card-head {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.card-head h3 { margin: 0; font-size: 16px; }
+
+.result-count { font-size: 12px; color: var(--ink-faint); }
+
+.task-list { list-style: none; margin: 0; padding: 0; }
+
+.task-list li {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 0;
+  border-top: 1px solid var(--line-soft);
+}
+
+.task-list li:first-child { border-top: 0; }
+
+.task-main { flex: 1; min-width: 0; }
+.task-name { font-weight: 600; margin-bottom: 3px; }
+.task-meta { font-size: 12px; color: var(--ink-muted); }
+
+.link-btn {
+  background: none;
+  border: 0;
+  padding: 10px 0 0;
+  color: var(--action-red);
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.link-btn:hover { text-decoration: underline; }
+
+.empty-card { padding: 18px 0; color: var(--ink-faint); }
+
+.pulse-compose {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.pulse-input {
+  flex: 1;
+  background: var(--surface2);
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  padding: 9px 12px;
+  color: var(--ink-faint);
+  font-size: 13px;
+}
+
+.tile-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: left;
+  background: var(--surface2);
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  padding: 14px;
+  cursor: pointer;
+  color: inherit;
+  font-size: 13px;
+}
+
+.tile:hover { border-color: var(--action-red); }
+
+.tile-count { font-size: 22px; font-weight: 700; color: var(--action-red); }
+.tile-name { font-weight: 600; }
+.tile-sub { font-size: 11px; color: var(--ink-faint); }

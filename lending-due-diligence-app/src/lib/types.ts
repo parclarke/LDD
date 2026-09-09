@@ -125,6 +125,7 @@ export interface ProcessConfig {
 }
 
 export type Route =
+  | { name: 'home' }
   | { name: 'worklist' }
   | { name: 'cases' }
   | { name: 'newCase' }

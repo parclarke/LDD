@@ -65,11 +65,14 @@ Case types: `LendingReview`, `RiskAssessment`, `ComplianceMonitoring`, `Escalati
 - [x] v2: `scripts/verify-engine.mjs` — **58 passed / 0 failed** against live Dataverse
 - [x] v2: built, linted clean, deployed
 - [x] v2: `docs/DEVELOPER-HANDOVER.md` written
+- [x] v2.1: CIBC branding removed; palette realigned to the Pega Constellation theme
+      used by the generated prototype, and a Home dashboard added as the landing screen
 
 ## Screens
 
 | Screen | File | Purpose |
 | --- | --- | --- |
+| Home | `screens/HomeScreen.tsx` | Landing dashboard: announcements, tasks, Pulse, case-type tiles |
 | My Worklist | `screens/WorklistScreen.tsx` | Pending assignments across all case types |
 | Cases | `screens/CaseListScreen.tsx` | All cases, filterable by type and status |
 | New case | `screens/NewCaseScreen.tsx` | Pick a case type and create |

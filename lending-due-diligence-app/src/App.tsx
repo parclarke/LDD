@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import './theme.css';
 import { AppHeader } from './components/AppHeader';
 import { IconRail } from './components/IconRail';
+import { HomeScreen } from './screens/HomeScreen';
 import { WorklistScreen } from './screens/WorklistScreen';
 import { CaseListScreen } from './screens/CaseListScreen';
 import { NewCaseScreen } from './screens/NewCaseScreen';
@@ -30,7 +31,7 @@ const DEFAULT_USER: CurrentUser = {
 };
 
 function App() {
-  const [route, setRoute] = useState<Route>({ name: 'worklist' });
+  const [route, setRoute] = useState<Route>({ name: 'home' });
   const [user] = useState<CurrentUser>(DEFAULT_USER);
   const [config, setConfig] = useState<ProcessConfig | null>(null);
   const [lookups, setLookups] = useState<LookupSources>({});
@@ -60,7 +61,7 @@ function App() {
 
   return (
     <div className="app-shell">
-      <AppHeader user={user} appName={APP_NAME} onHome={() => setRoute({ name: 'worklist' })} />
+      <AppHeader user={user} appName={APP_NAME} onHome={() => setRoute({ name: 'home' })} />
       <div className="app-body">
         <IconRail active={railActive} onNavigate={(r) => setRoute({ name: r } as Route)} />
         <main className="main-area">
@@ -74,6 +75,18 @@ function App() {
 
           {!config && !error && route.name !== 'records' && (
             <div className="loading">Loading process configuration…</div>
+          )}
+
+          {config && route.name === 'home' && (
+            <HomeScreen
+              config={config}
+              user={user}
+              onOpenCase={(caseId, assignmentId) =>
+                setRoute({ name: 'case', caseId, openAssignmentId: assignmentId })
+              }
+              onShowMore={() => setRoute({ name: 'worklist' })}
+              onOpenCases={() => setRoute({ name: 'cases' })}
+            />
           )}
 
           {config && route.name === 'worklist' && (
