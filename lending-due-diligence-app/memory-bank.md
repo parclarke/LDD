@@ -77,6 +77,7 @@ Case types: `LendingReview`, `RiskAssessment`, `ComplianceMonitoring`, `Escalati
 | Assignment form | `screens/forms/AssignmentForm.tsx` | Renders any view via `DynamicForm` |
 | Approval form | `screens/forms/ApprovalForm.tsx` | Approve / reject |
 | Configuration | `screens/ConfigScreen.tsx` | Read-only view of the imported process metadata |
+| Records Manager | `screens/RecordsScreen.tsx` + `lib/records.ts` | Browses the ten Pega data objects, one tab each |
 
 ## Key implementation notes
 
@@ -113,6 +114,11 @@ node scripts/seed-prototype.mjs --no-demo      # omit --no-demo to also reseed d
 LDD_SCHEMA=schema-v2.mjs node scripts/provision-dataverse.mjs
 node scripts/verify-engine.mjs                 # live E2E; --keep leaves records behind
 ```
+
+The 2026-09-09 Pegakit re-run (`C:\pegakit\newapp2`, live DX API harvest plus
+18 portal screenshots) produced a config byte-identical to the deployed
+`prototype/ldd-prototype-config.json`, so no reseed was needed. Diff before
+reseeding rather than assuming a new extraction changed anything.
 
 ## Redeploy
 
