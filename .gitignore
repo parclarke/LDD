@@ -1,0 +1,18 @@
+# Throwaway probe scripts.
+#
+# Investigation in this repo leans on short-lived scripts for poking at the Pega
+# export and Dataverse metadata. They are named with a leading underscore by
+# convention so a `git add -A` cannot sweep them into a commit - which is
+# exactly how `_t.py` once ended up tracked.
+_*.py
+_*.mjs
+_*.js
+_*.ps1
+
+# Scratch output from those probes.
+_slides/
+_v/
+_x/
+_y/
+_z/
+_n/
