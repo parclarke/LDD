@@ -42,11 +42,11 @@ export function RecordsScreen() {
 
   const source = RECORD_SOURCES.find((s) => s.key === activeKey) ?? RECORD_SOURCES[0];
 
+  // The effect only touches state from its async callbacks. Clearing the
+  // previous tab's rows is done in the click handler, so switching tabs does
+  // not briefly show one object's records under another's column headings.
   useEffect(() => {
     let cancelled = false;
-    setLoading(true);
-    setError(null);
-    setRows([]);
     source
       .load()
       .then((r) => !cancelled && setRows(r))
@@ -76,8 +76,12 @@ export function RecordsScreen() {
               type="button"
               className={`tab${s.key === activeKey ? ' active' : ''}`}
               onClick={() => {
+                if (s.key === activeKey) return;
                 setActiveKey(s.key);
                 setSearch('');
+                setRows([]);
+                setError(null);
+                setLoading(true);
               }}
             >
               {s.label}
