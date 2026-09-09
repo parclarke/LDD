@@ -18,8 +18,12 @@ from pptx.enum.text import PP_ALIGN, MSO_ANCHOR
 OUT = sys.argv[1] if len(sys.argv) > 1 else "Pega-to-PowerPlatform-Migration-PoC.pptx"
 
 # ---------------------------------------------------------------- palette ---
-RED = RGBColor(0xC8, 0x10, 0x2E)      # CIBC-style masthead red
-TEAL = RGBColor(0x00, 0x6D, 0x77)     # case banner teal
+# CIBC-inspired palette pulled from the public site styles.
+RED = RGBColor(0xC4, 0x1F, 0x3E)      # CIBC red
+TEAL = RGBColor(0x00, 0x7B, 0xA4)     # primary CIBC blue
+DEEP = RGBColor(0x00, 0x53, 0x77)     # darker blue for section slides
+LIGHT = RGBColor(0xA0, 0xD3, 0xE8)    # pale blue for contrast
+PALE = RGBColor(0xD3, 0xED, 0xEE)     # very light blue for subtext
 INK = RGBColor(0x1A, 0x1A, 0x1A)
 BODY = RGBColor(0x3C, 0x3C, 0x3C)
 MUTE = RGBColor(0x6E, 0x6E, 0x6E)
@@ -235,17 +239,17 @@ def callout(slide, text, y=None, tone=TEAL, x=0.62, w=12.1, h=0.72):
 
 def divider(number, title, blurb):
     s = prs.slides.add_slide(BLANK)
-    rect(s, 0, 0, 13.333, 7.5, TEAL)
+    rect(s, 0, 0, 13.333, 7.5, DEEP)
     rect(s, 0, 0, 13.333, 0.16, RED)
     tb = textbox(s, 1.0, 2.55, 2.0, 1.2)
     para(_tf(tb), f"{number:02d}", size=64, bold=True,
-         color=RGBColor(0x7F, 0xC4, 0xCB), first=True, space_after=0)
+         color=LIGHT, first=True, space_after=0)
     tb = textbox(s, 2.55, 2.72, 9.6, 1.0)
     para(_tf(tb), title, size=34, bold=True, color=WHITE, first=True,
          space_after=0)
     tb = textbox(s, 2.62, 3.72, 9.4, 0.7)
     para(_tf(tb), blurb, size=14.5,
-         color=RGBColor(0xD6, 0xEC, 0xEE), first=True, space_after=0)
+         color=PALE, first=True, space_after=0)
     return s
 
 
@@ -296,7 +300,7 @@ def num(s):
 s = prs.slides.add_slide(BLANK)
 rect(s, 0, 0, 13.333, 7.5, WHITE)
 rect(s, 0, 0, 13.333, 0.30, RED)
-rect(s, 0, 7.20, 13.333, 0.30, TEAL)
+rect(s, 0, 7.20, 13.333, 0.30, DEEP)
 tb = textbox(s, 1.0, 2.15, 11.3, 0.45)
 para(_tf(tb), "PROOF OF CONCEPT  |  MIGRATION APPROACH", size=13, bold=True,
      color=TEAL, first=True, space_after=0)
@@ -1399,7 +1403,7 @@ num(s)
 
 # ---------------------------------------------------------------- closing ---
 s = prs.slides.add_slide(BLANK)
-rect(s, 0, 0, 13.333, 7.5, TEAL)
+rect(s, 0, 0, 13.333, 7.5, DEEP)
 rect(s, 0, 0, 13.333, 0.16, RED)
 tb = textbox(s, 1.5, 2.75, 10.3, 1.0)
 para(_tf(tb), "Questions", size=40, bold=True, color=WHITE, first=True,
@@ -1407,11 +1411,11 @@ para(_tf(tb), "Questions", size=40, bold=True, color=WHITE, first=True,
 tb = textbox(s, 1.5, 3.75, 10.3, 1.6)
 para(_tf(tb),
      "Pega to Power Platform  ·  Lending Due Diligence PoC",
-     size=15, color=RGBColor(0xD6, 0xEC, 0xEE), first=True, space_after=6)
+     size=15, color=PALE, first=True, space_after=6)
 para(_tf(tb),
      f"5 case types  ·  {F['stages']} stages  ·  {F['steps']} steps  ·  "
      f"{TESTS} verification checks  ·  0 business workshops",
-     size=13, color=RGBColor(0xBF, 0xDF, 0xE3), space_after=0)
+     size=13, color=LIGHT, space_after=0)
 num(s)
 
 prs.save(OUT)

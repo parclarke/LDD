@@ -1,4 +1,5 @@
 import type { CurrentUser } from '../lib/types';
+import cibcLogo from '../assets/cibc-logo.png';
 
 interface Props {
   user: CurrentUser;
@@ -10,10 +11,9 @@ interface Props {
 export function AppHeader({ user, onHome, appName }: Props) {
   return (
     <header className="app-header">
-      <div className="brand" onClick={onHome} role="button" tabIndex={0}>
-        <span className="brand-mark">CIBC</span>
-        <span className="brand-diamond" aria-hidden="true" />
-      </div>
+      <button className="brand" onClick={onHome} type="button" aria-label="Return home">
+        <img className="brand-logo" src={cibcLogo} alt="CIBC" />
+      </button>
       <span className="brand-title">{appName}</span>
       <div className="header-spacer" />
       <div className="header-right">
