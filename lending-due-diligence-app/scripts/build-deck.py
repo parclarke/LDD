@@ -534,8 +534,9 @@ bullets(s, [
     "Having extracted the flow bodies, all 264 connector transitions are "
     "unconditional - 225 Always, 32 Action, 7 Else. Not one is when-guarded.",
     ("Behaviour is still locked to the engine", 0, True),
-    "Data transforms, correspondence bodies and notification templates are "
-    "engine-executed and have no exportable representation.",
+    "Screen layouts, dashboards and any customised AI prompt text have no "
+    "exportable representation. Correspondence bodies do - all 27 were "
+    "recovered in full.",
     ("Skills and cost", 0, True),
     "Certified Pega specialists are scarce and expensive relative to the "
     "React / TypeScript / Dataverse talent pool.",
@@ -774,7 +775,7 @@ table(s,
         "application", "Additional rules would need a further extraction pass"],
        ["*2", "Rework conditions can be agreed with the business", "*Extraction proved none exist in Pega to recover"],
        ["*3", "Notification and correspondence content can be re-authored, "
-        "not migrated", "Effort increases if exact templates are mandatory"],
+        "not migrated", "*Superseded - all 27 bodies were recovered verbatim"],
        ["*4", "Dataverse security roles can express the 19 Pega access groups",
         "A more granular model would need custom logic"],
        ["*5", "Business volumes are within standard Dataverse limits",

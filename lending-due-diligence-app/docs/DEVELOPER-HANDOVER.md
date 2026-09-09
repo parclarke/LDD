@@ -215,19 +215,25 @@ generated services replace them.
 
 ### Confirmed by the extraction tool
 
-pegakit's own documentation lists what no Pega artefact exposes:
+pegakit originally listed four things it claimed no Pega artefact exposes.
+Three of the four have since been disproved by testing against this export,
+and pegakit's README and extractor have been corrected accordingly:
 
-- Data transform logic (`pzRunDataTransform` steps) - **but see 4.3a: this
-  export has none authored, and in a real app they should be recoverable**
-- Email / correspondence bodies
-- Dashboard and insight definitions
-- AI agent prompts and tool bindings
+| Original claim | Status |
+|---|---|
+| Data transform logic (`pzRunDataTransform`) | **Partly wrong** - rule names and step actions (`SET`, `UPDATE_PAGE`) recover. See 4.3a: this export has none authored. |
+| Email / correspondence bodies | **Wrong** - all 27 recover in full from `pySourceStream`. See 4.3b. |
+| Dashboard and insight definitions | Correct - no app-owned instances in the export |
+| AI agent prompts and tool bindings | **Partly wrong** - the `Rule-Connect-GenerativeAI` binding and step names recover; only custom prompt *text* does not |
+
+pegakit also used to state:
 
 > "Rule bodies in the export (`instances_*.bin`) are a proprietary binary format
 > and cannot be decoded outside a Pega instance."
 
-**That last claim is wrong, and this project originally repeated it.** See
-section 3b.
+**That is wrong, and this project originally repeated it.** See section 3b.
+`pega_rules.py` in pegakit now recovers flow bodies, connector transitions,
+stage changes and correspondence bodies as a standard part of `--export`.
 
 ---
 
