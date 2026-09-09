@@ -71,7 +71,7 @@ lifecycle for every case type against live Dataverse, then cleans up after itsel
 node scripts/verify-engine.mjs          # --keep leaves the records behind
 ```
 
-Current result: **49 passed / 0 failed**.
+Current result: **58 passed / 0 failed**.
 
 ## Provision and seed
 
@@ -83,6 +83,13 @@ LDD_SCHEMA=schema-v2.mjs node scripts/provision-dataverse.mjs
 node scripts/extract-prototype.mjs <prototype-dir> prototype/ldd-prototype-config.json
 node scripts/seed-prototype.mjs         # --no-demo to skip demo cases
 ```
+
+> **Before re-extracting**, check the prototype's fidelity. The `myapp`
+> directory is produced by **pegakit**, which yields views and choice sets only
+> when it is run against a live instance via the DX API. An export-plus-document
+> run produces a valid-looking `model.json` with **zero** views and choice sets,
+> and seeding it would wipe the metadata the assignment forms render from.
+> See [Prototype provenance](./docs/DEVELOPER-HANDOVER.md#prototype-provenance-read-before-re-extracting).
 
 ## Further reading
 

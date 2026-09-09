@@ -1,22 +1,22 @@
 {
-  "name": "ava_lddstep",
-  "title": "LDD Steps",
+  "name": "ava_lddflowbranch",
+  "title": "LDD Flow Branches",
   "schema": {
     "type": "array",
     "items": {
       "type": "object",
       "x-ms-dataverse-entity": true,
-      "x-ms-dataverse-entityset": "ava_lddsteps",
-      "x-ms-dataverse-primary-id": "ava_lddstepid",
+      "x-ms-dataverse-entityset": "ava_lddflowbranchs",
+      "x-ms-dataverse-primary-id": "ava_lddflowbranchid",
       "x-ms-dataverse-primary-name": "ava_name",
       "properties": {
-        "ava_approvertype": {
+        "ava_casetypecode": {
           "type": "string",
-          "title": "Approver Type",
-          "x-ms-dataverse-attribute": "ava_approvertype",
+          "title": "Case Type Code",
+          "x-ms-dataverse-attribute": "ava_casetypecode",
           "x-ms-dataverse-type": "StringType",
-          "x-ms-schema-name": "ava_ApproverType",
-          "maxLength": 40
+          "x-ms-schema-name": "ava_CaseTypeCode",
+          "maxLength": 100
         },
         "ava_decisionname": {
           "type": "string",
@@ -24,106 +24,66 @@
           "x-ms-dataverse-attribute": "ava_decisionname",
           "x-ms-dataverse-type": "StringType",
           "x-ms-schema-name": "ava_DecisionName",
-          "maxLength": 100
+          "maxLength": 200
         },
-        "ava_guarddecision": {
+        "ava_isterminal": {
           "type": "string",
-          "title": "Guard Decision",
-          "x-ms-dataverse-attribute": "ava_guarddecision",
-          "x-ms-dataverse-type": "StringType",
-          "x-ms-schema-name": "ava_GuardDecision",
-          "maxLength": 100
+          "title": "Is Terminal",
+          "x-ms-dataverse-attribute": "ava_isterminal",
+          "x-ms-dataverse-type": "BooleanType",
+          "x-ms-schema-name": "ava_IsTerminal",
+          "enum": [
+            "No",
+            "Yes"
+          ],
+          "x-ms-enum-values": [
+            0,
+            1
+          ],
+          "Color": [
+            null,
+            null
+          ],
+          "x-ms-optionsetmetadataid": "68179af6-c8ab-f111-aaab-70a8a5b112f9",
+          "x-ms-isGlobal": false,
+          "x-ms-optionsetdisplayname": "Is Terminal",
+          "x-ms-optionSetType": "Boolean"
         },
-        "ava_guardresults": {
+        "ava_isterminalname": {
           "type": "string",
-          "title": "Guard Results",
-          "x-ms-dataverse-attribute": "ava_guardresults",
-          "x-ms-dataverse-type": "StringType",
-          "x-ms-schema-name": "ava_GuardResults",
-          "maxLength": 500
+          "title": "ava_isterminalname",
+          "x-ms-dataverse-attribute": "ava_isterminalname",
+          "x-ms-dataverse-type": "VirtualType",
+          "x-ms-schema-name": "ava_isterminalName",
+          "x-ms-read-only": true
         },
-        "ava_impl": {
+        "ava_lddflowbranchid": {
           "type": "string",
-          "title": "Impl",
-          "x-ms-dataverse-attribute": "ava_impl",
-          "x-ms-dataverse-type": "StringType",
-          "x-ms-schema-name": "ava_Impl",
-          "maxLength": 100
-        },
-        "ava_kind": {
-          "type": "string",
-          "title": "Kind",
-          "x-ms-dataverse-attribute": "ava_kind",
-          "x-ms-dataverse-type": "StringType",
-          "x-ms-schema-name": "ava_Kind",
-          "maxLength": 30
-        },
-        "ava_lddstepid": {
-          "type": "string",
-          "title": "LDD Step",
-          "x-ms-dataverse-attribute": "ava_lddstepid",
+          "title": "LDD Flow Branch",
+          "x-ms-dataverse-attribute": "ava_lddflowbranchid",
           "x-ms-dataverse-type": "UniqueidentifierType",
-          "x-ms-schema-name": "ava_LddStepId",
+          "x-ms-schema-name": "ava_LddFlowBranchId",
           "x-ms-dataverse-primary-id": true,
           "required": true,
           "x-ms-keyType": "primary"
         },
         "ava_name": {
           "type": "string",
-          "title": "Step Name",
+          "title": "Branch",
           "x-ms-dataverse-attribute": "ava_name",
           "x-ms-dataverse-type": "StringType",
           "x-ms-schema-name": "ava_Name",
           "x-ms-dataverse-primary-name": true,
           "required": true,
-          "maxLength": 200
-        },
-        "ava_notificationname": {
-          "type": "string",
-          "title": "Notification Name",
-          "x-ms-dataverse-attribute": "ava_notificationname",
-          "x-ms-dataverse-type": "StringType",
-          "x-ms-schema-name": "ava_NotificationName",
-          "maxLength": 100
-        },
-        "ava_notifybody": {
-          "type": "string",
-          "title": "Notification Body",
-          "x-ms-dataverse-attribute": "ava_notifybody",
-          "x-ms-dataverse-type": "StringType",
-          "x-ms-schema-name": "ava_NotifyBody",
-          "maxLength": 4000
-        },
-        "ava_notifysubject": {
-          "type": "string",
-          "title": "Notification Subject",
-          "x-ms-dataverse-attribute": "ava_notifysubject",
-          "x-ms-dataverse-type": "StringType",
-          "x-ms-schema-name": "ava_NotifySubject",
           "maxLength": 250
         },
-        "ava_params": {
+        "ava_resultvalue": {
           "type": "string",
-          "title": "Params",
-          "x-ms-dataverse-attribute": "ava_params",
-          "x-ms-dataverse-type": "MemoType",
-          "x-ms-schema-name": "ava_Params",
-          "maxLength": 4000
-        },
-        "ava_routingtype": {
-          "type": "string",
-          "title": "Routing Type",
-          "x-ms-dataverse-attribute": "ava_routingtype",
+          "title": "Result Value",
+          "x-ms-dataverse-attribute": "ava_resultvalue",
           "x-ms-dataverse-type": "StringType",
-          "x-ms-schema-name": "ava_RoutingType",
-          "maxLength": 30
-        },
-        "ava_sladays": {
-          "type": "string",
-          "title": "Sla Days",
-          "x-ms-dataverse-attribute": "ava_sladays",
-          "x-ms-dataverse-type": "IntegerType",
-          "x-ms-schema-name": "ava_SlaDays"
+          "x-ms-schema-name": "ava_ResultValue",
+          "maxLength": 200
         },
         "ava_sortorder": {
           "type": "string",
@@ -132,45 +92,37 @@
           "x-ms-dataverse-type": "IntegerType",
           "x-ms-schema-name": "ava_SortOrder"
         },
-        "ava_stageid": {
+        "ava_stagecode": {
           "type": "string",
-          "title": "Stage",
-          "x-ms-dataverse-attribute": "ava_stageid",
-          "x-ms-dataverse-type": "LookupType",
-          "x-ms-schema-name": "ava_StageId"
-        },
-        "ava_stageidname": {
-          "type": "string",
-          "title": "ava_stageidname",
-          "x-ms-dataverse-attribute": "ava_stageidname",
+          "title": "Stage Code",
+          "x-ms-dataverse-attribute": "ava_stagecode",
           "x-ms-dataverse-type": "StringType",
-          "x-ms-schema-name": "ava_StageIdName",
-          "x-ms-read-only": true,
-          "maxLength": 200
-        },
-        "ava_targetstagecode": {
-          "type": "string",
-          "title": "Target Stage Code",
-          "x-ms-dataverse-attribute": "ava_targetstagecode",
-          "x-ms-dataverse-type": "StringType",
-          "x-ms-schema-name": "ava_TargetStageCode",
+          "x-ms-schema-name": "ava_StageCode",
           "maxLength": 20
         },
-        "ava_viewname": {
+        "ava_stagename": {
           "type": "string",
-          "title": "View Name",
-          "x-ms-dataverse-attribute": "ava_viewname",
+          "title": "Stage Name",
+          "x-ms-dataverse-attribute": "ava_stagename",
           "x-ms-dataverse-type": "StringType",
-          "x-ms-schema-name": "ava_ViewName",
+          "x-ms-schema-name": "ava_StageName",
+          "maxLength": 200
+        },
+        "ava_targettask": {
+          "type": "string",
+          "title": "Target Task",
+          "x-ms-dataverse-attribute": "ava_targettask",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "ava_TargetTask",
           "maxLength": 100
         },
-        "ava_workbasket": {
+        "ava_transitionid": {
           "type": "string",
-          "title": "Workbasket",
-          "x-ms-dataverse-attribute": "ava_workbasket",
+          "title": "Transition Id",
+          "x-ms-dataverse-attribute": "ava_transitionid",
           "x-ms-dataverse-type": "StringType",
-          "x-ms-schema-name": "ava_Workbasket",
-          "maxLength": 100
+          "x-ms-schema-name": "ava_TransitionId",
+          "maxLength": 50
         },
         "createdby": {
           "type": "string",
@@ -399,7 +351,7 @@
             null,
             null
           ],
-          "x-ms-optionsetmetadataid": "ceeb5ab9-acab-f111-aaab-70a8a5b112f9",
+          "x-ms-optionsetmetadataid": "689e07d5-c8ab-f111-aaab-70a8a5b112f9",
           "x-ms-isGlobal": false,
           "x-ms-optionsetdisplayname": "Status",
           "x-ms-optionSetType": "State"
@@ -430,7 +382,7 @@
             null,
             null
           ],
-          "x-ms-optionsetmetadataid": "d8eb5ab9-acab-f111-aaab-70a8a5b112f9",
+          "x-ms-optionsetmetadataid": "729e07d5-c8ab-f111-aaab-70a8a5b112f9",
           "x-ms-isGlobal": false,
           "x-ms-optionsetdisplayname": "Status Reason",
           "x-ms-optionSetType": "Status"
@@ -467,7 +419,7 @@
         }
       },
       "required": [
-        "ava_lddstepid",
+        "ava_lddflowbranchid",
         "ava_name",
         "createdbyyominame",
         "createdonbehalfbyyominame",

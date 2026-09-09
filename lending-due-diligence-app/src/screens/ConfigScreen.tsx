@@ -13,9 +13,9 @@ interface Props {
  * app matches the source design.
  */
 export function ConfigScreen({ config, appName }: Props) {
-  const [tab, setTab] = useState<'caseTypes' | 'views' | 'choices' | 'decisions' | 'roles'>(
-    'caseTypes'
-  );
+  const [tab, setTab] = useState<
+    'caseTypes' | 'views' | 'choices' | 'decisions' | 'routing' | 'roles'
+  >('caseTypes');
 
   const totals = {
     caseTypes: config.caseTypes.length,
@@ -25,6 +25,7 @@ export function ConfigScreen({ config, appName }: Props) {
     viewFields: config.viewFields.length,
     choiceSets: config.choiceSets.length,
     decisions: config.decisions.length,
+    branches: config.flowBranches.length,
     roles: config.roles.length,
   };
 
@@ -45,6 +46,7 @@ export function ConfigScreen({ config, appName }: Props) {
             <Stat value={totals.viewFields} label="View fields" />
             <Stat value={totals.choiceSets} label="Choice sets" />
             <Stat value={totals.decisions} label="Decision tables" />
+            <Stat value={totals.branches} label="Flow branches" />
             <Stat value={totals.roles} label="Roles" />
           </div>
         </div>
@@ -57,6 +59,7 @@ export function ConfigScreen({ config, appName }: Props) {
                 ['views', 'Views'],
                 ['choices', 'Choice sets'],
                 ['decisions', 'Decision tables'],
+                ['routing', 'Flow routing'],
                 ['roles', 'Roles'],
               ] as const
             ).map(([key, label]) => (
@@ -109,6 +112,17 @@ export function ConfigScreen({ config, appName }: Props) {
                               {st.ava_impl ? ` / ${st.ava_impl}` : ''}
                               {st.ava_viewname ? ` / ${st.ava_viewname}` : ''}
                             </span>
+                            {st.ava_notifysubject && (
+                              <div
+                                className="muted"
+                                style={{ fontSize: 11.5, marginTop: 3, paddingLeft: 2 }}
+                              >
+                                <strong>{st.ava_notifysubject}</strong>
+                                {st.ava_notifybody ? ` — ${st.ava_notifybody.slice(0, 150)}${
+                                  st.ava_notifybody.length > 150 ? '…' : ''
+                                }` : ''}
+                              </div>
+                            )}
                           </li>
                         ))}
                       </ul>
@@ -242,6 +256,61 @@ export function ConfigScreen({ config, appName }: Props) {
                 </div>
               );
             })}
+
+          {tab === 'routing' && (
+            <>
+              <p className="muted" style={{ fontSize: 12, marginTop: 0 }}>
+                Extracted from the Pega flow rule bodies and validated against the decision
+                table that owns each result. A branch marked <em>ends stage</em> routes to an
+                END shape, so the engine skips the remaining steps of that stage.
+              </p>
+              {Object.entries(
+                config.flowBranches.reduce<Record<string, typeof config.flowBranches>>(
+                  (acc, b) => {
+                    const key = `${b.ava_casetypecode} / ${b.ava_stagename} · ${b.ava_decisionname}`;
+                    (acc[key] ??= []).push(b);
+                    return acc;
+                  },
+                  {}
+                )
+              ).map(([key, branches]) => (
+                <div key={key} style={{ marginBottom: 22 }}>
+                  <strong>{key}</strong>
+                  <div className="grid-wrap" style={{ marginTop: 6 }}>
+                    <table className="grid">
+                      <thead>
+                        <tr>
+                          <th style={{ width: 240 }}>Decision result</th>
+                          <th style={{ width: 160 }}>Routes to</th>
+                          <th>Effect</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {branches
+                          .slice()
+                          .sort((a, b) => (a.ava_sortorder ?? 0) - (b.ava_sortorder ?? 0))
+                          .map((b) => (
+                            <tr key={b.ava_lddflowbranchid}>
+                              <td>
+                                <strong>{b.ava_resultvalue}</strong>
+                              </td>
+                              <td className="muted">{b.ava_targettask}</td>
+                              <td>
+                                {b.ava_isterminal ? (
+                                  <span className="pill">ends stage</span>
+                                ) : (
+                                  <span className="muted">continues</span>
+                                )}
+                              </td>
+                            </tr>
+                          ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              ))}
+            </>
+          )}
 
           {tab === 'roles' && (
             <div className="grid-wrap">

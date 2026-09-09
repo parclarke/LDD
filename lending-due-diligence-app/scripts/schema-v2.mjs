@@ -157,6 +157,28 @@ const configTables = [
     primary: { schema: 'ava_Name', display: 'Role Name', len: 200 },
     columns: [S('ava_AccessGroup', 200), S('ava_Workbasket', 100), B('ava_IsManager')],
   },
+  {
+    schema: 'ava_LddFlowBranch',
+    display: 'LDD Flow Branch',
+    plural: 'LDD Flow Branches',
+    description:
+      'A decision outcome and where the Pega flow routes it. Extracted from the ' +
+      'flow rule bodies and validated against the decision table that owns it.',
+    primary: { schema: 'ava_Name', display: 'Branch', len: 250 },
+    columns: [
+      S('ava_CaseTypeCode', 100),
+      S('ava_StageCode', 20),
+      S('ava_StageName', 200),
+      S('ava_DecisionName', 200),
+      S('ava_ResultValue', 200),
+      S('ava_TargetTask', 100),
+      S('ava_TransitionId', 50),
+      // A branch landing on an END shape completes the stage, so the remaining
+      // steps must be skipped rather than run.
+      B('ava_IsTerminal'),
+      I('ava_SortOrder'),
+    ],
+  },
 ];
 
 /* ------------------------------------------------------------------ *
@@ -339,6 +361,31 @@ const workTables = [
       S('ava_PerformedBy', 200),
       M('ava_Details'),
       DT('ava_EventDate'),
+      L('ava_WorkCaseId', 'ava_lddworkcase'),
+    ],
+  },
+  {
+    schema: 'ava_LddNotification',
+    display: 'LDD Notification',
+    plural: 'LDD Notifications',
+    description:
+      'Outbox for notifications raised by a case. The code app writes a Pending ' +
+      'row; a Power Automate flow triggers on create, sends it and stamps the ' +
+      'result back. Keeps delivery out of the browser and gives retries for free.',
+    primary: { schema: 'ava_Name', display: 'Notification', len: 250 },
+    columns: [
+      S('ava_Subject', 250),
+      M('ava_Body'),
+      S('ava_Recipient', 250),
+      S('ava_RecipientRole', 100),
+      S('ava_CaseNumber', 50),
+      S('ava_CaseTypeCode', 100),
+      S('ava_StepName', 200),
+      // Pending -> Sent | Failed. The flow owns everything after Pending.
+      S('ava_Status', 20),
+      DT('ava_QueuedOn'),
+      DT('ava_SentOn'),
+      M('ava_ErrorMessage'),
       L('ava_WorkCaseId', 'ava_lddworkcase'),
     ],
   },

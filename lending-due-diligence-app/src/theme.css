@@ -69,22 +69,16 @@ button {
   gap: 10px;
   cursor: pointer;
   user-select: none;
+  border: 0;
+  background: transparent;
+  padding: 0;
 }
 
-.brand-mark {
-  font-weight: 700;
-  font-size: 26px;
-  letter-spacing: 1px;
-  line-height: 1;
-}
-
-.brand-diamond {
-  width: 20px;
-  height: 20px;
-  background: #fff;
-  transform: rotate(45deg);
-  border-radius: 2px;
-  margin-left: 2px;
+.brand-logo {
+  display: block;
+  width: 138px;
+  max-height: 34px;
+  height: auto;
 }
 
 .brand-title {

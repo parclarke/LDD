@@ -38,14 +38,14 @@ myapp.zip -> scripts/extract-prototype.mjs -> prototype/ldd-prototype-config.jso
 See `docs/DEVELOPER-HANDOVER.md` for the full architecture, verification results, and the
 production readiness backlog.
 
-## Dataverse tables — 27, all `ava_` prefixed, all in the solution
+## Dataverse tables — 29, all `ava_` prefixed, all in the solution
 
-- **Configuration (10)** — `ava_lddcasetype`, `ava_lddstage`, `ava_lddstep`, `ava_lddview`,
+- **Configuration (11)** — `ava_lddcasetype`, `ava_lddstage`, `ava_lddstep`, `ava_lddview`,
   `ava_lddviewfield`, `ava_lddchoiceset`, `ava_lddchoicevalue`, `ava_ldddecision`,
-  `ava_ldddecisionrow`, `ava_lddrole`
+  `ava_ldddecisionrow`, `ava_lddrole`, `ava_lddflowbranch`
 - **Data objects (9)** — `ava_lddcustomer` and the other prototype data objects
-- **Work / runtime (4)** — `ava_lddworkcase` (shared case envelope), `ava_lddassignment`,
-  `ava_lddapproval`, `ava_lddcasehistory` (audit trail)
+- **Work / runtime (5)** — `ava_lddworkcase` (shared case envelope), `ava_lddassignment`,
+  `ava_lddapproval`, `ava_lddcasehistory` (audit trail), `ava_lddnotification` (outbox)
 - **Detail (5)** — one strongly-typed detail table per case type
 
 Case types: `LendingReview`, `RiskAssessment`, `ComplianceMonitoring`, `EscalationManagement`,
@@ -56,13 +56,13 @@ Case types: `LendingReview`, `RiskAssessment`, `ComplianceMonitoring`, `Escalati
 - [x] Prerequisites validated (Node 24, git, `pa` CLI)
 - [x] Scaffold + `pa app init`
 - [x] v1: 9 tables, demo data, UI, deployed and verified end to end
-- [x] v2: prototype analysed; 27-table schema designed and provisioned into the solution
+- [x] v2: prototype analysed; 29-table schema designed and provisioned into the solution
 - [x] v2: config seeded — 26 choice sets/107 values, 19 roles, 24 views/59 fields,
       10 decisions/28 rows, 5 case types/39 stages/80 steps, plus 5 demo cases
 - [x] v2: 28 Dataverse data sources added to the code app
 - [x] v2: engine, orchestrator, dynamic form renderer, 5 screens, 4 components
 - [x] v2: rework-loop bug fixed (inferred guards + hard stage re-visit cap)
-- [x] v2: `scripts/verify-engine.mjs` — **49 passed / 0 failed** against live Dataverse
+- [x] v2: `scripts/verify-engine.mjs` — **58 passed / 0 failed** against live Dataverse
 - [x] v2: built, linted clean, deployed
 - [x] v2: `docs/DEVELOPER-HANDOVER.md` written
 
@@ -82,11 +82,14 @@ Case types: `LendingReview`, `RiskAssessment`, `ComplianceMonitoring`, `Escalati
 
 - **Engine is pure.** `src/lib/engine.ts` has no I/O, so `scripts/verify-engine.mjs` imports it
   directly (Node 24 strips TS types natively) and tests the real shipped code.
-- **Rework-loop guard.** Pega `when` conditions on stage-change steps are not in the export
-  (they live in compiled `.jar` flow rules). Guards are *inferred* from the preceding decision
+- **Rework-loop guard.** Pega `when` conditions on stage-change steps are not in the export.
+  The flow bodies were later extracted (see handover 3b) and contain **no conditional
+  transitions at all** - 264 connectors, all `Always`/`Action`/`Else` - so the guards were
+  never missing, they do not exist. Guards are *inferred* from the preceding decision
   table's non-terminal results into `ava_lddstep.ava_guarddecision` / `ava_guardresults`, and a
   hard `maxStageRevisits` cap (default 2) guarantees termination regardless. `advanceCase`
-  derives visit counts from the `ava_lddcasehistory` audit trail.
+  derives visit counts from the `ava_lddcasehistory` audit trail. The cap is permanent design,
+  not a stopgap.
 - **Re-plan after decisions.** `advanceCase` stops executing a plan once a decision runs and
   re-plans with the fresh result so guarded steps see the correct value.
 - **Detail-column mapping** is `ava_${fieldName.toLowerCase()}`; `src/lib/detail-columns.ts` is
@@ -94,6 +97,10 @@ Case types: `LendingReview`, `RiskAssessment`, `ComplianceMonitoring`, `Escalati
   than failing the save.
 - **`formMapping.ts`** exists because ESLint `react-refresh/only-export-components` forbids
   non-component exports from a component file.
+- **Dataverse entity set names are derived naively.** `ava_lddflowbranch` became
+  `ava_lddflowbranch`**`s`**, which cost a debugging cycle when a seeder 404'd. Always confirm
+  with `EntityDefinitions(LogicalName='<table>')?$select=EntitySetName` before writing Web API
+  calls. Metadata entities also reject `startswith`, so filter attribute lists client-side.
 - Scripts authenticate with `az account get-access-token --resource <org>`.
 
 ## Re-running the scripts

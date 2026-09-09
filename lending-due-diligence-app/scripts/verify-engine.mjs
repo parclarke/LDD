@@ -76,7 +76,7 @@ const created = [];
 
 async function main() {
   console.log('Loading process configuration from Dataverse...');
-  const [caseTypes, stages, steps, views, viewFields, decisions, decisionRows, choiceSets, choiceValues] =
+  const [caseTypes, stages, steps, views, viewFields, decisions, decisionRows, choiceSets, choiceValues, flowBranches] =
     await Promise.all([
       get('ava_lddcasetypes', '?$orderby=ava_sortorder'),
       get('ava_lddstages', '?$orderby=ava_sortorder&$top=200'),
@@ -87,11 +87,13 @@ async function main() {
       get('ava_ldddecisionrows', '?$orderby=ava_sortorder&$top=300'),
       get('ava_lddchoicesets', '?$top=100'),
       get('ava_lddchoicevalues', '?$orderby=ava_sortorder&$top=300'),
+      get('ava_lddflowbranchs', '?$orderby=ava_sortorder&$top=200'),
     ]);
 
   console.log(
     `  caseTypes=${caseTypes.length} stages=${stages.length} steps=${steps.length} ` +
-      `views=${views.length} fields=${viewFields.length} decisions=${decisions.length}`
+      `views=${views.length} fields=${viewFields.length} decisions=${decisions.length} ` +
+      `flowBranches=${flowBranches.length}`
   );
 
   console.log('\n=== 1. Configuration integrity ===');
@@ -100,6 +102,45 @@ async function main() {
   check('80 steps imported', steps.length === 80, `got ${steps.length}`);
   check('24 views imported', views.length === 24, `got ${views.length}`);
   check('10 decision tables imported', decisions.length === 10, `got ${decisions.length}`);
+  check(
+    'all 17 notification steps carry recovered content',
+    steps.filter((s) => s.ava_impl === 'pzNotifyWrapper').length === 17 &&
+      steps
+        .filter((s) => s.ava_impl === 'pzNotifyWrapper')
+        .every((s) => Boolean(s.ava_notifysubject && s.ava_notifybody)),
+    steps
+      .filter((s) => s.ava_impl === 'pzNotifyWrapper' && !s.ava_notifysubject)
+      .map((s) => s.ava_name)
+      .join(', ')
+  );
+  check('26 flow branches imported', flowBranches.length === 26, `got ${flowBranches.length}`);
+  check(
+    'every flow branch result is a real result of its own decision table',
+    flowBranches.every((b) => {
+      const dec = decisions.find((d) => d.ava_name === b.ava_decisionname);
+      if (!dec) return false;
+      const rows = decisionRows.filter((r) => r._ava_decisionid_value === dec.ava_ldddecisionid);
+      const legal = new Set(rows.map((r) => (r.ava_result ?? '').trim().toLowerCase()));
+      if (dec.ava_otherwise) legal.add(dec.ava_otherwise.trim().toLowerCase());
+      return legal.has((b.ava_resultvalue ?? '').trim().toLowerCase());
+    }),
+    flowBranches
+      .filter((b) => !decisions.some((d) => d.ava_name === b.ava_decisionname))
+      .map((b) => b.ava_name)
+      .join(', ')
+  );
+  check(
+    'every flow branch points at a stage that exists',
+    flowBranches.every((b) => stages.some((s) => s.ava_stagecode === b.ava_stagecode))
+  );
+  check(
+    'exactly 2 terminal branches were extracted',
+    flowBranches.filter((b) => b.ava_isterminal === true).length === 2,
+    flowBranches
+      .filter((b) => b.ava_isterminal === true)
+      .map((b) => `${b.ava_casetypecode}/${b.ava_resultvalue}`)
+      .join(', ')
+  );
   check(
     'every case type has at least one primary stage',
     caseTypes.every(
@@ -219,6 +260,51 @@ async function main() {
       `${plan.length} actions, kinds=${[...new Set(plan.map((a) => a.type))].join('/')}`);
   }
 
+  console.log('\n=== 4b. Terminal decision results end the stage ===');
+  for (const b of flowBranches.filter((x) => x.ava_isterminal === true)) {
+    const ct = caseTypes.find((c) => c.ava_code === b.ava_casetypecode);
+    const ctStages = stages.filter((s) => s._ava_casetypeid_value === ct.ava_lddcasetypeid);
+    const stageIds = new Set(ctStages.map((s) => s.ava_lddstageid));
+    const ctSteps = steps.filter((s) => stageIds.has(s._ava_stageid_value));
+    const stage = ctStages.find((s) => s.ava_stagecode === b.ava_stagecode);
+    const inStage = stepsForStage(ctSteps, stage.ava_lddstageid);
+    // Position the case just after the decision step in that stage.
+    const decIdx = inStage.findIndex((s) => s.ava_kind === 'Decision');
+    const base = {
+      ava_lddworkcaseid: '00000000-0000-0000-0000-000000000000',
+      ava_stagecode: stage.ava_stagecode,
+      ava_currentstepindex: decIdx + 1,
+      ava_casetypecode: ct.ava_code,
+    };
+
+    const terminalPlan = planNextActions(
+      { ...base, ava_lastdecisionresult: `${b.ava_decisionname}: ${b.ava_resultvalue}` },
+      ctStages, ctSteps, { flowBranches }
+    );
+    const skipped = terminalPlan.find((a) => a.type === 'skipStep' && /END shape/.test(a.reason ?? ''));
+    check(
+      `${b.ava_casetypecode}: "${b.ava_resultvalue}" ends ${stage.ava_name} early`,
+      Boolean(skipped),
+      terminalPlan.map((a) => a.type).join(' -> ')
+    );
+
+    // A non-terminal result of the same decision must NOT skip the stage.
+    const other = flowBranches.find(
+      (x) => x.ava_decisionname === b.ava_decisionname && x.ava_isterminal !== true
+    );
+    if (other) {
+      const normalPlan = planNextActions(
+        { ...base, ava_lastdecisionresult: `${b.ava_decisionname}: ${other.ava_resultvalue}` },
+        ctStages, ctSteps, { flowBranches }
+      );
+      check(
+        `${b.ava_casetypecode}: "${other.ava_resultvalue}" does not end the stage early`,
+        !normalPlan.some((a) => a.type === 'skipStep' && /END shape/.test(a.reason ?? '')),
+        normalPlan.map((a) => a.type).join(' -> ')
+      );
+    }
+  }
+
   console.log('\n=== 5. Live lifecycle per case type ===');
   const stamp = Date.now().toString().slice(-6);
 
@@ -263,7 +349,7 @@ async function main() {
     const stageVisits = { [first.ava_stagecode]: 1 };
 
     while (iterations++ < 40) {
-      const plan = planNextActions(record, ctStages, ctSteps, { stageVisits });
+      const plan = planNextActions(record, ctStages, ctSteps, { stageVisits, flowBranches });
       if (!plan.length) break;
 
       let paused = false;
@@ -390,7 +476,25 @@ async function main() {
   const demo = await get('ava_lddworkcases', "?$filter=ava_createdbyuser eq 'BEL, MM01025_RSA'");
   check('5 seeded demo cases present', demo.length >= 5, `${demo.length}`);
   const demoAssignments = await get('ava_lddassignments', "?$filter=ava_status eq 'Pending'");
-  check('seeded demo assignments are pending', demoAssignments.length >= 5, `${demoAssignments.length}`);
+  // Each demo case should be waiting on something or finished. Counting pending
+  // assignments globally was fragile: a demo case sitting at an approval has no
+  // pending assignment, so the count drifts as cases advance.
+  const demoApprovals = await get('ava_lddapprovals', "?$filter=ava_status eq 'Pending'");
+  const parked = demo.filter((c) => {
+    const status = c.ava_status ?? '';
+    if (status.startsWith('Resolved')) return true;
+    const id = c.ava_lddworkcaseid;
+    return (
+      demoAssignments.some((a) => a._ava_workcaseid_value === id) ||
+      demoApprovals.some((a) => a._ava_workcaseid_value === id)
+    );
+  });
+  check(
+    'every demo case is waiting on an assignment or approval, or resolved',
+    parked.length === demo.length,
+    `${parked.length}/${demo.length} parked; ${demoAssignments.length} assignments, ` +
+      `${demoApprovals.length} approvals`
+  );
 
   console.log('\n=== 7. Case ID generator ===');
   const gen = nextCaseId({ ava_caseprefix: 'L' }, ['L-26090001', 'L-26090002']);
@@ -398,15 +502,72 @@ async function main() {
 
   if (!KEEP) {
     console.log('\nCleaning up verification records...');
+    let removed = 0;
+    const stubborn = [];
     for (const [set, id] of created.reverse()) {
       if (!id) continue;
       try {
         await call('DELETE', `${set}(${id})`, null, null);
-      } catch {
-        /* child rows may already be gone via cascade */
+        removed += 1;
+      } catch (err) {
+        // A child row may already be gone via cascade, which is fine. Anything
+        // else is a real leak, so keep it for a second pass rather than
+        // silently swallowing it.
+        if (/404|Does Not Exist|not found/i.test(err.message)) continue;
+        stubborn.push([set, id, err.message]);
       }
     }
-    console.log(`  removed ${created.length} records`);
+
+    // Second pass: a parent can refuse to delete until its children are gone,
+    // and the first pass may have removed those children after we tried.
+    const stillThere = [];
+    for (const [set, id] of stubborn) {
+      try {
+        await call('DELETE', `${set}(${id})`, null, null);
+        removed += 1;
+      } catch (err) {
+        if (/404|Does Not Exist|not found/i.test(err.message)) continue;
+        stillThere.push(`${set}(${id}): ${err.message.slice(0, 120)}`);
+      }
+    }
+
+    console.log(`  removed ${removed} of ${created.length} records`);
+    if (stillThere.length) {
+      console.log(`  WARNING: ${stillThere.length} record(s) could not be removed:`);
+      for (const s of stillThere) console.log(`    ${s}`);
+    }
+
+    // Sweep any work cases left behind by earlier runs, so a leak does not
+    // accumulate and pollute the demo data.
+    const orphans = await get(
+      'ava_lddworkcases',
+      `?$filter=ava_createdbyuser eq 'verify-engine'&$select=ava_name`
+    );
+    if (orphans.length) {
+      console.log(`  sweeping ${orphans.length} leftover case(s) from earlier runs`);
+      for (const o of orphans) {
+        for (const child of ['ava_lddassignments', 'ava_lddapprovals', 'ava_lddcasehistories']) {
+          const rows = await get(
+            child,
+            `?$filter=_ava_workcaseid_value eq ${o.ava_lddworkcaseid}&$select=ava_name`
+          );
+          for (const r of rows) {
+            const key = `${child.slice(0, -1)}id`;
+            try {
+              await call('DELETE', `${child}(${r[key]})`, null, null);
+            } catch {
+              /* best effort */
+            }
+          }
+        }
+        try {
+          await call('DELETE', `ava_lddworkcases(${o.ava_lddworkcaseid})`, null, null);
+          console.log(`    removed ${o.ava_name}`);
+        } catch (err) {
+          console.log(`    could not remove ${o.ava_name}: ${err.message.slice(0, 100)}`);
+        }
+      }
+    }
   }
 
   console.log(`\n${'='.repeat(50)}`);

@@ -8,7 +8,7 @@ interface Props {
   onChangeStage: (stageCode: string) => void;
 }
 
-const SECTIONS = ['Overview', 'Case Details', 'Process', 'History'];
+const SECTIONS = ['Overview', 'Case Details', 'Process', 'Notifications', 'History'];
 
 /** Teal case banner plus the summary rail shown to the left of a case. */
 export function CaseSummaryPanel({ bundle, activeSection, onSection, onChangeStage }: Props) {

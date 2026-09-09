@@ -7,6 +7,7 @@ import { CaseListScreen } from './screens/CaseListScreen';
 import { NewCaseScreen } from './screens/NewCaseScreen';
 import { CaseScreen } from './screens/CaseScreen';
 import { ConfigScreen } from './screens/ConfigScreen';
+import { InsightsScreen } from './screens/InsightsScreen';
 import { loadLookupSources, loadProcessConfig } from './lib/data';
 import type { LookupSources } from './lib/data';
 import type { CurrentUser, ProcessConfig, Route } from './lib/types';
@@ -109,6 +110,13 @@ function App() {
               lookups={lookups}
               user={user}
               onExit={() => setRoute({ name: 'worklist' })}
+            />
+          )}
+
+          {config && route.name === 'insights' && (
+            <InsightsScreen
+              config={config}
+              onOpenCase={(caseId) => setRoute({ name: 'case', caseId })}
             />
           )}
 
