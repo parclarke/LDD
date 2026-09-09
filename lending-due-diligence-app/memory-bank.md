@@ -82,11 +82,14 @@ Case types: `LendingReview`, `RiskAssessment`, `ComplianceMonitoring`, `Escalati
 
 - **Engine is pure.** `src/lib/engine.ts` has no I/O, so `scripts/verify-engine.mjs` imports it
   directly (Node 24 strips TS types natively) and tests the real shipped code.
-- **Rework-loop guard.** Pega `when` conditions on stage-change steps are not in the export
-  (they live in compiled `.jar` flow rules). Guards are *inferred* from the preceding decision
+- **Rework-loop guard.** Pega `when` conditions on stage-change steps are not in the export.
+  The flow bodies were later extracted (see handover 3b) and contain **no conditional
+  transitions at all** - 264 connectors, all `Always`/`Action`/`Else` - so the guards were
+  never missing, they do not exist. Guards are *inferred* from the preceding decision
   table's non-terminal results into `ava_lddstep.ava_guarddecision` / `ava_guardresults`, and a
   hard `maxStageRevisits` cap (default 2) guarantees termination regardless. `advanceCase`
-  derives visit counts from the `ava_lddcasehistory` audit trail.
+  derives visit counts from the `ava_lddcasehistory` audit trail. The cap is permanent design,
+  not a stopgap.
 - **Re-plan after decisions.** `advanceCase` stops executing a plan once a decision runs and
   re-plans with the fresh result so guarded steps see the correct value.
 - **Detail-column mapping** is `ava_${fieldName.toLowerCase()}`; `src/lib/detail-columns.ts` is
@@ -94,6 +97,10 @@ Case types: `LendingReview`, `RiskAssessment`, `ComplianceMonitoring`, `Escalati
   than failing the save.
 - **`formMapping.ts`** exists because ESLint `react-refresh/only-export-components` forbids
   non-component exports from a component file.
+- **Dataverse entity set names are derived naively.** `ava_lddflowbranch` became
+  `ava_lddflowbranch`**`s`**, which cost a debugging cycle when a seeder 404'd. Always confirm
+  with `EntityDefinitions(LogicalName='<table>')?$select=EntitySetName` before writing Web API
+  calls. Metadata entities also reject `startswith`, so filter attribute lists client-side.
 - Scripts authenticate with `az account get-access-token --resource <org>`.
 
 ## Re-running the scripts

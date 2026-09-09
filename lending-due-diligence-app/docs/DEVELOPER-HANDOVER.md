@@ -542,32 +542,56 @@ Flow patches the row: ava_Status = 'Sent' | 'Failed', ava_SentOn, ava_ErrorMessa
 and body recovered from Pega already populated. What a developer adds is one
 flow.
 
+The table, by every name you will need:
+
+| Where you see it | Name |
+|---|---|
+| Flow designer / maker portal | **LDD Notifications** |
+| Logical name | `ava_lddnotification` |
+| Schema name | `ava_LddNotification` |
+| Entity set (Web API) | `ava_lddnotifications` |
+| Primary key / primary name | `ava_lddnotificationid` / `ava_name` |
+
+> **Check the entity set name before writing any Web API call.** Dataverse
+> pluralised this one correctly, but it derives the set name naively: the flow
+> branch table `ava_lddflowbranch` became `ava_lddflowbranch**s**`, which is what
+> a seeder in this repo hit as a 404. Confirm with
+> `EntityDefinitions(LogicalName='<table>')?$select=EntitySetName` rather than
+> assuming. Note also that metadata entities do not support `startswith`, so
+> filter the attribute list client-side.
+
 | Column | Written by | Contains |
 |---|---|---|
-| `ava_Subject` | app | recovered Pega subject |
-| `ava_Body` | app | recovered Pega email body |
-| `ava_RecipientRole` | app | the step's workbasket, e.g. `TheLending:Users` |
-| `ava_Recipient` | **flow** | resolved address - blank on insert |
-| `ava_CaseNumber` / `ava_CaseTypeCode` / `ava_StepName` | app | context for routing and logging |
-| `ava_Status` | app then flow | `Pending` -> `Sent` / `Failed` |
-| `ava_SentOn`, `ava_ErrorMessage` | flow | delivery outcome |
-| `ava_WorkCaseId` | app | lookup to the case |
+| `ava_subject` | app | recovered Pega subject |
+| `ava_body` | app | recovered Pega email body |
+| `ava_recipientrole` | app | the step's workbasket, e.g. `TheLending:Users` |
+| `ava_recipient` | **flow** | resolved address - blank on insert |
+| `ava_casenumber` / `ava_casetypecode` / `ava_stepname` | app | context for routing and logging |
+| `ava_status` | app then flow | `Pending` -> `Sent` / `Failed` |
+| `ava_senton`, `ava_errormessage` | flow | delivery outcome |
+| `ava_workcaseid` | app | lookup to the case |
+| `ava_queuedon` | app | when the case raised it |
 
 **The flow to build** - one flow covers all 17 notification steps, because the
 content travels on the row:
 
-1. Trigger: **When a row is added** (Dataverse) on `ava_lddnotification`,
+1. Trigger: **When a row is added** (Dataverse) on **LDD Notifications**,
    filtered to `ava_status eq 'Pending'`
-2. Resolve the recipient from `ava_RecipientRole` - a lookup from workbasket to
+2. Resolve the recipient from `ava_recipientrole` - a lookup from workbasket to
    a Dataverse team or a distribution list. **This is the one piece the Pega
    export does not carry**, so it needs a business decision (section 4.4)
-3. Send an email (Office 365 Outlook) using `ava_Subject` and `ava_Body`
-4. Update the row: `ava_Status = 'Sent'`, `ava_SentOn = utcNow()`
-5. Configure run-after on failure: `ava_Status = 'Failed'`, write
-   `ava_ErrorMessage`
+3. Send an email (Office 365 Outlook) using `ava_subject` and `ava_body`
+4. Update the row: `ava_status = 'Sent'`, `ava_senton = utcNow()`
+5. Configure run-after on failure: `ava_status = 'Failed'`, write
+   `ava_errormessage`
 
 Because the send is decoupled, failures are visible and re-runnable in
-Dataverse, and the app is unaffected if mail is down.
+Dataverse, and the app is unaffected if mail is down. Queued and sent rows are
+visible per case under **Notifications** in the case workspace.
+
+The environment is seeded with demo rows in both states, so a new flow can be
+pointed at the table and tested without first driving a case through a
+notification step.
 
 > `SIMULATED_EFFECTS` in `orchestrator.ts` still lists `notify`, which now only
 > affects the wording of the audit entry. Remove it once the flow is live.
