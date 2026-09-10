@@ -1,0 +1,46 @@
+/* default palette */
+:root{
+  --font: 'Roboto Flex',Segoe UI,system-ui,sans-serif;
+  --font-head: Poppins, sans-serif;
+  --lh: 1.28;
+  --stretch: 100%;
+  --radius: 1rem;
+  --space: 0.65rem;
+  --ink: #001d54;
+  --bg: #e2e6f3;
+  --panel: #ffffff;
+  --surface2: #F3F4FA;
+  --p: #3f57e4;
+  --brand: #A100FF;
+  --brand-fg: #FFF;
+  --brand-accent: #003B70;
+  --line: #cfd5e2;
+  --link: #3f57e4;
+  --btn: #3f57e4;
+  --btn-fg: #ffffff;
+  --btn-radius: 0.5rem;
+  --ctl-radius: 0.25rem;
+  --ctl-border: #8a8a8a;
+  --label-fg: #001d54b3;
+  --nav-bg: #e2e6f3;
+  --nav-fg: #001F5F;
+  --nav-sep: #cfd5e2;
+  --nav-btn-bg: #f5f5fc;
+  --hdr-bg: #fff;
+  --hdr-fg: #001F5F;
+  --hdr-border: #e2e6f3;
+  --case-hdr-bg: #A100FF;
+  --case-hdr-fg: #FFF;
+  --stage-cur-bg: #A100FF;
+  --stage-cur-fg: #FFF;
+  --stage-done-bg: #f6fef6;
+  --stage-done-fg: #0b6a2b;
+  --asg-bg: #fff;
+  --util-bg: #F3F4FA;
+  --announce-bg: #A100FF;
+  --announce-fg: #FFF;
+  --avatar-bg: #001d54;
+  --agent-bg: linear-gradient(90deg,#f7f5ff 0%,#eff6fe 100%);
+  --focus: 0 0 0 .18rem #3F57E4;
+  --striped: 1;
+}
