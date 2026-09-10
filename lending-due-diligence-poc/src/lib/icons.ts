@@ -27,6 +27,12 @@ export const ICONS: Record<string, string> = {
   image: 'M3 4h14v12H3zM3 13l4-4 3 3 3-3 4 4M7.5 7.5h.01',
   paper: 'M11 3L5 9a3 3 0 004.2 4.2l6-6a4.5 4.5 0 00-6.4-6.4L3 6.6',
   pencil: 'M13.5 3.5l3 3L7 16H4v-3zM12 5l3 3',
+  collapse: 'M12 4l-5 6 5 6M4 3v14',
+  expandnav: 'M8 4l5 6-5 6M16 3v14',
+  mic: 'M10 3a2 2 0 012 2v4a2 2 0 01-4 0V5a2 2 0 012-2zM5 9a5 5 0 0010 0M10 14v3',
+  emoji: 'M10 17a7 7 0 110-14 7 7 0 010 14zM7.5 8h.01M12.5 8h.01M7 12c.8.9 1.8 1.4 3 1.4s2.2-.5 3-1.4',
+  send: 'M3 10l14-6-5 14-2.5-5.5z',
+  filter: 'M3 4h14l-5.5 6.5V16l-3 1.5v-7z',
 };
 
 /** Case-type icon mapping, also from the prototype. */

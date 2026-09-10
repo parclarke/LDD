@@ -1,7 +1,11 @@
-import { openAssignmentFor, stagesFor, stepsFor, type AppData } from '../lib/appdata';
+import { caseTypeName, openAssignmentFor, type AppData } from '../lib/appdata';
 import { PageHeader, StatusChip, Toolbar } from '../components/Primitives';
+import { ChartCard } from '../components/Chart';
 import { iconFor } from '../lib/icons';
 import { urgencyOf } from '../lib/status';
+import { formatDate } from '../lib/format';
+import { asSeries, countBy, crossTab, created, monthlySeries, statusBucket } from '../lib/analytics';
+import type { LddWorkCase } from '../lib/types';
 
 interface CaseTypeScreenProps {
   data: AppData;
@@ -11,137 +15,160 @@ interface CaseTypeScreenProps {
   onCreate: (code: string) => void;
 }
 
-/** Mirrors `pageType()`: lifecycle chevrons, case table, and the process outline. */
+/** The three insight cards each case type reports on, keyed by Pega case type code. */
+const REPORTS: Record<string, { bar: string; barX: string; barY: string; line: string; lineX: string; lineY: string; pie: string }> = {
+  LendingReview: {
+    bar: 'Quality Review Results Across Business Units',
+    barX: 'Business unit',
+    barY: 'Count Quality revi…',
+    line: 'Lending Review Requests Over Time',
+    lineX: 'Review requested date',
+    lineY: 'Count Case ID',
+    pie: 'Breakdown of Reviews by Risk Rating',
+  },
+  RiskAssessment: {
+    bar: 'Distribution of Risk Ratings Across Assessments',
+    barX: 'Risk rating',
+    barY: 'Count Risk rating',
+    line: 'Number of Assessments Completed Each Month',
+    lineX: 'Assessment date',
+    lineY: 'Count Assessment dat…',
+    pie: 'Final Outcomes Grouped by Risk Type',
+  },
+  ComplianceMonitoring: {
+    bar: 'Distribution of Compliance Findings by Severity Level',
+    barX: 'Issue severity',
+    barY: 'Count Case ID',
+    line: 'Compliance Reviews Conducted Over Time',
+    lineX: 'Review date',
+    lineY: 'Count Case ID',
+    pie: 'Compliance Assessment Results Across Regulatory Requirements',
+  },
+  EscalationManagement: {
+    bar: 'Distribution of Cases Across Urgency Levels',
+    barX: 'Escalation urgency level',
+    barY: 'Count Case ID',
+    line: 'Escalation Volume Over Time by Month',
+    lineX: 'Date escalated',
+    lineY: 'Count Case ID',
+    pie: 'Case Distribution Across Escalation Categories',
+  },
+  QualityRecommendation: {
+    bar: 'Distribution of Quality Recommendations Across Types',
+    barX: 'Recommendation type',
+    barY: 'Count Quality recom…',
+    line: 'Monthly Trend of Recommendation Resolutions Over Time',
+    lineX: 'Actual resolution date',
+    lineY: 'Count Actual resol…',
+    pie: 'Breakdown of Recommendations by Business Priority Level',
+  },
+};
+
+const DEFAULT_REPORT = {
+  bar: 'Distribution of Cases by Stage',
+  barX: 'Stage',
+  barY: 'Count Case ID',
+  line: 'Case Volume Over Time by Month',
+  lineX: 'Created date',
+  lineY: 'Count Case ID',
+  pie: 'Breakdown of Cases by Status',
+};
+
+/**
+ * A case type landing page. Pega renders these as an insight report: three
+ * staggered charts over the case list. Every series is computed from the live
+ * work cases rather than a static extract.
+ */
 export function CaseTypeScreen({ data, code, onOpenCase, onOpenAssignment, onCreate }: CaseTypeScreenProps) {
   const index = data.caseTypes.findIndex((t) => t.ava_code === code);
-  const type = data.caseTypes[index];
-  if (!type) {
-    return <div className="empty">Case type not found</div>;
-  }
+  const rows = data.cases.filter((c) => c.ava_casetypecode === code);
+  const report = REPORTS[code] ?? DEFAULT_REPORT;
 
-  const stages = stagesFor(data, type.ava_lddcasetypeid);
-  const cases = data.cases.filter((c) => c.ava_casetypecode === code);
+  const stage = (c: LddWorkCase) => c.ava_stagename ?? c.ava_stagecode ?? 'N/A';
+  const barSlices = countBy(rows, (c) => (code === 'EscalationManagement' ? c.ava_urgency : stage(c)));
+  const lineData = monthlySeries(rows, created, () => 'Count Case ID');
+  const pieSlices = countBy(rows, (c) => (code === 'RiskAssessment' ? c.ava_urgency : statusBucket(c)));
 
   return (
     <>
-      <PageHeader icon={iconFor(code, index)} title={type.ava_name} sub={type.ava_pegaclass ?? type.ava_code}>
+      <PageHeader icon={iconFor(code, Math.max(0, index))} title={caseTypeName(data, code)}>
         <button className="btn" type="button" onClick={() => onCreate(code)}>
-          + New {type.ava_name}
+          <span className="sparkle">✦</span> Create
         </button>
       </PageHeader>
 
-      <div className="card">
-        <div className="cardhd">
-          <h3>Lifecycle</h3>
-        </div>
-        <div className="stagebar">
-          {stages.map((s) => (
-            <div
-              className={`chevron ${s.ava_stagetype === 'Alternate' ? 'alt' : ''}`.trim()}
-              key={s.ava_lddstageid}
-            >
-              {s.ava_name}
-            </div>
-          ))}
-        </div>
+      <div className="reportstack">
+        <ChartCard
+          title={report.bar}
+          kind="bar"
+          xLabel={report.barX}
+          yLabel={report.barY}
+          data={asSeries(barSlices, 'Count Case ID')}
+        />
+        <ChartCard title={report.line} kind="line" xLabel={report.lineX} yLabel={report.lineY} data={lineData} />
+        <ChartCard
+          title={report.pie}
+          kind={code === 'ComplianceMonitoring' || code === 'RiskAssessment' ? 'bar' : 'pie'}
+          xLabel={code === 'ComplianceMonitoring' ? 'Regulatory requirement' : code === 'RiskAssessment' ? 'Risk type' : undefined}
+          yLabel={code === 'ComplianceMonitoring' || code === 'RiskAssessment' ? 'Count Outcome, C…' : undefined}
+          slices={pieSlices}
+          data={crossTab(rows, stage, statusBucket)}
+        />
       </div>
 
-      <div className="cols">
-        <div>
-          <div className="card flush">
-            <div className="cardhd">
-              <h3>Cases</h3>
-              <span className="count">{cases.length}</span>
-              <Toolbar />
-            </div>
-            <div className="tw">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Case ID</th>
-                    <th>Assignment</th>
-                    <th>Status</th>
-                    <th>Stage</th>
-                    <th className="num">Urgency</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {cases.length === 0 ? (
-                    <tr>
-                      <td colSpan={5} className="empty">
-                        No cases yet
-                      </td>
-                    </tr>
-                  ) : (
-                    cases.map((c) => {
-                      const a = openAssignmentFor(data, c.ava_lddworkcaseid);
-                      return (
-                        <tr key={c.ava_lddworkcaseid}>
-                          <td>
-                            <a onClick={() => onOpenCase(c.ava_lddworkcaseid)}>{c.ava_name}</a>
-                          </td>
-                          <td>
-                            {a ? (
-                              <a onClick={() => onOpenAssignment(c.ava_lddworkcaseid, a.ava_lddassignmentid)}>
-                                {a.ava_name}
-                              </a>
-                            ) : (
-                              <span className="muted">—</span>
-                            )}
-                          </td>
-                          <td className="statcell">
-                            <StatusChip status={c.ava_status} />
-                          </td>
-                          <td className="muted">{c.ava_stagename ?? '—'}</td>
-                          <td className="num">{urgencyOf(c)}</td>
-                        </tr>
-                      );
-                    })
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </div>
+      <div className="card flush">
+        <div className="cardhd">
+          <h3>{caseTypeName(data, code)}:</h3>
+          <span className="selv">All ▾</span>
+          <span className="count">{rows.length} results</span>
+          <Toolbar />
         </div>
-
-        <div>
-          <div className="card">
-            <div className="cardhd">
-              <h3>Process</h3>
-            </div>
-            {stages.map((s) => {
-              const steps = stepsFor(data, s.ava_lddstageid);
-              return (
-                <div style={{ marginBottom: 16 }} key={s.ava_lddstageid}>
-                  <div style={{ fontWeight: 700, marginBottom: 2 }}>
-                    {s.ava_name}
-                    <span className="kind">{s.ava_stagetype ?? 'Primary'}</span>
-                  </div>
-                  <div className="muted small" style={{ marginBottom: 6 }}>
-                    {s.ava_processname ?? ''}
-                  </div>
-                  <ul className="steps">
-                    {steps.length === 0 ? (
-                      <li className="muted">No steps captured</li>
-                    ) : (
-                      steps.map((x) => (
-                        <li key={x.ava_lddstepid}>
-                          <span className="dot">{x.ava_kind === 'Assignment' ? '●' : '›'}</span>
-                          <span>
-                            <span className="nm">{x.ava_name}</span>
-                            <span className="kind">{x.ava_kind ?? 'Step'}</span>
-                            {x.ava_notificationname ? (
-                              <div className="muted small">✉ {x.ava_notificationname}</div>
-                            ) : null}
-                          </span>
-                        </li>
-                      ))
-                    )}
-                  </ul>
-                </div>
-              );
-            })}
-          </div>
+        <div className="tw">
+          <table>
+            <thead>
+              <tr>
+                <th>Case ID</th>
+                <th>Assignment</th>
+                <th>Stage</th>
+                <th>Status</th>
+                <th>Due date</th>
+                <th className="num">Urgency</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="empty">
+                    No cases of this type
+                  </td>
+                </tr>
+              ) : (
+                rows.map((c) => {
+                  const a = openAssignmentFor(data, c.ava_lddworkcaseid);
+                  return (
+                    <tr key={c.ava_lddworkcaseid}>
+                      <td>
+                        <a onClick={() => onOpenCase(c.ava_lddworkcaseid)}>{c.ava_name}</a>
+                      </td>
+                      <td>
+                        {a ? (
+                          <a onClick={() => onOpenAssignment(c.ava_lddworkcaseid, a.ava_lddassignmentid)}>{a.ava_name}</a>
+                        ) : (
+                          <span className="muted">—</span>
+                        )}
+                      </td>
+                      <td>{stage(c)}</td>
+                      <td className="statcell">
+                        <StatusChip status={c.ava_status} />
+                      </td>
+                      <td className="muted">{a?.ava_deadline ? formatDate(a.ava_deadline) : '—'}</td>
+                      <td className="num">{urgencyOf(c)}</td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
     </>

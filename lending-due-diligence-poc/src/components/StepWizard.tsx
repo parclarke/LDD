@@ -20,6 +20,8 @@ export function StepWizard({ config, record, assignment, user, onClose, onSubmit
   const [values, setValues] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [minimised, setMinimised] = useState(false);
+  const [confirming, setConfirming] = useState(false);
 
   const fields = useMemo(() => {
     const view = config.views.find(
@@ -43,6 +45,33 @@ export function StepWizard({ config, record, assignment, user, onClose, onSubmit
   };
 
   const missing = fields.filter((f) => f.ava_required && !values[f.ava_name]);
+  const dirty = Object.values(values).some((v) => v !== '');
+  const filled = fields.filter((f) => values[f.ava_name]).length;
+  const progress = fields.length === 0 ? 100 : Math.round((filled / fields.length) * 100);
+
+  /** Populates every empty control with a plausible value so the flow can be demonstrated. */
+  function fillSample() {
+    const next: Record<string, string> = { ...values };
+    for (const f of fields) {
+      if (next[f.ava_name] || f.ava_readonly) continue;
+      const control = (f.ava_control ?? 'text').toLowerCase();
+      const choices = choicesFor(f.ava_choiceset);
+      if (choices.length > 0) next[f.ava_name] = choices[0].ava_name;
+      else if (control === 'date') next[f.ava_name] = new Date().toISOString().slice(0, 10);
+      else if (control === 'datetime') next[f.ava_name] = new Date().toISOString().slice(0, 16);
+      else if (control === 'integer') next[f.ava_name] = '10';
+      else if (control === 'decimal' || control === 'currency') next[f.ava_name] = '1000.00';
+      else if (control === 'multiline') next[f.ava_name] = `Sample ${(f.ava_label ?? f.ava_name).toLowerCase()} captured for demonstration.`;
+      else next[f.ava_name] = `Sample ${f.ava_label ?? f.ava_name}`;
+    }
+    setValues(next);
+  }
+
+  /** Closes the form, prompting first when the operator has entered data. */
+  function requestClose() {
+    if (dirty) setConfirming(true);
+    else onClose();
+  }
 
   async function submit() {
     if (missing.length > 0) {
@@ -76,18 +105,28 @@ export function StepWizard({ config, record, assignment, user, onClose, onSubmit
   }
 
   return (
-    <div className="backdrop" onClick={(e) => e.target === e.currentTarget && onClose()}>
-      <div className="pmodal">
+    <div className="backdrop" onClick={(e) => e.target === e.currentTarget && requestClose()}>
+      <div className={minimised ? 'pmodal min' : 'pmodal'}>
         <div className="pmodal-hd">
           <div className="pmodal-title">
             <b>{assignment.ava_name}</b>
           </div>
-          <button className="ic first" onClick={onClose} title="Close" type="button">
+          <button className="ic" onClick={() => setMinimised((v) => !v)} title="Minimise" type="button">
+            −
+          </button>
+          <button className="ic first" onClick={requestClose} title="Close" type="button">
             ✕
           </button>
         </div>
+        <div className="prog">
+          <div className="prog-track" />
+          <div className="prog-fill" style={{ width: `calc((100% - 1.1rem) * ${progress / 100})` }} />
+          <div className="prog-dot on" style={{ left: '.55rem', transform: 'translateX(-50%)' }} />
+        </div>
+        <div className="prog-label right">
+          {assignment.ava_stepname ?? record.ava_stagename ?? 'Case step'}
+        </div>
         <div className="pmodal-body">
-          <div className="prog-label">{record.ava_stagename ?? 'Case step'}</div>
           {fields.length === 0 ? (
             <p className="muted">
               This step has no captured form. Submitting advances the case to the next step in the
@@ -159,16 +198,41 @@ export function StepWizard({ config, record, assignment, user, onClose, onSubmit
           ) : null}
         </div>
         <div className="pmodal-ft">
-          <button className="btn o" onClick={onClose} type="button">
+          <button className="btn o" onClick={requestClose} type="button">
             Cancel
           </button>
           <div className="right">
+            <button className="btn o" onClick={fillSample} disabled={busy || fields.length === 0} type="button">
+              <span className="sparkle">✦</span> Fill with sample data
+            </button>
+            <button className="btn o" onClick={() => setValues({})} disabled={busy || !dirty} type="button">
+              Previous
+            </button>
             <button className="btn" onClick={submit} disabled={busy} type="button">
               {busy ? 'Submitting…' : 'Submit'}
             </button>
           </div>
         </div>
       </div>
+
+      {confirming ? (
+        <div className="cmodal-wrap">
+          <div className="cmodal">
+            <h3>Discard unsaved changes?</h3>
+            <p>You have unsaved changes. You can discard them or go back to keep working.</p>
+            <div className="ft">
+              <button className="btn o" type="button" onClick={() => setConfirming(false)}>
+                Go back
+              </button>
+              <div className="right">
+                <button className="btn" type="button" onClick={onClose}>
+                  Discard
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

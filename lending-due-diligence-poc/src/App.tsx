@@ -5,13 +5,19 @@ import { EMPTY_APP_DATA, type AppData } from './lib/appdata';
 import type { PocRoute } from './lib/routes';
 import { AppBar } from './components/AppBar';
 import { Rail } from './components/Rail';
-import { CasePanel } from './components/CasePanel';
 import { StepWizard } from './components/StepWizard';
 import { HomeScreen } from './screens/HomeScreen';
 import { MyWorkScreen } from './screens/MyWorkScreen';
 import { CaseTypeScreen } from './screens/CaseTypeScreen';
+import { CaseScreen } from './screens/CaseScreen';
 import { RecordsScreen } from './screens/RecordsScreen';
 import { ExploreScreen } from './screens/ExploreScreen';
+import { InsightScreen } from './screens/InsightScreen';
+import { DashboardsScreen } from './screens/DashboardsScreen';
+import { DashboardScreen } from './screens/DashboardScreen';
+import { AgentScreen } from './screens/AgentScreen';
+
+const APP_NAME = 'The Lending Due Diligence (LDD)';
 
 /**
  * Placeholder operator until the app reads the signed-in identity from the
@@ -28,12 +34,12 @@ const DEFAULT_USER: CurrentUser = {
 export default function App() {
   const [ready, setReady] = useState(false);
   const [route, setRoute] = useState<PocRoute>({ name: 'home' });
+  const [navExpanded, setNavExpanded] = useState(false);
   const [search, setSearch] = useState('');
   const [config, setConfig] = useState<ProcessConfig | null>(null);
   const [cases, setCases] = useState<LddWorkCase[]>([]);
   const [assignments, setAssignments] = useState<LddAssignment[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [panelCaseId, setPanelCaseId] = useState<string | null>(null);
   const [wizard, setWizard] = useState<{ caseId: string; assignment: LddAssignment } | null>(null);
   const [toasts, setToasts] = useState<{ id: number; text: string }[]>([]);
 
@@ -75,8 +81,9 @@ export default function App() {
     };
   }, [config, cases, assignments]);
 
-  const panelCase = panelCaseId ? (cases.find((c) => c.ava_lddworkcaseid === panelCaseId) ?? null) : null;
   const wizardCase = wizard ? (cases.find((c) => c.ava_lddworkcaseid === wizard.caseId) ?? null) : null;
+  const activeCase =
+    route.name === 'case' ? (cases.find((c) => c.ava_lddworkcaseid === route.caseId) ?? null) : null;
 
   const toast = useCallback((text: string) => {
     const id = Date.now() + Math.random();
@@ -89,10 +96,10 @@ export default function App() {
     if (a) setWizard({ caseId, assignment: a });
   };
 
-  const navigate = (next: PocRoute) => {
-    setPanelCaseId(null);
-    setRoute(next);
-  };
+  const openCase = (caseId: string) => setRoute({ name: 'case', caseId });
+  const navigate = (next: PocRoute) => setRoute(next);
+  const backToType = () =>
+    setRoute(activeCase?.ava_casetypecode ? { name: 'type', code: activeCase.ava_casetypecode } : { name: 'mywork' });
 
   if (!ready) {
     return (
@@ -105,7 +112,7 @@ export default function App() {
   return (
     <>
       <AppBar
-        appName="Lending Due Diligence PoC"
+        appName={APP_NAME}
         userInitials={DEFAULT_USER.initials}
         search={search}
         onSearch={(v) => {
@@ -115,8 +122,11 @@ export default function App() {
       />
       <div className="shell">
         <Rail
+          appName="Lending Due Diligence"
           caseTypes={data.caseTypes}
           route={route}
+          expanded={navExpanded}
+          onToggle={() => setNavExpanded((v) => !v)}
           onNavigate={navigate}
           onCreate={() => toast('Case creation runs from the case type page')}
         />
@@ -127,41 +137,55 @@ export default function App() {
             <HomeScreen
               data={data}
               onNavigate={navigate}
-              onOpenCase={setPanelCaseId}
+              onOpenCase={openCase}
               onCreate={() => navigate({ name: 'mywork' })}
             />
           ) : null}
 
           {route.name === 'mywork' ? (
-            <MyWorkScreen data={data} onOpenCase={setPanelCaseId} onOpenAssignment={openAssignment} />
+            <MyWorkScreen data={data} onOpenCase={openCase} onOpenAssignment={openAssignment} />
           ) : null}
 
           {route.name === 'type' ? (
             <CaseTypeScreen
               data={data}
               code={route.code}
-              onOpenCase={setPanelCaseId}
+              onOpenCase={openCase}
               onOpenAssignment={openAssignment}
               onCreate={() => toast('New case intake is available in the full application')}
+            />
+          ) : null}
+
+          {route.name === 'case' && activeCase ? (
+            <CaseScreen
+              data={data}
+              record={activeCase}
+              onBack={backToType}
+              onOpenAssignment={(a) => setWizard({ caseId: activeCase.ava_lddworkcaseid, assignment: a })}
             />
           ) : null}
 
           {route.name === 'records' ? <RecordsScreen /> : null}
 
           {route.name === 'explore' ? (
-            <ExploreScreen data={data} search={search} onOpenCase={setPanelCaseId} />
+            <ExploreScreen data={data} onOpenInsight={(id) => navigate({ name: 'insight', id })} />
           ) : null}
+
+          {route.name === 'insight' ? (
+            <InsightScreen data={data} id={route.id} onBack={() => navigate({ name: 'explore' })} />
+          ) : null}
+
+          {route.name === 'dashboards' ? (
+            <DashboardsScreen onOpen={(id) => navigate({ name: 'dashboard', id })} />
+          ) : null}
+
+          {route.name === 'dashboard' ? (
+            <DashboardScreen data={data} id={route.id} onBack={() => navigate({ name: 'dashboards' })} />
+          ) : null}
+
+          {route.name === 'agent' ? <AgentScreen appName="Lending Due Diligence" /> : null}
         </main>
       </div>
-
-      {panelCase ? (
-        <CasePanel
-          data={data}
-          record={panelCase}
-          onClose={() => setPanelCaseId(null)}
-          onOpenAssignment={(a) => setWizard({ caseId: panelCase.ava_lddworkcaseid, assignment: a })}
-        />
-      ) : null}
 
       {wizard && wizardCase && config ? (
         <StepWizard

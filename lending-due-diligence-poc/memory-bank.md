@@ -44,28 +44,36 @@ Data sources were transplanted rather than re-added: the `databaseReferences` an
 
 ## Screens
 
-| Route | Component | Prototype source |
+| Route | Component | Source screen |
 | --- | --- | --- |
-| `home` | `HomeScreen.tsx` | `pageHome()` — announcement, Tasks, followed items, Pulse, case-type tiles |
-| `mywork` | `MyWorkScreen.tsx` | `pageMyWork()` — six-column worklist of open cases |
-| `type/<code>` | `CaseTypeScreen.tsx` | `pageType()` — lifecycle chevrons, Cases table, Process outline |
-| `records` | `RecordsScreen.tsx` | `pageRecords()` — data-object tiles that drill into live Dataverse rows |
-| `explore` | `ExploreScreen.tsx` | `pageExplore()` — all cases, filtered by the app-bar search |
-
+| `home` | `HomeScreen.tsx` | Announcement, Tasks with "Show more", followed-items table, Pulse compose, case-type tiles |
+| `mywork` | `MyWorkScreen.tsx` | Six-column worklist of open cases |
+| `type/<code>` | `CaseTypeScreen.tsx` | Insight report: three staggered charts over the case list |
+| `case/<id>` | `CaseScreen.tsx` | Full-page case view: purple summary column, vertical Details/Pulse/History tabs, Definition + Details cards |
+| `records` | `RecordsScreen.tsx` | Records Manager: horizontal data-object tabs over one live table |
+| `explore` | `ExploreScreen.tsx` | Recently opened card plus the grouped Insights catalogue |
+| `insight/<id>` | `InsightScreen.tsx` | Single large metric with its period-on-period delta |
+| `dashboards` | `DashboardsScreen.tsx` | Dashboard catalogue with Create Dashboard |
+| `dashboard/<id>` | `DashboardScreen.tsx` | Work metrics: filter bar, four KPI tiles, created/resolved/volume charts |
+| `agent` | `AgentScreen.tsx` | In-app agent conversation surface |
 ## Components
 
-- `AppBar.tsx` — waffle launcher, app name with chevron, centred search, avatar
-- `Rail.tsx` — create button, Home, My Work, Explore, one entry per case type, Record Manager, spacer, Notifications, Recents
-- `CasePanel.tsx` — right-hand drawer: stage strip, assignments with Go buttons, Details / History tabs
-- `StepWizard.tsx` — assignment step form rendered from the harvested Pega view definition; submits via `orchestrator.submitAssignment`
+- `AppBar.tsx` — waffle launcher, leading chevron, app name, centred search, avatar
+- `Rail.tsx` — collapsible navigation; expanded it shows labels, Dashboards, the app agent and a
+  "Collapse navigation" toggle
+- `Chart.tsx` — `ChartCard` renders bar / stacked / line / pie in plain SVG; no chart library
+- `CasePanel.tsx` — legacy preview drawer, superseded by the full-page `CaseScreen`
+- `StepWizard.tsx` — step form from the harvested view definition, with progress bar,
+  "Fill with sample data", Previous, and a discard-unsaved-changes dialog
 - `Primitives.tsx` — `StatusChip`, `Toolbar`, `PageHeader`
 - `Icon.tsx` + `lib/icons.ts` — the prototype's inline SVG set
-
+- `lib/analytics.ts` — all chart and KPI derivation from live work cases
+- `lib/catalog.ts` — dashboard and insight catalogues
+- `lib/palette.ts` — the eight-colour chart palette
 ## Interaction model
 
-Matches Pega and the prototype: clicking a **Case ID** opens the preview panel; clicking an
-**Assignment** opens the step form modal. Do not collapse these into one action.
-
+Clicking a **Case ID** opens the full-page case view; clicking an **Assignment** opens the step
+form modal. Do not collapse these into one action.
 ## Gotchas
 
 - `react-hooks/set-state-in-effect` fires if an effect calls a `useCallback` that sets state,
@@ -79,5 +87,13 @@ Matches Pega and the prototype: clicking a **Case ID** opens the preview panel; 
 ## Next Steps
 
 - Read the signed-in identity from `getContext()` instead of `DEFAULT_USER` in `App.tsx`
-- Wire case creation (the rail "+" and the per-type "New" button currently toast)
+- Wire case creation (the rail "+" and the per-type "Create" button currently toast)
+- Connect the agent screen to a real model endpoint
 - Build the Power Automate flows that drain the notification outbox table
+
+## Gotchas (added)
+
+- `react-hooks/immutability` forbids reassigning a local across a render pass. Cumulative pie
+  geometry is computed in the module-level `arcsFor()` helper for this reason.
+- `pa app push` adds the app to the environment's preferred (Default) solution. After every push,
+  re-check membership and, if needed, `POST /AddSolutionComponent` with ComponentType 300.

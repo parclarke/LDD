@@ -17,8 +17,8 @@ export function AppBar({ appName, userInitials, search, onSearch }: AppBarProps)
         ))}
       </div>
       <div className="appname">
+        <span className="chev lead">›</span>
         {appName}
-        <span className="chev">›</span>
       </div>
       <div className="searchwrap">
         <div className="search">
