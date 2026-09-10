@@ -1,6 +1,7 @@
 import { openAssignmentFor, stagesFor, stepsFor, type AppData } from '../lib/appdata';
 import { PageHeader, StatusChip, Toolbar } from '../components/Primitives';
 import { iconFor } from '../lib/icons';
+import { urgencyOf } from '../lib/status';
 
 interface CaseTypeScreenProps {
   data: AppData;
@@ -92,7 +93,7 @@ export function CaseTypeScreen({ data, code, onOpenCase, onOpenAssignment, onCre
                             <StatusChip status={c.ava_status} />
                           </td>
                           <td className="muted">{c.ava_stagename ?? '—'}</td>
-                          <td className="num">{Number(c.ava_urgency ?? 0).toFixed(2)}</td>
+                          <td className="num">{urgencyOf(c)}</td>
                         </tr>
                       );
                     })

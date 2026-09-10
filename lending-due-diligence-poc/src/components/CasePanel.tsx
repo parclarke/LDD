@@ -6,6 +6,7 @@ import { formatDate, formatDateTime, relativeTime } from '../lib/format';
 import { StatusChip } from './Primitives';
 import { Icon } from './Icon';
 import { iconFor } from '../lib/icons';
+import { urgencyOf } from '../lib/status';
 
 interface CasePanelProps {
   data: AppData;
@@ -150,7 +151,7 @@ export function CasePanel({ data, record, onClose, onOpenAssignment }: CasePanel
                     </div>
                     <div className="frow">
                       <dt>Urgency</dt>
-                      <dd>{Number(record.ava_urgency ?? 0).toFixed(2)}</dd>
+                      <dd>{urgencyOf(record)}</dd>
                     </div>
                     <div className="frow">
                       <dt>SLA deadline</dt>

@@ -1,6 +1,7 @@
 import { caseTypeName, isOpen, openAssignmentFor, type AppData } from '../lib/appdata';
 import { PageHeader, StatusChip, Toolbar } from '../components/Primitives';
 import { formatDate } from '../lib/format';
+import { urgencyOf } from '../lib/status';
 
 interface MyWorkScreenProps {
   data: AppData;
@@ -63,7 +64,7 @@ export function MyWorkScreen({ data, onOpenCase, onOpenAssignment }: MyWorkScree
                         <StatusChip status={c.ava_status} />
                       </td>
                       <td className="muted">{a?.ava_deadline ? formatDate(a.ava_deadline) : '—'}</td>
-                      <td className="num">{Number(c.ava_urgency ?? 0).toFixed(2)}</td>
+                      <td className="num">{urgencyOf(c)}</td>
                     </tr>
                   );
                 })
