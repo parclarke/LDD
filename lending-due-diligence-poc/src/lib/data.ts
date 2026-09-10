@@ -34,6 +34,7 @@ import { Ava_lddriskassessmentcasesService } from '../generated/services/Ava_ldd
 import { Ava_lddcompliancecasesService } from '../generated/services/Ava_lddcompliancecasesService';
 import { Ava_lddescalationcasesService } from '../generated/services/Ava_lddescalationcasesService';
 import { Ava_lddqualityreccasesService } from '../generated/services/Ava_lddqualityreccasesService';
+import { DETAIL_COLUMNS } from './detail-columns';
 
 import type {
   CaseDetail,
@@ -66,6 +67,34 @@ function unwrap<T>(result: OperationResult<T>, what: string): T {
     throw new Error(`${what} failed: ${message}`);
   }
   return result.data;
+}
+
+function normalizeDetailKey(key: string): string {
+  if (key.includes('@odata.bind')) return key;
+  if (key.startsWith('ava_') || key === 'statecode' || key === 'statuscode') return key;
+  const snake = key
+    .replace(/([a-z0-9])([A-Z])/g, '$1_$2')
+    .replace(/[^A-Za-z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '')
+    .toLowerCase();
+  return snake.startsWith('ava_') ? snake : `ava_${snake}`;
+}
+
+function sanitizeDetailRecord(code: CaseTypeCode, record: Record<string, unknown>): Record<string, unknown> {
+  const allowed = DETAIL_COLUMNS[code] ?? new Set<string>();
+  const clean: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(record)) {
+    const normalized = normalizeDetailKey(key);
+    if (
+      normalized.includes('@odata.bind') ||
+      normalized === 'statecode' ||
+      normalized === 'statuscode' ||
+      allowed.has(normalized)
+    ) {
+      clean[normalized] = value;
+    }
+  }
+  return clean;
 }
 
 const PAGE = { top: 500 } as const;
@@ -207,7 +236,7 @@ export async function createCaseDetail(
   code: CaseTypeCode,
   record: Record<string, unknown>
 ): Promise<CaseDetail> {
-  const res = await DETAIL_REGISTRY[code].service.create(record);
+  const res = await DETAIL_REGISTRY[code].service.create(sanitizeDetailRecord(code, record));
   return unwrap(res, 'Create case detail') as CaseDetail;
 }
 
@@ -216,7 +245,7 @@ export async function updateCaseDetail(
   id: string,
   changes: Record<string, unknown>
 ): Promise<void> {
-  unwrap(await DETAIL_REGISTRY[code].service.update(id, changes), 'Update case detail');
+  unwrap(await DETAIL_REGISTRY[code].service.update(id, sanitizeDetailRecord(code, changes)), 'Update case detail');
 }
 
 /* -------------------------------------------------------------------------- *
