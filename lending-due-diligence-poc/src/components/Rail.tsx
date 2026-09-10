@@ -4,7 +4,6 @@ import { Icon } from './Icon';
 import { iconFor } from '../lib/icons';
 
 interface RailProps {
-  appName: string;
   caseTypes: LddCaseType[];
   route: PocRoute;
   expanded: boolean;
@@ -42,10 +41,10 @@ function RailLink({ icon, label, active, expanded, onClick }: RailLinkProps) {
 /**
  * Left navigation. Collapsed it is the icon rail; expanded it shows labels, in the
  * same order as the source application: Create, Home, My Work, Explore Data,
- * Dashboards, one entry per case type, Records Manager, the app agent, then
- * Notifications, Recents and the AI assistant pinned to the bottom.
+ * Dashboards, one entry per case type, Records Manager, then Notifications and
+ * Recents pinned to the bottom.
  */
-export function Rail({ appName, caseTypes, route, expanded, onToggle, onNavigate, onCreate }: RailProps) {
+export function Rail({ caseTypes, route, expanded, onToggle, onNavigate, onCreate }: RailProps) {
   const key = routeKey(route);
   const link = (icon: string, label: string, activeKey: string, target: PocRoute) => (
     <RailLink
@@ -90,13 +89,11 @@ export function Rail({ appName, caseTypes, route, expanded, onToggle, onNavigate
       })}
 
       {link('data', 'Records Manager', 'records', { name: 'records' })}
-      {link('spark', `${appName} Agent`, 'agent', { name: 'agent' })}
 
       <span className="sp" />
 
       {link('bell', 'Notifications', 'notifications', { name: 'home' })}
       {link('clock', 'Recents', 'recents', { name: 'mywork' })}
-      {link('spark', 'AI Assistant', 'assistant', { name: 'agent' })}
 
       <button
         className="navtoggle"

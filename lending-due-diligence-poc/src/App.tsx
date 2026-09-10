@@ -6,6 +6,7 @@ import type { PocRoute } from './lib/routes';
 import { AppBar } from './components/AppBar';
 import { Rail } from './components/Rail';
 import { StepWizard } from './components/StepWizard';
+import { CreateCaseDialog } from './components/CreateCaseDialog';
 import { HomeScreen } from './screens/HomeScreen';
 import { MyWorkScreen } from './screens/MyWorkScreen';
 import { CaseTypeScreen } from './screens/CaseTypeScreen';
@@ -15,7 +16,6 @@ import { ExploreScreen } from './screens/ExploreScreen';
 import { InsightScreen } from './screens/InsightScreen';
 import { DashboardsScreen } from './screens/DashboardsScreen';
 import { DashboardScreen } from './screens/DashboardScreen';
-import { AgentScreen } from './screens/AgentScreen';
 
 const APP_NAME = 'The Lending Due Diligence (LDD)';
 
@@ -41,6 +41,7 @@ export default function App() {
   const [assignments, setAssignments] = useState<LddAssignment[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [wizard, setWizard] = useState<{ caseId: string; assignment: LddAssignment } | null>(null);
+  const [creating, setCreating] = useState<{ code?: string } | null>(null);
   const [toasts, setToasts] = useState<{ id: number; text: string }[]>([]);
 
   const reload = useCallback(async () => {
@@ -122,13 +123,12 @@ export default function App() {
       />
       <div className="shell">
         <Rail
-          appName="Lending Due Diligence"
           caseTypes={data.caseTypes}
           route={route}
           expanded={navExpanded}
           onToggle={() => setNavExpanded((v) => !v)}
           onNavigate={navigate}
-          onCreate={() => toast('Case creation runs from the case type page')}
+          onCreate={() => setCreating({})}
         />
         <main>
           {error ? <div className="note">Could not load data: {error}</div> : null}
@@ -138,7 +138,7 @@ export default function App() {
               data={data}
               onNavigate={navigate}
               onOpenCase={openCase}
-              onCreate={() => navigate({ name: 'mywork' })}
+              onCreate={() => setCreating({})}
             />
           ) : null}
 
@@ -152,7 +152,7 @@ export default function App() {
               code={route.code}
               onOpenCase={openCase}
               onOpenAssignment={openAssignment}
-              onCreate={() => toast('New case intake is available in the full application')}
+              onCreate={() => setCreating({ code: route.code })}
             />
           ) : null}
 
@@ -182,10 +182,24 @@ export default function App() {
           {route.name === 'dashboard' ? (
             <DashboardScreen data={data} id={route.id} onBack={() => navigate({ name: 'dashboards' })} />
           ) : null}
-
-          {route.name === 'agent' ? <AgentScreen appName="Lending Due Diligence" /> : null}
         </main>
       </div>
+
+      {creating && config ? (
+        <CreateCaseDialog
+          config={config}
+          caseTypes={data.caseTypes}
+          initialCode={creating.code}
+          user={DEFAULT_USER}
+          onClose={() => setCreating(null)}
+          onCreated={(caseId, message) => {
+            setCreating(null);
+            toast(message);
+            void reload();
+            openCase(caseId);
+          }}
+        />
+      ) : null}
 
       {wizard && wizardCase && config ? (
         <StepWizard

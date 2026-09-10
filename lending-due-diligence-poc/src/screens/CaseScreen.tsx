@@ -188,9 +188,6 @@ export function CaseScreen({ data, record, onBack, onOpenAssignment }: CaseScree
                     </button>
                     <div className="right">
                       <button className="btn o" type="button">
-                        <span className="sparkle">✦</span> Fill with sample data
-                      </button>
-                      <button className="btn o" type="button">
                         Save for later
                       </button>
                       <button className="btn" type="button" onClick={() => onOpenAssignment(open)}>

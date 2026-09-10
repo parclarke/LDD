@@ -49,24 +49,6 @@ export function StepWizard({ config, record, assignment, user, onClose, onSubmit
   const filled = fields.filter((f) => values[f.ava_name]).length;
   const progress = fields.length === 0 ? 100 : Math.round((filled / fields.length) * 100);
 
-  /** Populates every empty control with a plausible value so the flow can be demonstrated. */
-  function fillSample() {
-    const next: Record<string, string> = { ...values };
-    for (const f of fields) {
-      if (next[f.ava_name] || f.ava_readonly) continue;
-      const control = (f.ava_control ?? 'text').toLowerCase();
-      const choices = choicesFor(f.ava_choiceset);
-      if (choices.length > 0) next[f.ava_name] = choices[0].ava_name;
-      else if (control === 'date') next[f.ava_name] = new Date().toISOString().slice(0, 10);
-      else if (control === 'datetime') next[f.ava_name] = new Date().toISOString().slice(0, 16);
-      else if (control === 'integer') next[f.ava_name] = '10';
-      else if (control === 'decimal' || control === 'currency') next[f.ava_name] = '1000.00';
-      else if (control === 'multiline') next[f.ava_name] = `Sample ${(f.ava_label ?? f.ava_name).toLowerCase()} captured for demonstration.`;
-      else next[f.ava_name] = `Sample ${f.ava_label ?? f.ava_name}`;
-    }
-    setValues(next);
-  }
-
   /** Closes the form, prompting first when the operator has entered data. */
   function requestClose() {
     if (dirty) setConfirming(true);
@@ -202,9 +184,6 @@ export function StepWizard({ config, record, assignment, user, onClose, onSubmit
             Cancel
           </button>
           <div className="right">
-            <button className="btn o" onClick={fillSample} disabled={busy || fields.length === 0} type="button">
-              <span className="sparkle">✦</span> Fill with sample data
-            </button>
             <button className="btn o" onClick={() => setValues({})} disabled={busy || !dirty} type="button">
               Previous
             </button>

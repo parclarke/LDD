@@ -7,7 +7,6 @@ export type PocRoute =
   | { name: 'dashboard'; id: string }
   | { name: 'insight'; id: string }
   | { name: 'records' }
-  | { name: 'agent' }
   | { name: 'case'; caseId: string }
   | { name: 'type'; code: string };
 

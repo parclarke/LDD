@@ -56,7 +56,11 @@ export function MyWorkScreen({ data, onOpenCase, onOpenAssignment }: MyWorkScree
                             {a.ava_name}
                           </a>
                         ) : (
-                          <span className="muted">—</span>
+                          <span className="muted">
+                            {c.ava_status?.startsWith('Pending-Approval')
+                              ? 'Awaiting approval'
+                              : (c.ava_stagename ?? '—')}
+                          </span>
                         )}
                       </td>
                       <td>{caseTypeName(data, c.ava_casetypecode)}</td>

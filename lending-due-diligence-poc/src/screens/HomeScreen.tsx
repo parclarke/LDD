@@ -121,7 +121,6 @@ export function HomeScreen({ data, onNavigate, onOpenCase, onCreate }: HomeScree
           <div className="card">
             <div className="cardhd">
               <h3>Pulse</h3>
-              <Icon name="wave" />
             </div>
             <div className="pulse-post">
               <div className="pp-hd">

@@ -40,7 +40,6 @@
   --announce-bg: #A100FF;
   --announce-fg: #FFF;
   --avatar-bg: #001d54;
-  --agent-bg: linear-gradient(90deg,#f7f5ff 0%,#eff6fe 100%);
   --focus: 0 0 0 .18rem #3F57E4;
   --striped: 1;
 }

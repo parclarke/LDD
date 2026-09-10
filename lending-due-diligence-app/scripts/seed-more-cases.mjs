@@ -153,11 +153,17 @@ async function main() {
       continue;
     }
 
-    const used = existing
-      .filter((c) => c.ava_name?.startsWith(`${prefix}-`))
-      .map((c) => Number(c.ava_name.slice(-4)))
-      .filter((n) => Number.isFinite(n));
-    let seq = used.length ? Math.max(...used) : 1;
+    // Only place open work on stages that actually have an assignment step. Some
+    // harvested stages contain nothing but sub-process or utility steps, and a
+    // case parked on one of those would show a blank assignment on My Work.
+    const assignable = primary.filter((s) =>
+      (stepsByStage.get(s.ava_lddstageid) ?? []).some((x) => x.ava_kind === 'Assignment')
+    );
+    const pool = assignable.length ? assignable : primary;
+
+    // Fixed start so re-runs regenerate the same case numbers and upsert in place
+    // rather than appending a fresh batch every time.
+    let seq = 1;
 
     const rand = rng(ct.ava_code.split('').reduce((a, ch) => a + ch.charCodeAt(0), 0));
 
@@ -167,9 +173,9 @@ async function main() {
 
       // Spread cases across the primary stages, weighted towards the middle of the
       // lifecycle so the worklist is not dominated by intake.
-      const stage = primary[Math.min(primary.length - 1, Math.floor(rand() * primary.length))];
-      const stageIndex = primary.indexOf(stage);
-      const isLast = stageIndex === primary.length - 1;
+      const stage = pool[Math.min(pool.length - 1, Math.floor(rand() * pool.length))];
+      const stageIndex = pool.indexOf(stage);
+      const isLast = stageIndex === pool.length - 1;
 
       const roll = rand();
       const status = isLast && roll < 0.6
@@ -223,6 +229,21 @@ async function main() {
       created += 1;
 
       if (step && !resolved) {
+        // Drop any pending assignment left behind on a stage the case no longer sits on.
+        const stale = await call(
+          'GET',
+          `ava_lddassignments?$select=ava_lddassignmentid,ava_name&$filter=${encodeURIComponent(
+            `_ava_workcaseid_value eq ${caseId} and ava_status eq 'Pending'`
+          )}`,
+          null,
+          null
+        );
+        for (const a of stale.value ?? []) {
+          if (a.ava_name !== step.ava_name) {
+            await call('DELETE', `ava_lddassignments(${a.ava_lddassignmentid})`, null, null);
+          }
+        }
+
         await upsert(
           'ava_lddassignments',
           `_ava_workcaseid_value eq ${caseId} and ava_name eq ${q(step.ava_name)}`,

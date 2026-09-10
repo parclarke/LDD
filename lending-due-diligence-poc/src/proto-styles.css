@@ -511,26 +511,6 @@ tr.grouprow td{background:#eef0f7!important;font-weight:600;font-size:.82rem}
   font-size:.85rem;cursor:pointer;font-family:var(--font)}
 .showmore:hover{text-decoration:underline}
 
-/* ================= agent ================= */
-.agentwrap{background:var(--panel);border-radius:var(--radius);padding:1.4rem 1.6rem 1.8rem;
-  box-shadow:0 1px 2px rgba(0,29,84,.05),0 4px 14px rgba(0,29,84,.06);min-height:26rem;
-  display:flex;flex-direction:column}
-.agentwrap h3{margin:0 0 .5rem;font-size:1.25rem;font-weight:600}
-.agentbody{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:.9rem;max-width:34rem;margin:0 auto;width:100%}
-.agentbody .spark{width:2.2rem;height:2.2rem;color:var(--brand)}
-.agentbody .spark svg{width:100%;height:100%;fill:currentColor;stroke:none}
-.agentbody .q{font-size:1rem;font-weight:500}
-.agentcompose{width:100%;border:1px solid var(--p);border-radius:.45rem;background:#fff;
-  padding:.6rem .7rem;display:flex;flex-direction:column;gap:.5rem}
-.agentcompose input{border:none;outline:none;font:inherit;font-family:var(--font);color:var(--ink)}
-.agentcompose .row{display:flex;align-items:center;gap:.6rem;color:var(--label-fg)}
-.agentcompose .row svg{width:1rem;height:1rem;fill:none;stroke:currentColor;stroke-width:1.7}
-.agentcompose .send{margin-left:auto;width:1.9rem;height:1.9rem;border-radius:.25rem;border:none;
-  background:none;color:var(--p);cursor:pointer;display:grid;place-items:center}
-.agentcompose .send:hover{background:var(--surface2)}
-.agentnote{text-align:center;color:var(--label-fg);font-size:.75rem;margin-top:.5rem}
-
 /* ================= confirm dialog ================= */
 .cmodal{background:#fff;border-radius:.5rem;width:min(24rem,100%);padding:1.3rem 1.5rem 1.2rem;
   box-shadow:0 20px 60px rgba(0,29,84,.35);margin-top:4rem}
@@ -581,23 +561,6 @@ tr.grouprow td svg{width:.95rem;height:.95rem;fill:none;stroke:currentColor;stro
   border-radius:.25rem;color:inherit;cursor:pointer;display:grid;place-items:center}
 .pulse-post .pp-acts button:not(.btn):hover{background:var(--surface2)}
 .pulse-post .pp-acts svg{width:1rem;height:1rem;fill:none;stroke:currentColor;stroke-width:1.7}
-
-/* agent conversation */
-.agentbody{align-items:stretch;justify-content:flex-start;padding:.5rem 0 1rem;overflow-y:auto}
-.turn{display:flex;gap:.6rem;align-items:flex-start}
-.turn p{margin:0;font-size:.9rem;line-height:1.5;padding:.6rem .8rem;border-radius:.5rem;
-  background:var(--surface2);max-width:100%}
-.turn.user{justify-content:flex-end}
-.turn.user p{background:var(--p);color:#fff}
-.turn .av{width:1.8rem;height:1.8rem;border-radius:50%;background:var(--brand);color:#fff;
-  display:grid;place-items:center;flex-shrink:0}
-.turn .av svg{width:1rem;height:1rem;fill:currentColor;stroke:none}
-.agentcompose{flex-direction:row;align-items:center}
-.agentcompose input{flex:1}
-.agentcompose button{width:1.9rem;height:1.9rem;border-radius:.25rem;border:none;background:none;
-  color:var(--p);cursor:pointer;display:grid;place-items:center;flex-shrink:0}
-.agentcompose button:hover{background:var(--surface2)}
-.agentcompose svg{width:1.05rem;height:1.05rem;fill:none;stroke:currentColor;stroke-width:1.7}
 
 /* discard-changes dialog */
 .cmodal-wrap{position:fixed;inset:0;background:rgba(0,29,84,.35);z-index:200;
