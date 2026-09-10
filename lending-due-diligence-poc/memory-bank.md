@@ -55,16 +55,18 @@ Data sources were transplanted rather than re-added: the `databaseReferences` an
 | `insight/<id>` | `InsightScreen.tsx` | Single large metric with its period-on-period delta |
 | `dashboards` | `DashboardsScreen.tsx` | Dashboard catalogue with Create Dashboard |
 | `dashboard/<id>` | `DashboardScreen.tsx` | Work metrics: filter bar, four KPI tiles, created/resolved/volume charts |
-| `agent` | `AgentScreen.tsx` | In-app agent conversation surface |
 ## Components
 
 - `AppBar.tsx` — waffle launcher, leading chevron, app name, centred search, avatar
-- `Rail.tsx` — collapsible navigation; expanded it shows labels, Dashboards, the app agent and a
-  "Collapse navigation" toggle
+- `Rail.tsx` — collapsible navigation; expanded it shows labels, Dashboards and a
+  "Collapse navigation" toggle. There is deliberately no agent or AI assistant entry.
 - `Chart.tsx` — `ChartCard` renders bar / stacked / line / pie in plain SVG; no chart library
 - `CasePanel.tsx` — legacy preview drawer, superseded by the full-page `CaseScreen`
 - `StepWizard.tsx` — step form from the harvested view definition, with progress bar,
-  "Fill with sample data", Previous, and a discard-unsaved-changes dialog
+  Previous, and a discard-unsaved-changes dialog
+- `CreateCaseDialog.tsx` — case intake. Pegakit harvested no creation view, so this form is
+  authored from the source screenshot: "Create <Case Type>" over Lending Transaction and
+  Customer lookups, submitted through `orchestrator.createCase`
 - `Primitives.tsx` — `StatusChip`, `Toolbar`, `PageHeader`
 - `Icon.tsx` + `lib/icons.ts` — the prototype's inline SVG set
 - `lib/analytics.ts` — all chart and KPI derivation from live work cases
@@ -87,8 +89,6 @@ form modal. Do not collapse these into one action.
 ## Next Steps
 
 - Read the signed-in identity from `getContext()` instead of `DEFAULT_USER` in `App.tsx`
-- Wire case creation (the rail "+" and the per-type "Create" button currently toast)
-- Connect the agent screen to a real model endpoint
 - Build the Power Automate flows that drain the notification outbox table
 
 ## Gotchas (added)
@@ -97,3 +97,4 @@ form modal. Do not collapse these into one action.
   geometry is computed in the module-level `arcsFor()` helper for this reason.
 - `pa app push` adds the app to the environment's preferred (Default) solution. After every push,
   re-check membership and, if needed, `POST /AddSolutionComponent` with ComponentType 300.
+
